@@ -1,0 +1,10 @@
+fastapi[standard]==0.112.2
+PyJWT[crypto]==2.9.0
+requests==2.32.3
+uvicorn==0.30.6
+pydantic==2.9.2
+Jinja2==3.1.4
+pre-commit==3.8.0
+jsonschema==4.23.0
+PyYAML==6.0.2
+pydantic-settings~=2.7.1

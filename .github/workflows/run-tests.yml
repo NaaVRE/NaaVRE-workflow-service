@@ -1,0 +1,88 @@
+name: Run tests
+
+
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        default: ubuntu-latest
+        type: string
+      base_image_tags_url:
+        required: true
+        type: string
+      debug:
+        required: true
+        type: string
+      oidc_configuration_url:
+        required: true
+        type: string
+      verify_ssl:
+        required: true
+        type: string
+      disable_auth :
+        required: true
+        type: string
+      module_mapping_url:
+        required: true
+        type: string
+      cell_github:
+        required: true
+        type: string
+      root_path:
+        required: true
+        type: string
+      test:
+        required: true
+        type: string
+    secrets:
+      cell_github_token:
+        required: true
+      auth_token:
+        required: true
+
+env:
+  CELL_GITHUB: ${{ inputs.cell_github }}
+  CELL_GITHUB_TOKEN: ${{ secrets.cell_github_token }}
+  BASE_IMAGE_TAGS_URL: ${{ inputs.base_image_tags_url }}
+  DEBUG: ${{ inputs.debug }}
+  OIDC_CONFIGURATION_URL: ${{ inputs.oidc_configuration_url }}
+  VERIFY_SSL: ${{ inputs.verify_ssl }}
+  DISABLE_AUTH: ${{ inputs.disable_auth }}
+  MODULE_MAPPING_URL: ${{ inputs.module_mapping_url }}
+  ROOT_PATH: ${{ inputs.root_path }}
+  AUTH_TOKEN: ${{ secrets.auth_token }}
+
+
+jobs:
+  test:
+    runs-on: ${{ inputs.runs-on }}
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          miniforge-version: latest
+
+          python-version: 3.11
+          path: ${{ env.CONDA }}/envs
+          environment-file: environment.yaml
+          activate-environment: jupyterlab
+          use-mamba: true
+
+      - name: Cache Conda environment
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CONDA }}/envs
+          key: conda-environment-${{ runner.os }}-${{ hashFiles('environment.yaml') }}
+          restore-keys: |
+            conda-environment-${{ runner.os }}-
+        id: cache-conda
+
+      - name: pytest
+        shell: bash -l {0}
+        run: |
+           conda activate naavre-workflow-service
+           pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header
