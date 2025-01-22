@@ -1,11 +1,21 @@
 import logging
-from typing import Literal, Optional
+from typing import Optional
 
 from pydantic import BaseModel
+
+from app.models.naavre_wf2 import Naavrewf2
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-class Naavrewf2Payload (BaseModel):
-    title: str
+class Naavrewf2Payload(BaseModel):
+    virtual_lab: str
+    params: Optional[list[dict]] | None = None
+    secrets: Optional[list[dict]] | None = None
+    naavrewf2: Naavrewf2
+    user_name: str | None = None
+
+    def set_user_name(self, user_name: str):
+        self.user_name = user_name
+        return self

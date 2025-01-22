@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: "{{ include "naavre-workflow-service.fullname" . }}-test-connection"
   labels:
-    {{- include "naavre-workflow-service.labels" . | nindent 4 }}
+    {{- include "naavre-workflow-service.labels" . | nindent 4}}
   annotations:
     "helm.sh/hook": test
 spec:

@@ -6,11 +6,11 @@ import jwt
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic.v1.config import get_config
 from pydantic_settings import BaseSettings
 
-
-
 from app.models.naavrewf2_payload import Naavrewf2Payload
+from app.services.wf_engines.argo_engine import ArgoEngine
 from app.utils.openid import OpenIDValidator
 
 security = HTTPBearer()
@@ -42,18 +42,25 @@ def valid_access_token(credentials: Annotated[
         raise HTTPException(status_code=401, detail="Not authenticated")
 
 
-
+def _get_wf_engine(naavrewf2_payload):
+    wf_engine_name = get_config(naavrewf2_payload.virtual_lab)['wf_engine']
+    if wf_engine_name == "argo":
+        return ArgoEngine(naavrewf2_payload)
+    pass
 
 
 @app.post("/submit")
-def extract_cell(access_token: Annotated[dict, Depends(valid_access_token)],
-                 naavrewf2_payload: Naavrewf2Payload):
-    return {"run_url":"https://example.org/","naavrewf2":None}
+def submit(access_token: Annotated[dict, Depends(valid_access_token)],
+           naavrewf2_payload: Naavrewf2Payload):
+    naavrewf2_payload.set_user_name(access_token['preferred_username'])
+    wf_engine = _get_wf_engine(naavrewf2_payload)
+    wf_engine
+    return {"run_url": "https://example.org/", "naavrewf2": None}
 
 
 @app.post("/convert")
-def containerize(access_token: Annotated[dict, Depends(valid_access_token)],
-                 naavrewf2_payload: Naavrewf2Payload):
+def convert(access_token: Annotated[dict, Depends(valid_access_token)],
+            naavrewf2_payload: Naavrewf2Payload):
     return {"workflow": "invalid"}
 
 

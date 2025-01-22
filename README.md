@@ -14,7 +14,6 @@ Activate the environment:
 conda activate naavre-workflow-service
 ```
 
-
 Run the dev server
 
 ```shell
@@ -43,4 +42,5 @@ We use Helm for the deployment:
 helm -n naavre-workflow-service upgrade --install --create-namespace naavre-workflow-service ./helm/naavre-workflow-service -f values.yaml
 ```
 
-`values.yaml` should contain ingress, OAuth2, and other configuration (checkout [./helm/naavre-workflow-service/values-example.yaml](./helm/naavre-workflow-service/values-example.yaml)).
+`values.yaml` should contain ingress, OAuth2, and other configuration (
+checkout [./helm/naavre-workflow-service/values-example.yaml](./helm/naavre-workflow-service/values-example.yaml)).

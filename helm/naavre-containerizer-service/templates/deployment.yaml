@@ -1,75 +1,75 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "naavre-workflow-service.fullname" . }}
+  name: {{include "naavre-workflow-service.fullname" .}}
   labels:
-    {{- include "naavre-workflow-service.labels" . | nindent 4 }}
+    {{- include "naavre-workflow-service.labels" . | nindent 4}}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  {{- if not .Values.autoscaling.enabled}}
+  replicas: {{.Values.replicaCount}}
+  {{- end}}
   selector:
     matchLabels:
-      {{- include "naavre-workflow-service.selectorLabels" . | nindent 6 }}
+      {{- include "naavre-workflow-service.selectorLabels" . | nindent 6}}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.podAnnotations}}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml . | nindent 8}}
+      {{- end}}
       labels:
-        {{- include "naavre-workflow-service.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "naavre-workflow-service.labels" . | nindent 8}}
+          {{- with .Values.podLabels}}
+          {{- toYaml . | nindent 8}}
+          {{- end}}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets}}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "naavre-workflow-service.serviceAccountName" . }}
+        {{- toYaml . | nindent 8}}
+      {{- end}}
+      serviceAccountName: {{include "naavre-workflow-service.serviceAccountName" .}}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.podSecurityContext | nindent 8}}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{.Chart.Name}}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.securityContext | nindent 12}}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{.Values.image.pullPolicy}}
           env:
             - name: ROOT_PATH
               value: "{{ .Values.conf.rootPath }}"
-            {{- range $k, $v := .Values.env }}
-            - name: {{ $k | quote }}
-              value: {{ $v | quote }}
-            {{- end }}
+            {{- range $k, $v := .Values.env}}
+            - name: {{$k | quote}}
+              value: {{$v | quote}}
+            {{- end}}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{.Values.service.port}}
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- toYaml .Values.livenessProbe | nindent 12}}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- toYaml .Values.readinessProbe | nindent 12}}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+            {{- toYaml .Values.resources | nindent 12}}
+          {{- with .Values.volumeMounts}}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- toYaml . | nindent 12}}
+          {{- end}}
+      {{- with .Values.volumes}}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
+        {{- toYaml . | nindent 8}}
+      {{- end}}
+      {{- with .Values.nodeSelector}}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
+        {{- toYaml . | nindent 8}}
+      {{- end}}
+      {{- with .Values.affinity}}
       affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
+        {{- toYaml . | nindent 8}}
+      {{- end}}
+      {{- with .Values.tolerations}}
       tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml . | nindent 8}}
+      {{- end}}
