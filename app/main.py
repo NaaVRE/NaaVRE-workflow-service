@@ -6,7 +6,6 @@ import jwt
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic.v1.config import get_config
 from pydantic_settings import BaseSettings
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
@@ -42,10 +41,15 @@ def valid_access_token(credentials: Annotated[
         raise HTTPException(status_code=401, detail="Not authenticated")
 
 
+def get_vl_config(virtual_lab: str):
+    return {}
+
+
 def _get_wf_engine(naavrewf2_payload):
-    wf_engine_name = get_config(naavrewf2_payload.virtual_lab)['wf_engine']
+    vl_conf = get_vl_config(naavrewf2_payload.virtual_lab)
+    wf_engine_name = vl_conf['wf_engine']
     if wf_engine_name == "argo":
-        return ArgoEngine(naavrewf2_payload)
+        return ArgoEngine(naavrewf2_payload, vl_conf)
     pass
 
 
@@ -54,7 +58,7 @@ def submit(access_token: Annotated[dict, Depends(valid_access_token)],
            naavrewf2_payload: Naavrewf2Payload):
     naavrewf2_payload.set_user_name(access_token['preferred_username'])
     wf_engine = _get_wf_engine(naavrewf2_payload)
-    wf_engine
+    print(wf_engine)
     return {"run_url": "https://example.org/", "naavrewf2": None}
 
 

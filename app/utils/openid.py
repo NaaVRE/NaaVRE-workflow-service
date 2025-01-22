@@ -5,6 +5,7 @@ from typing import Union
 
 import jwt
 import requests
+import cachetools.func
 
 logger = logging.getLogger()
 
@@ -14,7 +15,6 @@ class OpenIDValidator:
     def __init__(self):
         self.verify_ssl = self._get_verify_ssl()
         self.ssl_context = self._get_ssl_context(self.verify_ssl)
-        self.openid_conf = self._get_openid_conf(self.verify_ssl)
 
     @staticmethod
     def _get_verify_ssl() -> bool:
@@ -28,6 +28,7 @@ class OpenIDValidator:
             return ssl.SSLContext(verify_mode=ssl.CERT_NONE)
 
     @staticmethod
+    @cachetools.func.ttl_cache(ttl=60*60*12)
     def _get_openid_conf(verify_ssl: bool) -> Union[dict, None]:
         url = os.environ['OIDC_CONFIGURATION_URL']
         r = requests.get(url, verify=verify_ssl)
@@ -37,7 +38,12 @@ class OpenIDValidator:
     def validate(self, access_token):
         if os.getenv('DISABLE_AUTH', 'false').lower() == 'true':
             return self.validate_fake_token(access_token)
-        url = self.openid_conf['jwks_uri']
+        else:
+            return self.validate_token(access_token)
+
+    def validate_token(self, access_token):
+        openid_conf = self._get_openid_conf(self.verify_ssl)
+        url = openid_conf['jwks_uri']
         jwks_client = jwt.PyJWKClient(url, ssl_context=self.ssl_context)
 
         signing_key = jwks_client.get_signing_key_from_jwt(access_token)
