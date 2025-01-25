@@ -6,30 +6,27 @@ import jwt
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic_settings import BaseSettings
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.services.wf_engines.argo_engine import ArgoEngine
+from app.settings import Settings
 from app.utils.openid import OpenIDValidator
 
 security = HTTPBearer()
 token_validator = OpenIDValidator()
 
+conf_base_path = os.getenv("SETTINGS_BASE_PATH", "../")
+conf_file_path = os.path.join(conf_base_path, "config.yaml")
 
-class Settings(BaseSettings):
-    root_path: str = "my-root-path"
-    if not root_path.startswith("/"):
-        root_path = "/" + root_path
-    if root_path.endswith("/"):
-        root_path = root_path[:-1]
+settings = Settings(config_file=conf_file_path)
 
+# Use the settings in your application
+app = FastAPI(root_path=settings.wf_service_settings.root_path)
 
-settings = Settings()
-
-app = FastAPI(root_path=settings.root_path)
-
-if os.getenv("DEBUG", "false").lower() == "true":
-    logging.basicConfig(level=10)
+if settings.wf_service_settings.debug:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
 
 
 def valid_access_token(credentials: Annotated[
@@ -41,12 +38,8 @@ def valid_access_token(credentials: Annotated[
         raise HTTPException(status_code=401, detail="Not authenticated")
 
 
-def get_vl_config(virtual_lab: str):
-    return {}
-
-
 def _get_wf_engine(naavrewf2_payload):
-    vl_conf = get_vl_config(naavrewf2_payload.virtual_lab)
+    vl_conf = settings.get_vl_config(naavrewf2_payload.virtual_lab)
     wf_engine_name = vl_conf['wf_engine']
     if wf_engine_name == "argo":
         return ArgoEngine(naavrewf2_payload, vl_conf)

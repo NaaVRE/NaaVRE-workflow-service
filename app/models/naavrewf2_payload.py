@@ -11,10 +11,10 @@ logger.setLevel(logging.DEBUG)
 
 class Naavrewf2Payload(BaseModel):
     virtual_lab: str
-    params: Optional[list[dict]] | None = None
-    secrets: Optional[list[dict]] | None = None
+    params: Optional[dict] | None = None
+    secrets: Optional[dict] | None = None
     naavrewf2: Naavrewf2
-    user_name: str | None = None
+    user_name: Optional[str] | None = None
 
     def set_user_name(self, user_name: str):
         self.user_name = user_name
