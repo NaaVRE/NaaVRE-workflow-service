@@ -13,6 +13,8 @@ class OpenIDValidator:
 
     def __init__(self, openid_conf=None):
         self.openid_conf = openid_conf
+        self.ssl_context = self._get_ssl_context(openid_conf['openapi']
+                                                 ['verify_ssl'])
 
     @staticmethod
     def _get_ssl_context(verify_ssl: bool) -> ssl.SSLContext:
