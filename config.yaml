@@ -1,5 +1,10 @@
 "root_path": "/NaaVRE-workflow-service"
 "debug": true
+openapi:
+  verify_ssl: false
+  oidc_configuration_url: "https://naavre-oidc-server/.well-known/openid-configuration"
+  disable_oauth: false
+
 vl_config:
   - name: "virtual_lab_1"
     wf_engine: "argo"

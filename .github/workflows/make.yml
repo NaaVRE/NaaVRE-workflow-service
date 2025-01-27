@@ -41,7 +41,6 @@ jobs:
   call-collect-tests:
     uses: ./.github/workflows/collect-tests.yml
     with:
-      base_image_tags_url: ${{ vars.BASE_IMAGE_TAGS_URL }}
       oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
 
   split-tests:
@@ -78,17 +77,13 @@ jobs:
         test: ${{ fromJson(needs.split-tests.outputs.test_list) }}
     with:
       runs-on: ${{ needs.configure-workflow.outputs.runner }}
-      base_image_tags_url: ${{ vars.BASE_IMAGE_TAGS_URL }}
       debug: ${{ vars.DEBUG }}
       oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
       verify_ssl: ${{ vars.VERIFY_SSL }}
       disable_auth: ${{ vars.DISABLE_AUTH }}
-      module_mapping_url: ${{ vars.MODULE_MAPPING_URL }}
       root_path: ${{ vars.ROOT_PATH }}
-      cell_github: ${{ vars.CELL_GITHUB }}
       test: ${{ matrix.test }}
     secrets:
-      cell_github_token:  ${{ secrets.CELL_GITHUB_TOKEN }}
       auth_token: ${{ secrets.AUTH_TOKEN }}
 
   call-build-container:

@@ -9,11 +9,7 @@ on:
       oidc_configuration_url:
         required: true
         type: string
-      base_image_tags_url:
-        required: true
-        type: string
 env:
-  BASE_IMAGE_TAGS_URL: ${{ inputs.base_image_tags_url }}
   DEBUG: ${{ inputs.debug }}
   OIDC_CONFIGURATION_URL: ${{ inputs.oidc_configuration_url }}
 

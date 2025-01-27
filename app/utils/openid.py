@@ -1,5 +1,4 @@
 import logging
-import os
 import ssl
 from typing import Union
 
@@ -12,13 +11,8 @@ logger = logging.getLogger()
 
 class OpenIDValidator:
 
-    def __init__(self):
-        self.verify_ssl = self._get_verify_ssl()
-        self.ssl_context = self._get_ssl_context(self.verify_ssl)
-
-    @staticmethod
-    def _get_verify_ssl() -> bool:
-        return os.getenv('VERIFY_SSL', 'true').lower() != 'false'
+    def __init__(self, openid_conf=None):
+        self.openid_conf = openid_conf
 
     @staticmethod
     def _get_ssl_context(verify_ssl: bool) -> ssl.SSLContext:
@@ -27,22 +21,23 @@ class OpenIDValidator:
         else:
             return ssl.SSLContext(verify_mode=ssl.CERT_NONE)
 
-    @staticmethod
     @cachetools.func.ttl_cache(ttl=60*60*12)
-    def _get_openid_conf(verify_ssl: bool) -> Union[dict, None]:
-        url = os.environ['OIDC_CONFIGURATION_URL']
+    def _get_openid_conf(self, verify_ssl: bool) -> Union[dict, None]:
+        url = self.openid_conf['openapi']['oidc_configuration_url']
         r = requests.get(url, verify=verify_ssl)
         r.raise_for_status()
         return r.json()
 
     def validate(self, access_token):
-        if os.getenv('DISABLE_AUTH', 'false').lower() == 'true':
+
+        if self.openid_conf['openapi']['disable_auth'].lower() == 'true':
             return self.validate_fake_token(access_token)
         else:
             return self.validate_token(access_token)
 
     def validate_token(self, access_token):
-        openid_conf = self._get_openid_conf(self.verify_ssl)
+        openid_conf = self._get_openid_conf(self.openid_conf['openapi']
+                                            ['verify_ssl'])
         url = openid_conf['jwks_uri']
         jwks_client = jwt.PyJWKClient(url, ssl_context=self.ssl_context)
 

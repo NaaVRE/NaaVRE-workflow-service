@@ -10,6 +10,7 @@ class WorkflowServiceSettings(BaseSettings):
     root_path: str
     debug: bool
     vl_config: List[VLConfig]
+    openapi: dict
 
 
 class Settings:

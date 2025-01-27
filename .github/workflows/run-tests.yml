@@ -7,9 +7,6 @@ on:
       runs-on:
         default: ubuntu-latest
         type: string
-      base_image_tags_url:
-        required: true
-        type: string
       debug:
         required: true
         type: string
@@ -22,12 +19,6 @@ on:
       disable_auth :
         required: true
         type: string
-      module_mapping_url:
-        required: true
-        type: string
-      cell_github:
-        required: true
-        type: string
       root_path:
         required: true
         type: string
@@ -35,20 +26,14 @@ on:
         required: true
         type: string
     secrets:
-      cell_github_token:
-        required: true
       auth_token:
         required: true
 
 env:
-  CELL_GITHUB: ${{ inputs.cell_github }}
-  CELL_GITHUB_TOKEN: ${{ secrets.cell_github_token }}
-  BASE_IMAGE_TAGS_URL: ${{ inputs.base_image_tags_url }}
   DEBUG: ${{ inputs.debug }}
   OIDC_CONFIGURATION_URL: ${{ inputs.oidc_configuration_url }}
   VERIFY_SSL: ${{ inputs.verify_ssl }}
   DISABLE_AUTH: ${{ inputs.disable_auth }}
-  MODULE_MAPPING_URL: ${{ inputs.module_mapping_url }}
   ROOT_PATH: ${{ inputs.root_path }}
   AUTH_TOKEN: ${{ secrets.auth_token }}
 

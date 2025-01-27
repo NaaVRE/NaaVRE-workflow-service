@@ -15,6 +15,3 @@ conf:
 
 env:
   OIDC_CONFIGURATION_URL: "https://<keycloak-host>/<keycloak-base-path>/realms/<realm>/.well-known/openid-configuration"
-  MODULE_MAPPING_URL: "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json"
-  CELL_GITHUB: "https://github.com/my-org/my-repo.git"
-  CELL_GITHUB_TOKEN: "my_token"

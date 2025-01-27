@@ -110,10 +110,6 @@ conf:
   rootPath: /
 
 env:
-  BASE_IMAGE_TAGS_URL: "https://github.com/QCDIS/NaaVRE-flavors/releases/latest/download/base_image_tags.json"
   DEBUG: "false"
   OIDC_CONFIGURATION_URL: ""
   VERIFY_SSL: "true"
-  MODULE_MAPPING_URL: "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json"
-  CELL_GITHUB: ""
-  CELL_GITHUB_TOKEN: ""
