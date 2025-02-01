@@ -1,8 +1,11 @@
 import logging
 import os
+import shutil
 from typing import Annotated
+from urllib.parse import urlparse
 
 import jwt
+import requests
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -15,15 +18,46 @@ from app.utils.openid import OpenIDValidator
 security = HTTPBearer()
 token_validator = OpenIDValidator()
 
-conf_base_path = os.getenv("SETTINGS_BASE_PATH", "../")
-conf_file_path = os.path.join(conf_base_path, "config.yaml")
 
-settings = Settings(config_file=conf_file_path)
+def download_file(source, destination):
+    # Check if source is a URL
+    parsed_url = urlparse(source)
+
+    if parsed_url.scheme in ("http", "https"):  # Remote URL
+        try:
+            response = requests.get(source, stream=True)
+            response.raise_for_status()
+            with open(destination, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    file.write(chunk)
+            print(f"File downloaded from {source} to {destination}")
+        except requests.RequestException as e:
+            print(f"Error downloading remote file: {e}")
+
+    elif os.path.exists(source):  # Local file (relative or absolute path)
+        try:
+            shutil.copy(source, destination)
+            print(f"File copied from local path: {source} to {destination}")
+        except Exception as e:
+            print(f"Error copying local file: {e}")
+
+    else:
+        print(f"Invalid path or URL: {source}")
+
+
+download_file(os.getenv('CONFIG_FILE_URL', 'https://raw.githubusercontent.com/'
+                                           'naavrehub/'
+                                           'naavre-workflow-service/'
+                                           'main/conf.json'),
+              'conf.json')
+
+settings = Settings(config_file='conf.json')
 
 # Use the settings in your application
-app = FastAPI(root_path=settings.wf_service_settings.root_path)
+app = FastAPI(root_path=os.getenv('ROOT_PATH',
+                                  '/NaaVRE-workflow-service'))
 
-if settings.wf_service_settings.debug:
+if os.getenv('DEBUG', 'false').lower() == 'true':
     logging.basicConfig(level=logging.DEBUG)
 else:
     logging.basicConfig(level=logging.INFO)

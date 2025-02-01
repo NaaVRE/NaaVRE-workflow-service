@@ -1,0 +1,9 @@
+{
+  "vl_configurations": [
+    {
+      "name": "virtual_lab_1",
+      "wf_engine": "argo",
+      "other_config": "other_config_1"
+    }
+  ]
+}
