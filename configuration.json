@@ -1,8 +1,12 @@
 {
   "vl_configurations": [
     {
-      "name": "virtual_lab_1",
-      "wf_engine": "argo",
+      "name": "vl-example",
+      "wf_engine": {
+        "name": "argo",
+        "api_endpoint": "type_1",
+        "access_token": "config_1"
+      },
       "other_config": "other_config_1"
     }
   ]

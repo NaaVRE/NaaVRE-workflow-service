@@ -17,70 +17,23 @@ class WorkflowParser:
     links: dict
     splitters: dict
     dependencies: dict
-    cells_in_use: dict
+    cells: dict
 
     def __init__(self, naavrewf2: Naavrewf2):
 
         self.nodes = naavrewf2.nodes
         self.links = naavrewf2.links
+        self.dependencies = {}
+        self.cells = {}
+        for wf_node_id in self.nodes:
+            self.dependencies[self.nodes[wf_node_id]['id']] = []
+            if not is_special_node(self.nodes[wf_node_id]):
+                self.cells[self.nodes[wf_node_id]['id']] = \
+                            self.nodes[wf_node_id]['properties']['cell']
 
-        self.dependencies = {
-            self.nodes[node]['id']: [] for node in self.nodes
-        }
-        self.cells_in_use = {}
-        # for node in self.nodes:
-        #     if not is_special_node(self.nodes[node]):
-        #         try:
-        #             self.cells_in_use[self.nodes[node]['id']] = (
-        #                 Catalog.get_cell_from_og_node_id(self.nodes[node]
-        #                                                  ['properties']
-        #                                                  ['og_node_id']))
-        #         except Exception:
-        #             if 'properties' in self.nodes[node]:
-        #                 raise Exception('Error while parsing ' +
-        #                                 self.nodes[node]['properties']
-        #                                 ['title'])
-        #             elif 'properties' not in self.nodes[node]:
-        #                 raise Exception('Error while parsing ' +
-        #                                 self.nodes[node] +
-        #                                 ' has no properties')
-        #             elif 'og_node_id' not in self.nodes[node]['properties']:
-        #                 raise Exception('Error while parsing node id: ' +
-        #                 node
-        #                                 + ' has no og_node_id')
-        #             else:
-        #                 raise Exception('Error while parsing node id: ' +
-        #                 node)
-
-        for nid, node in self.nodes.items():
-            for pid, port in node['ports'].items():
-                is_special = is_special_node(node)
-                trailing_id = nid if is_special else node['properties'][
-                    'og_node_id']
-                self.nodes[nid]['ports'][pid][
-                    'id'] = f"{pid}_{trailing_id[:7]}"
-
-        for lid, link in self.links.items():
-            node_from = self.nodes[link['from']['nodeId']]
-            node_to = self.nodes[link['to']['nodeId']]
-
-            from_is_special = is_special_node(node_from)
-            to_is_special = is_special_node(node_to)
-
-            from_trailing_id = node_from['id'] if from_is_special else \
-                node_from['properties']['og_node_id']
-            to_trailing_id = node_to['id'] if to_is_special else \
-                node_to['properties']['og_node_id']
-
-            link['from']['portId'] = link['from'][
-                                         'portId'] + "_" + from_trailing_id[:7]
-            link['to']['portId'] = link['to']['portId'] + "_" + to_trailing_id[
-                                                                :7]
-
-        self.__parse_links()
+        # self.__parse_links()
 
     def __parse_links(self):
-
         for k in self.links:
             link = self.links[k]
 
@@ -102,9 +55,9 @@ class WorkflowParser:
             if from_special_node:
                 task_name = f'{from_node["type"]}-{from_node["id"][:7]}'
             else:
-                og_node_id = self.__get_og_node_id(from_node['id'])
-                print(og_node_id)
-                # cell = Catalog.get_cell_from_og_node_id(og_node_id)
+                id = self.__get_id(from_node['id'])
+                print(id)
+                # cell = Catalog.get_cell_from_id(id)
                 # task_name = f'{cell["task_name"]}-{from_node["id"][:7]}'
 
             self.dependencies[to_node['id']].append({
@@ -114,11 +67,11 @@ class WorkflowParser:
                 'type': from_node['type']
             })
 
-    def __get_og_node_id(self, node_id) -> str:
-        return self.nodes[node_id]['properties']['og_node_id']
+    def __get_id(self, node_id) -> str:
+        return self.nodes[node_id]['properties']['id']
 
     def get_workflow_cells(self) -> dict:
-        return self.cells_in_use
+        return self.cells
 
     def get_dependencies_dag(self) -> dict:
         return self.dependencies

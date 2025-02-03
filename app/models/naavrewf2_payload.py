@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 class Naavrewf2Payload(BaseModel):
     virtual_lab: str
     params: Optional[dict] | None = None
-    secrets: Optional[dict] | None = None
+    secrets: Optional[dict] = None
     naavrewf2: Naavrewf2
     user_name: Optional[str] | None = None
 

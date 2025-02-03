@@ -2,12 +2,13 @@ from abc import ABC
 
 import yaml
 
+from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
 
 
 class ArgoEngine(WFEngine, ABC):
 
-    def __init__(self, naavrewf2_payload, vl_config: dict):
+    def __init__(self, naavrewf2_payload, vl_config: VLConfig):
         super().__init__(naavrewf2_payload, vl_config)
         self.workflow_template = self.template_env.get_template(
             'argo_workflow.jinja2')
@@ -17,16 +18,10 @@ class ArgoEngine(WFEngine, ABC):
         global_params = []
         for _nid, cell in cells.items():
             global_params.extend(cell['params'])
-
-        try:
-            secrets = self.naavrewf2_payload.secrets
-            if secrets:
-                k8s_secret_name = self.add_secrets_to_k8s(secrets)
-            else:
-                k8s_secret_name = None
-        except Exception as e:
-            print(f"Secret creation failed: {e}")
-            return
+        if self.secrets:
+            k8s_secret_name = self.add_secrets_to_k8s()
+        else:
+            k8s_secret_name = None
 
         workflow_name = 'n-a-a-vre-' + self.naavrewf2_payload.user_name
         vlab_slug = self.naavrewf2_payload.virtual_lab

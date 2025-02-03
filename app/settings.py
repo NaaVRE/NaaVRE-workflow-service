@@ -1,4 +1,3 @@
-import json
 from typing import List
 
 from pydantic_settings import BaseSettings
@@ -11,19 +10,11 @@ class ServiceSettings(BaseSettings):
 
 
 class Settings:
-    def __init__(self, config_file: str):
-        self.config_file = config_file
-        self.service_settings = self.load_config()
-
-    def load_config(self) -> ServiceSettings:
-        """
-        Load the configuration from the json file and parse it into VLConfig.
-        """
-        with open(self.config_file, 'r') as file:
-            config_data = json.load(file)
-        return ServiceSettings(**config_data)
+    def __init__(self, config: dict = None):
+        self.config = config
+        self.service_settings = ServiceSettings(**config)
 
     def get_vl_config(self, virtual_lab) -> VLConfig:
-        for setting in self.service_settings.vl_config:
+        for setting in self.service_settings.vl_configurations:
             if setting.name == virtual_lab:
                 return setting
