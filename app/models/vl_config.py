@@ -12,3 +12,4 @@ class VLConfig(BaseModel):
     name: str
     wf_engine: WorkflowEngineConfig
     other_config: str
+    image_registry: str

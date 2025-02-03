@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -10,3 +11,5 @@ class WorkflowEngineConfig(BaseModel):
     name: str
     api_endpoint: str
     access_token: str
+    service_account: Optional[str] | None = None
+    workdir_storage_size: str = '1Gi'

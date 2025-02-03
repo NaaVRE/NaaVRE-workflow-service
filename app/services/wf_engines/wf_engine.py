@@ -22,6 +22,8 @@ class WFEngine:
                                         lstrip_blocks=True)
         self.vl_config = vl_config
         self.secrets = naavrewf2_payload.secrets
+        self.user_name = naavrewf2_payload.user_name
+        self.virtual_lab_name = naavrewf2_payload.virtual_lab
 
     @abstractmethod
     def submit(self):

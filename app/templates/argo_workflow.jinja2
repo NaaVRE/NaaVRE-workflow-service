@@ -18,9 +18,9 @@ spec:
             storage: {{ workdir_storage_size }}Gi
     arguments:
       parameters:
-      {% for p, value in global_params.items() %}
-      - name: {{ p }}
-        value:  "{{ value | replace('"', "'") }}"
+      {% for param in global_params %}
+      - name: {{ param['name'] }}
+        value:  "{{ param['default_value'] | replace('"', "'") }}"
       {% endfor %}
     templates:
     - name: {{ workflow_name }}
@@ -146,7 +146,7 @@ spec:
           app: naavre-visualizer
       {% else %}
       container:
-        image: "{{ image_repo }}/{{ cells[nid]['title'] }}:{{ cells[nid]['image_version'] }}"
+        image: "{{ image_registry }}/{{ cells[nid]['title'] }}:{{ cells[nid]['image_version'] }}"
         imagePullPolicy: Always
         volumeMounts:
         - name: workdir

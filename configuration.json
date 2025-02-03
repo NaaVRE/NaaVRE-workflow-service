@@ -7,7 +7,10 @@
         "api_endpoint": "type_1",
         "access_token": "config_1"
       },
-      "other_config": "other_config_1"
+      "other_config": "other_config_1",
+      "image_registry": "ghcr.io/qcdis/naavre-cells-test-3",
+      "service_account": "executor",
+      "workdir_storage_size": "1Gi"
     }
   ]
 }

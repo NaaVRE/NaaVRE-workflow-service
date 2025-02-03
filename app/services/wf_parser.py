@@ -29,7 +29,7 @@ class WorkflowParser:
             self.dependencies[self.nodes[wf_node_id]['id']] = []
             if not is_special_node(self.nodes[wf_node_id]):
                 self.cells[self.nodes[wf_node_id]['id']] = \
-                            self.nodes[wf_node_id]['properties']['cell']
+                    self.nodes[wf_node_id]['properties']['cell']
 
         # self.__parse_links()
 
