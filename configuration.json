@@ -12,5 +12,6 @@
       "service_account": "executor",
       "workdir_storage_size": "1Gi"
     }
+    (
   ]
 }

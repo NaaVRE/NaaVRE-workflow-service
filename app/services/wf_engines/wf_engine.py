@@ -24,6 +24,7 @@ class WFEngine:
         self.secrets = naavrewf2_payload.secrets
         self.user_name = naavrewf2_payload.user_name
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
+        self.nodes = naavrewf2_payload.naavrewf2.nodes
 
     @abstractmethod
     def submit(self):

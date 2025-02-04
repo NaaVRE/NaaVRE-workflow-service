@@ -31,7 +31,7 @@ class WorkflowParser:
                 self.cells[self.nodes[wf_node_id]['id']] = \
                     self.nodes[wf_node_id]['properties']['cell']
 
-        # self.__parse_links()
+        self.__parse_links()
 
     def __parse_links(self):
         for k in self.links:
@@ -49,16 +49,11 @@ class WorkflowParser:
             if 'id' not in from_node:
                 raise Exception('Error while parsing link: ' + link[
                     'from'] + ' from node has no id')
-
-            from_special_node = (is_special_node(from_node))
-
-            if from_special_node:
+            if is_special_node(from_node):
                 task_name = f'{from_node["type"]}-{from_node["id"][:7]}'
             else:
-                id = self.__get_id(from_node['id'])
-                print(id)
-                # cell = Catalog.get_cell_from_id(id)
-                # task_name = f'{cell["task_name"]}-{from_node["id"][:7]}'
+                task_name = (f'{from_node['properties']['cell']['title']}-'
+                             f'{from_node["id"][:7]}')
 
             self.dependencies[to_node['id']].append({
                 'task_name': task_name,
@@ -66,9 +61,6 @@ class WorkflowParser:
                 'og_port_id': link['to']['portId'],
                 'type': from_node['type']
             })
-
-    def __get_id(self, node_id) -> str:
-        return self.nodes[node_id]['properties']['id']
 
     def get_workflow_cells(self) -> dict:
         return self.cells

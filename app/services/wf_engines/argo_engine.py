@@ -24,11 +24,11 @@ class ArgoEngine(WFEngine, ABC):
             k8s_secret_name = None
         workflow_name = 'n-a-a-vre-' + self.user_name
         vlab_slug = self.virtual_lab_name
-        self.workflow_template.render(
+
+        workflow_doc = self.workflow_template.render(
             vlab_slug=vlab_slug,
             deps_dag=self.parser.get_dependencies_dag(),
-            cells=cells,
-            nodes=self.parser.nodes,
+            nodes=self.nodes,
             global_params=parameters,
             k8s_secret_name=k8s_secret_name,
             image_registry=self.vl_config.image_registry,
@@ -36,7 +36,6 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=self.vl_config.wf_engine.service_account,
             workdir_storage_size=self.vl_config.wf_engine.workdir_storage_size
         )
-        workflow_doc = yaml.safe_load(self.workflow_template)
 
         req_body = {
             "vlab": vlab_slug,
@@ -44,6 +43,12 @@ class ArgoEngine(WFEngine, ABC):
                 "workflow": workflow_doc
             }
         }
+        # Writev the workflow to a file
+        with open('/tmp/workflow.yaml', 'w') as f:
+            f.write(yaml.dump(yaml.safe_load(workflow_doc),
+                              default_flow_style=False))
+        #
+
         print(req_body)
         self.run_url = "https://example.org/"
         return {"run_url": self.run_url, "naavrewf2": None}
