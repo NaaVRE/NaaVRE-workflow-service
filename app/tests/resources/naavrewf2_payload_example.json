@@ -1,5 +1,5 @@
 {
-  "virtual_lab": "vl-example",
+  "virtual_lab": "virtual_lab_1",
   "params": {
     "test_param_2": {
       "value": "test",

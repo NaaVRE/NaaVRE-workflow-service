@@ -1,3 +1,4 @@
+import os
 from abc import ABC
 
 import yaml
@@ -25,16 +26,19 @@ class ArgoEngine(WFEngine, ABC):
         workflow_name = 'n-a-a-vre-' + self.user_name
         vlab_slug = self.virtual_lab_name
 
+        service_account = self.vl_config.wf_engine_config.service_account
+        workdir_storage_size = (self.vl_config.
+                                wf_engine_config.workdir_storage_size)
         workflow_doc = self.workflow_template.render(
             vlab_slug=vlab_slug,
             deps_dag=self.parser.get_dependencies_dag(),
             nodes=self.nodes,
             global_params=parameters,
             k8s_secret_name=k8s_secret_name,
-            image_registry=self.vl_config.image_registry,
+            image_registry=self.vl_config.registry_url,
             workflow_name=workflow_name,
-            workflow_service_account=self.vl_config.wf_engine.service_account,
-            workdir_storage_size=self.vl_config.wf_engine.workdir_storage_size
+            workflow_service_account=service_account,
+            workdir_storage_size=workdir_storage_size
         )
 
         req_body = {
@@ -44,7 +48,11 @@ class ArgoEngine(WFEngine, ABC):
             }
         }
         # Writev the workflow to a file
-        with open('/tmp/workflow.yaml', 'w') as f:
+        # Home directory
+
+        with open(
+                os.path.expanduser("~") + '/Downloads/notbooks/workflow.yaml',
+                'w') as f:
             f.write(yaml.dump(yaml.safe_load(workflow_doc),
                               default_flow_style=False))
         #

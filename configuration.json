@@ -1,17 +1,32 @@
 {
   "vl_configurations": [
     {
-      "name": "vl-example",
-      "wf_engine": {
+      "name": "virtual_lab_1",
+      "wf_engine_config": {
         "name": "argo",
         "api_endpoint": "type_1",
-        "access_token": "config_1"
+        "access_token": "config_1",
+        "service_account": "executor",
+        "workdir_storage_size": "1Gi"
       },
-      "other_config": "other_config_1",
-      "image_registry": "ghcr.io/qcdis/naavre-cells-test-3",
-      "service_account": "executor",
-      "workdir_storage_size": "1Gi"
+      "base_image_tags_url": "https://github.com/QCDIS/NaaVRE-flavors/releases/latest/download/base_image_tags.json",
+      "module_mapping_url": "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json",
+      "registry_url": "ghcr.io/qcdis/naavre-cells-test-3"
+    },
+    {
+      "name": "virtual_lab_2",
+      "wf_engine_config": {
+        "name": "argo",
+        "api_endpoint": "type_1",
+        "access_token": "config_1",
+        "service_account": "executor",
+        "workdir_storage_size": "1Gi"
+      },
+      "base_image_tags_url": "https://github.com/QCDIS/NaaVRE-flavors/releases/latest/download/base_image_tags.json",
+      "module_mapping_url": "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json",
+      "cell_github_url": "",
+      "cell_github_token": "",
+      "registry_url": "https://registry.naavre.com"
     }
-    (
   ]
 }

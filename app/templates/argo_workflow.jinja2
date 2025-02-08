@@ -39,21 +39,27 @@ spec:
         {% endif %} #}
         - name: {{ title }}
           {% if deps_dag[nid]|length > 0 %}
-          dependencies: [{% for d in deps_dag[nid] %} {{ d['title'] }}{% if not loop.last %},{% endif %} {% endfor %}]
+          dependencies: [{% for d in deps_dag[nid] %} {{ d['task_name'] }}{% if not loop.last %},{% endif %} {% endfor %}]
           {% endif %}
           template: {{ title }}-tmp
           {% if deps_dag[nid]|length > 0 or params|length > 0 %}
           arguments:
             parameters:
             {% for d in deps_dag[nid] %}
-            - {name: {{ d['port_id'] }}, value: {% if d['type'] == "splitter" %}{{ '"{{item}}"' }}{% else %}{{ '"{{tasks.' }}{{ d['title'] }}{{ '.outputs.parameters.' }}{{ d['port_id'] }}{{'}}"'}}{% endif %}}
+            - name: {{ d['port_id'] }}
+            {% if d['type'] == "splitter" %}
+              value: {{ '"{{item}}"' }}
+            {% else %}
+              value: {{ '"{{tasks.' }}{{ d.task_name }}{{ '.outputs.parameters.' }}{{ d['port_id'] }}{{'}}"'}}
+            {% endif %}
             {% endfor %}
             {% for p in params %}
-            - {name: {{ p }}, value: {{ '"{{workflow.parameters.' }}{{ p }}{{ '}}"' }}}
+            - name : {{ p['name'] }}
+              value: {{ '"{{workflow.parameters.' }}{{ p['name'] }}{{'}}"' }}
             {% endfor %}
           {% for d in deps_dag[nid] %}
           {% if d['type'] == "splitter" %}
-          withParam: {{ '"{{tasks.' }}{{ d['title'] }}{{ '.outputs.parameters.' }}{{ d['port_id'] }}{{'}}"'}}
+          withParam: {{ '"{{tasks.' }}{{ d['task_name'] }}{{ '.outputs.parameters.' }}{{ d['port_id'] }}{{'}}"'}}
           {% endif %}
           {% endfor %}
           {% endif %}
@@ -83,7 +89,7 @@ spec:
         - name: {{ d['port_id'] }}
         {% endfor %}
         {% for p in params %}
-        - name: {{ p }}
+        - name: {{ p['name'] }}
         {% endfor %}
       {% endif %}
       outputs:
@@ -138,7 +144,7 @@ spec:
             --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d['port_id'] }}{{ '}}' }}'
             {% endfor %}
             {% for p in params %}
-            --{{ p }} '{{ '{{workflow.parameters.' }}{{ p }}{{ '}}' }}'
+            --{{ p['name'] }} '{{ '{{workflow.parameters.' }}{{ p['name'] }}{{ '}}' }}'
             {% endfor %}
             && npm start
       metadata:
@@ -153,11 +159,11 @@ spec:
           mountPath: /tmp/data
         env:
         {%  for s in secrets %}
-          - name: {{ s }}
+          - name: {{ s['name'] }}
             valueFrom:
               secretKeyRef:
                 name: {{ k8s_secret_name }}
-                key: {{ s }}
+                key: {{ s['name'] }}
         {%  endfor %}
         command: ["/bin/bash", "-c"]
         args:
@@ -170,7 +176,7 @@ spec:
             --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d['port_id'] }}{{ '}}' }}'
             {% endfor %}
             {% for p in params %}
-            --{{ p }} '{{ '{{workflow.parameters.' }}{{ p }}{{ '}}' }}'
+            --{{ p['name'] }} '{{ '{{workflow.parameters.' }}{{ p['name'] }}{{ '}}' }}'
             {% endfor %}
             --id {{' '}}{{nodes[nid]['properties']['cell']['id']}}{{''}}{{";"}}
             jupyter execute /app/task-output.ipynb --allow-errors;
@@ -189,7 +195,7 @@ spec:
             --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d['port_id'] }}{{ '}}' }}'
             {% endfor %}
             {% for p in params %}
-            --{{ p }} {{ '"{{workflow.parameters.' }}{{ p }}{{ '}}"' }}
+            --{{ p['name'] }} {{ '"{{workflow.parameters.' }}{{ p['name'] }}{{ '}}"' }}
             {% endfor %}
             --id {{' '}}{{nodes[nid]['properties']['cell']['id']}}{{''}}{{";"}}
         {% elif nodes[nid]['properties']['cell']['kernel'] == 'IRkernel' %}
@@ -201,7 +207,7 @@ spec:
             --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d['port_id'] }}{{ '}}' }}'
             {% endfor %}
             {% for p in params %}
-            --{{ p }} {{ '"{{workflow.parameters.' }}{{ p }}{{ '}}"' }}
+            --{{ p['name'] }} {{ '"{{workflow.parameters.' }}{{ p['name'] }}{{ '}}"' }}
             {% endfor %}
             --id {{' '}}{{nodes[nid]['properties']['cell']['id']}}{{''}}{{";"}}
         {% endif %}

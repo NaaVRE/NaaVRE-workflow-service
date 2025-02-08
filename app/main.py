@@ -4,6 +4,7 @@ import os
 from typing import Annotated
 from urllib.parse import urlparse
 
+import cachetools.func
 import jwt
 import requests
 import uvicorn
@@ -12,45 +13,53 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.services.wf_engines.argo_engine import ArgoEngine
-from app.settings import Settings
+from app.settings.service_settings import Settings
 from app.utils.openid import OpenIDValidator
 
 security = HTTPBearer()
 token_validator = OpenIDValidator()
 
 
+@cachetools.func.ttl_cache(ttl=6 * 3600)
 def load_configuration(source):
     # Check if source is a URL
     parsed_url = urlparse(source)
-
     if parsed_url.scheme in ("http", "https"):  # Remote URL
-        try:
-            response = requests.get(source)
-            return response.json()
-        except requests.RequestException as e:
-            print(f"Error opening remote file: {e}")
-
+        response = requests.get(source)
+        return response.json()
     elif os.path.exists(source):  # Local file (relative or absolute path)
-        try:
-            with open(source, "r", encoding="utf-8") as file:
-                data_dict = json.load(file)
-            file.close()
-            return data_dict
-        except Exception as e:
-            print(f"Error copying local file: {e}")
+        with open(source, "r", encoding="utf-8") as file:
+            data_dict = json.load(file)
+        file.close()
+        return data_dict
 
     else:
         raise Exception('Invalid configuration source')
 
 
-conf = load_configuration(
-    os.getenv('CONFIG_FILE_URL', 'https://raw.githubusercontent.com/'
-                                 'naavrehub/'
-                                 'naavre-workflow-service/'
-                                 'main/conf.json'))
+config_file = os.getenv('CONFIG_FILE_URL', 'https://raw.githubusercontent.com/'
+                                           'naavrehub/'
+                                           'naavre-workflow-service/'
+                                           'main/conf.json')
+
+conf = None
+if os.path.exists(config_file):
+    conf = load_configuration(config_file)
+else:
+    # Start going up the directory tree until we find the configuration file
+    current_dir = os.getcwd()
+    print(current_dir)
+    while current_dir != '/':
+        config_path = os.path.join(current_dir,
+                                   os.getenv('CONFIG_FILE_URL',
+                                             'configuration.json'))
+        if os.path.exists(config_path):
+            conf = load_configuration(config_path)
+            break
+        current_dir = os.path.dirname(current_dir)
 
 settings = Settings(config=conf)
-# Use the settings in your application
+
 app = FastAPI(root_path=os.getenv('ROOT_PATH',
                                   '/NaaVRE-workflow-service'))
 
@@ -72,8 +81,7 @@ def valid_access_token(credentials: Annotated[
 
 def _get_wf_engine(naavrewf2_payload):
     vl_conf = settings.get_vl_config(naavrewf2_payload.virtual_lab)
-
-    if vl_conf.wf_engine.name == "argo":
+    if vl_conf and vl_conf.wf_engine_config.name == "argo":
         return ArgoEngine(naavrewf2_payload, vl_conf)
     else:
         raise HTTPException(status_code=422, detail="Invalid configuration")
