@@ -12,4 +12,5 @@ class WfEngineConfig(BaseModel):
     api_endpoint: str
     access_token: str
     service_account: Optional[str] | None = None
+    namespace: Optional[str] | None = None
     workdir_storage_size: str = '1Gi'

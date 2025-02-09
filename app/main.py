@@ -93,8 +93,8 @@ def submit(access_token: Annotated[dict, Depends(valid_access_token)],
     naavrewf2_payload.set_user_name(access_token['preferred_username'])
 
     wf_engine = _get_wf_engine(naavrewf2_payload)
-    wf_engine.submit()
-    return {"run_url": "https://example.org/", "naavrewf2": None}
+    response = wf_engine.submit()
+    return response
 
 
 @app.post("/convert")
