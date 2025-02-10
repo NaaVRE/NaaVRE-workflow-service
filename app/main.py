@@ -8,7 +8,7 @@ import cachetools.func
 import jwt
 import requests
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
@@ -79,10 +79,10 @@ def valid_access_token(credentials: Annotated[
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-def _get_wf_engine(naavrewf2_payload):
-    vl_conf = settings.get_vl_config(naavrewf2_payload.virtual_lab)
+def _get_wf_engine(virtual_lab: str = None):
+    vl_conf = settings.get_vl_config(virtual_lab)
     if vl_conf and vl_conf.wf_engine_config.name == "argo":
-        return ArgoEngine(naavrewf2_payload, vl_conf)
+        return ArgoEngine(vl_conf)
     else:
         raise HTTPException(status_code=422, detail="Invalid configuration")
 
@@ -92,7 +92,8 @@ def submit(access_token: Annotated[dict, Depends(valid_access_token)],
            naavrewf2_payload: Naavrewf2Payload):
     naavrewf2_payload.set_user_name(access_token['preferred_username'])
 
-    wf_engine = _get_wf_engine(naavrewf2_payload)
+    wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
+    wf_engine.set_payload(naavrewf2_payload)
     response = wf_engine.submit()
     return response
 
@@ -100,7 +101,24 @@ def submit(access_token: Annotated[dict, Depends(valid_access_token)],
 @app.post("/convert")
 def convert(access_token: Annotated[dict, Depends(valid_access_token)],
             naavrewf2_payload: Naavrewf2Payload):
-    return {"workflow": "invalid"}
+    naavrewf2_payload.set_user_name(access_token['preferred_username'])
+    wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
+    wf_engine.set_payload(naavrewf2_payload)
+    return wf_engine.naavrewf2_2_argo_workflow()
+
+
+@app.get('/status/{virtual_lab}')
+def get_status(
+        access_token: Annotated[dict, Depends(valid_access_token)],
+        virtual_lab: str,
+        workflow_url: str = Query()):
+    print(f'access_token: {access_token}')
+    print(f'virtual_lab: {virtual_lab}')
+    print(f'workflow_url: {workflow_url}')
+
+    wf_engine = _get_wf_engine(virtual_lab=virtual_lab)
+    argo_wf = wf_engine.get_wf(workflow_url)
+    return {'status': argo_wf['status']}
 
 
 if __name__ == "__main__":

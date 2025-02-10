@@ -13,14 +13,21 @@ from app.services.wf_parser import WorkflowParser
 
 class WFEngine:
 
-    def __init__(self, naavrewf2_payload: Naavrewf2Payload,
-                 vl_config: VLConfig):
-        self.naavrewf2_payload = Naavrewf2Payload
-        self.parser = WorkflowParser(naavrewf2_payload.naavrewf2)
+    def __init__(self, vl_config: VLConfig):
         loader = PackageLoader('app', 'templates')
         self.template_env = Environment(loader=loader, trim_blocks=True,
                                         lstrip_blocks=True)
         self.vl_config = vl_config
+        self.naavrewf2_payload = None
+        self.parser = None
+        self.secrets = None
+        self.user_name = None
+        self.virtual_lab_name = None
+        self.nodes = None
+
+    def set_payload(self, naavrewf2_payload: Naavrewf2Payload):
+        self.naavrewf2_payload = naavrewf2_payload
+        self.parser = WorkflowParser(naavrewf2_payload.naavrewf2)
         self.secrets = naavrewf2_payload.secrets
         self.user_name = naavrewf2_payload.user_name
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
@@ -28,6 +35,10 @@ class WFEngine:
 
     @abstractmethod
     def submit(self):
+        pass
+
+    @abstractmethod
+    def get_wf(self, workflow_url: str):
         pass
 
     def add_secrets_to_k8s(self):

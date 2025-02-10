@@ -4,17 +4,14 @@ from abc import ABC
 import requests
 import yaml
 
-from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
 
 
 class ArgoEngine(WFEngine, ABC):
 
-    def __init__(self, naavrewf2_payload: Naavrewf2Payload,
-                 vl_config: VLConfig):
-        super().__init__(naavrewf2_payload, vl_config)
-        self.naavrewf2 = naavrewf2_payload.naavrewf2
+    def __init__(self, vl_config: VLConfig):
+        super().__init__(vl_config)
         self.workflow_template = self.template_env.get_template(
             'argo_workflow.jinja2')
         # Add '/' at the end of the endpoint if not present
@@ -27,37 +24,11 @@ class ArgoEngine(WFEngine, ABC):
                       ('"', '')).replace('Bearer ', '')
 
     def submit(self):
-        cells = self.parser.get_workflow_cells()
-        parameters = []
-        for _nid, cell in cells.items():
-            parameters.extend(cell['params'])
-        if self.secrets:
-            k8s_secret_name = self.add_secrets_to_k8s()
-        else:
-            k8s_secret_name = None
-        workflow_name = 'n-a-a-vre-' + self.user_name
-        vlab_slug = self.virtual_lab_name
-
-        service_account = self.vl_config.wf_engine_config.service_account
-        workdir_storage_size = (self.vl_config.
-                                wf_engine_config.workdir_storage_size)
-        workflow_yaml = self.workflow_template.render(
-            vlab_slug=vlab_slug,
-            deps_dag=self.parser.get_dependencies_dag(),
-            nodes=self.nodes,
-            global_params=parameters,
-            k8s_secret_name=k8s_secret_name,
-            image_registry=self.vl_config.registry_url,
-            workflow_name=workflow_name,
-            workflow_service_account=service_account,
-            workdir_storage_size=workdir_storage_size
-        )
+        workflow_dict = self.naavrewf2_2_argo_workflow()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}"
         }
-        # Convert YAML to JSON
-        workflow_dict = yaml.safe_load(workflow_yaml)
         response = requests.post(self.api_endpoint,
                                  json={"workflow": workflow_dict},
                                  headers=headers,
@@ -68,12 +39,54 @@ class ArgoEngine(WFEngine, ABC):
             raise Exception('Error submitting workflow: ' + response.text)
         workflow_name = response.json()["metadata"]["name"]
 
-        print(response.text)
-        print(response.json())
-        # Get the
-
         run_url = (self.vl_config.wf_engine_config.api_endpoint +
                    f"workflows/"
                    f"{self.vl_config.wf_engine_config.namespace}/"
                    f"{workflow_name}")
-        return {'run_url': run_url, 'naavrewf2': self.naavrewf2}
+        return {'run_url': run_url, 'naavrewf2':
+                self.naavrewf2_payload.naavrewf2}
+
+    def naavrewf2_2_argo_workflow(self):
+        cells = self.parser.get_workflow_cells()
+        parameters = []
+        for _nid, cell in cells.items():
+            parameters.extend(cell['params'])
+        if self.secrets:
+            k8s_secret_name = self.add_secrets_to_k8s()
+        else:
+            k8s_secret_name = None
+        workflow_name = 'n-a-a-vre-' + self.user_name
+        service_account = self.vl_config.wf_engine_config.service_account
+        workdir_storage_size = (self.vl_config.
+                                wf_engine_config.workdir_storage_size)
+        workflow_yaml = self.workflow_template.render(
+            vlab_slug=self.virtual_lab_name,
+            deps_dag=self.parser.get_dependencies_dag(),
+            nodes=self.nodes,
+            global_params=parameters,
+            k8s_secret_name=k8s_secret_name,
+            image_registry=self.vl_config.registry_url,
+            workflow_name=workflow_name,
+            workflow_service_account=service_account,
+            workdir_storage_size=workdir_storage_size
+        )
+        workflow_dict = yaml.safe_load(workflow_yaml)
+        return workflow_dict
+
+    def get_wf(self, workflow_url: str):
+        # Get the workflow status from the Argo API
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}"
+        }
+        workflow_name = workflow_url.split('/')[-1]
+        # If the endpoint does not have a '/' at the end, add it
+        if not self.api_endpoint.endswith('/'):
+            self.api_endpoint += '/'
+        workflow_status_url = self.api_endpoint + workflow_name
+        response = requests.get(workflow_status_url, headers=headers,
+                                verify=os.getenv('VERIFY_SSL', 'true').
+                                lower() == 'true')
+        if response.status_code != 200:
+            raise Exception('Error getting workflow status: ' + response.text)
+        return response.json()
