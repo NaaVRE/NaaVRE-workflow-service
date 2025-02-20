@@ -108,8 +108,12 @@ affinity: {}
 
 conf:
   rootPath: /
+  virtual_labs_configuration:
+    rawJson: |
+      {}
 
 env:
   DEBUG: "false"
   OIDC_CONFIGURATION_URL: ""
   VERIFY_SSL: "true"
+  CONFIG_FILE_URL: "/configuration.json"

@@ -12,6 +12,33 @@ ingress:
 
 conf:
   rootPath: /my-root-path
+  virtual_labs_configuration:
+    rawJson: |
+      {
+        "vl_configurations": [
+          {
+            "name": "virtual_lab_1",
+            "wf_engine_config": {
+              "name": "argo",
+              "api_endpoint": "type_1",
+              "access_token": "config_1",
+              "service_account": "executor",
+              "workdir_storage_size": "1Gi"
+            }
+          },
+          {
+            "name": "virtual_lab_2",
+            "wf_engine_config": {
+              "name": "argo",
+              "api_endpoint": "type_1",
+              "access_token": "config_1",
+              "service_account": "executor",
+              "workdir_storage_size": "1Gi"
+            }
+          }
+        ]
+      }
 
 env:
   OIDC_CONFIGURATION_URL: "https://<keycloak-host>/<keycloak-base-path>/realms/<realm>/.well-known/openid-configuration"
+  CONFIG_FILE_URL: "/configuration.json"
