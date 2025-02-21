@@ -23,6 +23,7 @@ conf:
               "api_endpoint": "type_1",
               "access_token": "config_1",
               "service_account": "executor",
+              "namespace": "argo",
               "workdir_storage_size": "1Gi"
             }
           },
@@ -33,6 +34,7 @@ conf:
               "api_endpoint": "type_1",
               "access_token": "config_1",
               "service_account": "executor",
+              "namespace": "argo",
               "workdir_storage_size": "1Gi"
             }
           }
