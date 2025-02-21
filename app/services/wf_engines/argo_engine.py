@@ -65,7 +65,6 @@ class ArgoEngine(WFEngine, ABC):
             nodes=self.nodes,
             global_params=parameters,
             k8s_secret_name=k8s_secret_name,
-            image_registry=self.vl_config.registry_url,
             workflow_name=workflow_name,
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size

@@ -152,7 +152,7 @@ spec:
           app: naavre-visualizer
       {% else %}
       container:
-        image: "{{ image_registry }}/{{ nodes[nid]['properties']['cell']['title'] }}:{{ nodes[nid]['properties']['cell']['container_image'] }}"
+        image: "{{ nodes[nid]['properties']['cell']['container_image'] }}"
         imagePullPolicy: Always
         volumeMounts:
         - name: workdir

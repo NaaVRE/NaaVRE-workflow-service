@@ -16,4 +16,4 @@ class VLConfig(BaseModel):
     module_mapping_url: Optional[str] = None
     cell_github_url: Optional[str] = None
     cell_github_token: Optional[str] = None
-    registry_url: str
+    registry_url: Optional[str] = None
