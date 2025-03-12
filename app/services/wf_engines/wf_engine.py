@@ -26,8 +26,12 @@ class WFEngine:
 
     def __init__(self, vl_config: VLConfig):
         loader = PackageLoader('app', 'templates')
-        self.template_env = Environment(loader=loader, trim_blocks=True,
-                                        lstrip_blocks=True)
+        self.template_env = Environment(
+            loader=loader,
+            trim_blocks=True,
+            lstrip_blocks=True,
+            undefined=StrictUndefined,
+            )
         self.vl_config = vl_config
         self.naavrewf2_payload = None
         self.parser = None
