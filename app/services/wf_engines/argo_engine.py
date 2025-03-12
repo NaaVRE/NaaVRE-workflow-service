@@ -52,9 +52,10 @@ class ArgoEngine(WFEngine, ABC):
 
     def naavrewf2_2_argo_workflow(self):
         cells = self.parser.get_workflow_cells()
-        parameters = []
+        parameters = {}
         for _nid, cell in cells.items():
-            parameters.extend(cell.params)
+            parameters.update({p.name: p for p in cell.params})
+        global_params = list(parameters.values())
         if self.secrets:
             k8s_secret_name = self.add_secrets_to_k8s()
         else:
@@ -67,7 +68,7 @@ class ArgoEngine(WFEngine, ABC):
             vlab_slug=self.virtual_lab_name,
             deps_dag=self.parser.get_dependencies_dag(),
             nodes=self.nodes,
-            global_params=parameters,
+            global_params=global_params,
             k8s_secret_name=k8s_secret_name,
             workflow_name=workflow_name,
             workflow_service_account=service_account,
