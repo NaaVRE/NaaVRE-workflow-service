@@ -1,23 +1,23 @@
+from collections.abc import Mapping
 import logging
 
-from app.models.naavre_wf2 import Naavrewf2
+from app.models.naavre_wf2 import Naavrewf2, Node, Link, Cell
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-def is_special_node(node=None) -> bool:
-    return node['type'] == 'splitter' or node['type'] == 'merger' or node[
-        'type'] == 'visualizer'
+def is_special_node(node: Node) -> bool:
+    return node.type in ['splitter', 'merger', 'visualizer']
 
 
 class WorkflowParser:
     logger = logging.getLogger(__name__)
-    nodes: dict
-    links: dict
+    nodes: Mapping[str, Node]
+    links: Mapping[str, Link]
     splitters: dict
     dependencies: dict
-    cells: dict
+    cells: dict[str, Cell]
 
     def __init__(self, naavrewf2: Naavrewf2):
 
@@ -25,11 +25,10 @@ class WorkflowParser:
         self.links = naavrewf2.links
         self.dependencies = {}
         self.cells = {}
-        for wf_node_id in self.nodes:
-            self.dependencies[self.nodes[wf_node_id]['id']] = []
-            if not is_special_node(self.nodes[wf_node_id]):
-                self.cells[self.nodes[wf_node_id]['id']] = \
-                    self.nodes[wf_node_id]['properties']['cell']
+        for node_id, node in self.nodes.items():
+            self.dependencies[node.id] = []
+            if not is_special_node(node):
+                self.cells[node.id] = node.properties.cell
 
         self.__parse_links()
 
@@ -37,32 +36,23 @@ class WorkflowParser:
         for k in self.links:
             link = self.links[k]
 
-            to_node = self.nodes[link['to']['nodeId']]
-            from_node = self.nodes[link['from']['nodeId']]
+            to_node = self.nodes[link.to.nodeId]
+            from_node = self.nodes[link.from_.nodeId]
 
-            if not from_node:
-                raise Exception('Error while parsing link: ' + link[
-                    'from'] + ' from node not found')
-            if 'type' not in from_node:
-                raise Exception('Error while parsing link: ' + link[
-                    'from'] + ' from node has no type')
-            if 'id' not in from_node:
-                raise Exception('Error while parsing link: ' + link[
-                    'from'] + ' from node has no id')
             if is_special_node(from_node):
-                task_name = f'{from_node["type"]}-{from_node["id"][:7]}'
+                task_name = f'{from_node.type}-{from_node.id[:7]}'
             else:
-                task_name = (f'{from_node['properties']['cell']['title']}-'
-                             f'{from_node["id"][:7]}')
+                task_name = (f'{from_node.properties.cell.title}-'
+                             f'{from_node.id[:7]}')
 
-            self.dependencies[to_node['id']].append({
+            self.dependencies[to_node.id].append({
                 'task_name': task_name,
-                'port_id': link['from']['portId'],
-                'og_port_id': link['to']['portId'],
-                'type': from_node['type']
+                'port_id': link.from_.portId,
+                'og_port_id': link.to.portId,
+                'type': from_node.type
             })
 
-    def get_workflow_cells(self) -> dict:
+    def get_workflow_cells(self) -> Mapping[str, Cell]:
         return self.cells
 
     def get_dependencies_dag(self) -> dict:

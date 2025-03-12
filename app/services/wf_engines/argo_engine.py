@@ -1,6 +1,7 @@
 import os
 from abc import ABC
 
+import jinja2
 import requests
 import yaml
 
@@ -9,6 +10,9 @@ from app.services.wf_engines.wf_engine import WFEngine
 
 
 class ArgoEngine(WFEngine, ABC):
+    workflow_template: jinja2.Template
+    api_endpoint: str
+    token: str
 
     def __init__(self, vl_config: VLConfig):
         super().__init__(vl_config)
@@ -50,7 +54,7 @@ class ArgoEngine(WFEngine, ABC):
         cells = self.parser.get_workflow_cells()
         parameters = []
         for _nid, cell in cells.items():
-            parameters.extend(cell['params'])
+            parameters.extend(cell.params)
         if self.secrets:
             k8s_secret_name = self.add_secrets_to_k8s()
         else:
