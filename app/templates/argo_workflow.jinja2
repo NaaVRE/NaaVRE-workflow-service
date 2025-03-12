@@ -96,9 +96,9 @@ spec:
         parameters:
         {% for port in ports.values() %}
         {% if port.type == 'right' %}
-          - name: {{ port.id }}
+          - name: {{ port.id }}_{{ node.id[:7] }}
             valueFrom:
-              path: /tmp/{{ port.id }}.json
+              path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
         {% endif %}
         {% endfor %}
       {% if is_special_node and not is_visualizer %}
@@ -118,13 +118,13 @@ spec:
           for elem in {{special_dep.port_id}}:
             list = [elem]
             list_of_lists.append(list)
-          f_out = open("/tmp/{{port.id}}.json", "w")
+          f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
           f_out.write(json.dumps(list_of_lists))
           f_out.close()
           {% else %}
           {# Merger logic #}
           {{special_dep.port_id}} = [item for items in {{special_dep.port_id}} for item in json.loads(items)]
-          f_out = open("/tmp/{{port.id}}.json", "w")
+          f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
           f_out.write(json.dumps({{special_dep.port_id}}))
           f_out.close()
           {% endif %}
@@ -178,7 +178,7 @@ spec:
             {% for p in params %}
             --{{ p.name }} '{{ '{{workflow.parameters.' }}{{ p.name }}{{ '}}' }}'
             {% endfor %}
-            --id {{' '}}{{node.id}}{{''}}{{";"}}
+            --id {{ node.id[:7] }};
             jupyter execute /app/task-output.ipynb --allow-errors;
             jupyter nbconvert --no-input --execute /app/task-output.ipynb --to html;
             cp /app/task-output.html /tmp/data/{{ title }}-output.html;
@@ -197,7 +197,7 @@ spec:
             {% for p in params %}
             --{{ p.name }} {{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
             {% endfor %}
-            --id {{' '}}{{node.id}}{{''}}{{";"}}
+            --id {{ node.id[:7] }};
         {% elif node.properties.cell.kernel == 'IRkernel' %}
           - source /venv/bin/activate; Rscript /app/task.R
             {% for d in deps_dag[node.id] %}
@@ -209,7 +209,7 @@ spec:
             {% for p in params %}
             --{{ p.name }} {{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
             {% endfor %}
-            --id {{' '}}{{node.id}}{{''}}{{";"}}
+            --id {{ node.id[:7] }};
         {% endif %}
       {% endif %}
     {% endfor %}

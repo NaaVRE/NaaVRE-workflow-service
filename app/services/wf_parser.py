@@ -39,16 +39,19 @@ class WorkflowParser:
             to_node = self.nodes[link.to.nodeId]
             from_node = self.nodes[link.from_.nodeId]
 
+            to_node_id= to_node.id[:7]
+            from_node_id = from_node.id[:7]
+
             if is_special_node(from_node):
-                task_name = f'{from_node.type}-{from_node.id[:7]}'
+                task_name = f'{from_node.type}-{from_node_id}'
             else:
                 task_name = (f'{from_node.properties.cell.title}-'
-                             f'{from_node.id[:7]}')
+                             f'{from_node_id}')
 
             self.dependencies[to_node.id].append({
                 'task_name': task_name,
-                'port_id': link.from_.portId,
-                'og_port_id': link.to.portId,
+                'port_id': f'{link.from_.portId}_{from_node_id}',
+                'og_port_id': f'{link.to.portId}_{to_node_id}',
                 'type': from_node.type
             })
 
