@@ -55,8 +55,15 @@ class Cell(BaseModel):
     kernel: Optional[str]
     source_url: Optional[str]
 
-class SpecialCell(Cell):
-    type: str
+class SpecialCell(BaseModel):
+    title: str
+    container_image: str
+    dependencies: Sequence[Dependency]
+    inputs: Sequence[Input]
+    outputs: Sequence[Output]
+    confs: Sequence[Conf]
+    params: Sequence[Param]
+    secrets: Sequence[Secret]
 
 class PortProperties(BaseModel):
     color: str
@@ -68,7 +75,7 @@ class Port(BaseModel):
     properties: PortProperties
 
 class NodeProperties(BaseModel):
-    cell: Cell
+    cell: Cell | SpecialCell = Field(union_mode='left_to_right')
 
 class Node(BaseModel):
     id: str

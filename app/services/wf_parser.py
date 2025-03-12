@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 import logging
 
-from app.models.naavre_wf2 import Naavrewf2, Node, Link, Cell
+from app.models.naavre_wf2 import Naavrewf2, Node, Link, Cell, SpecialCell
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -17,7 +17,7 @@ class WorkflowParser:
     links: Mapping[str, Link]
     splitters: dict
     dependencies: dict
-    cells: dict[str, Cell]
+    cells: dict[str, Cell | SpecialCell]
 
     def __init__(self, naavrewf2: Naavrewf2):
 
@@ -55,7 +55,7 @@ class WorkflowParser:
                 'type': from_node.type
             })
 
-    def get_workflow_cells(self) -> Mapping[str, Cell]:
+    def get_workflow_cells(self) -> Mapping[str, Cell | SpecialCell]:
         return self.cells
 
     def get_dependencies_dag(self) -> dict:
