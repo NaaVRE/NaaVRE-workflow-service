@@ -20,29 +20,14 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: actions/setup-python@v5
         with:
-          auto-update-conda: true
-          miniforge-version: latest
-          python-version: 3.11
-          path: ${{ env.CONDA }}/envs
-          environment-file: environment.yaml
-          activate-environment: naavre-workflow-service
-          use-mamba: true
-
-      - name: Cache Conda environment
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.CONDA }}/envs
-          key: conda-environment-${{ runner.os }}-${{ hashFiles('environment.yaml') }}
-          restore-keys: |
-            conda-environment-${{ runner.os }}-
-        id: cache-conda
-
+          python-version: '3.13'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
       - name: pytest
         shell: bash -l {0}
         run: |
-          conda activate naavre-workflow-service
           pip install pytest
           pytest --collect-only -q | grep 'tests/' | jq -R . | jq -s . > test_list.json
           cat test_list.json
