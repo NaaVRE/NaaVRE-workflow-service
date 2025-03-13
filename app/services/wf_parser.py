@@ -39,7 +39,7 @@ class WorkflowParser:
             to_node = self.nodes[link.to.nodeId]
             from_node = self.nodes[link.from_.nodeId]
 
-            to_node_id= to_node.id[:7]
+            to_node_id = to_node.id[:7]
             from_node_id = from_node.id[:7]
 
             if is_special_node(from_node):
