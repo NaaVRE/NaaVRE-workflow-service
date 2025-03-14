@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{include "naavre-workflow-service.fullname" .}}
+  labels:
+    {{- include "naavre-workflow-service.labels" . | nindent 4}}
+
+data:
+  configuration.json: |
+    {{- .Values.conf.virtual_labs_configuration.rawJson | nindent 4 }}

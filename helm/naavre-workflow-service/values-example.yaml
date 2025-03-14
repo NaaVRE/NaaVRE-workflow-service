@@ -1,0 +1,46 @@
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: naavre-dev.minikube.test
+      paths:
+        - path: /my-root-path(/|$)(.*)
+          pathType: ImplementationSpecific
+
+conf:
+  rootPath: /my-root-path
+  virtual_labs_configuration:
+    rawJson: |
+      {
+        "vl_configurations": [
+          {
+            "name": "virtual_lab_1",
+            "wf_engine_config": {
+              "name": "argo",
+              "api_endpoint": "type_1",
+              "access_token": "config_1",
+              "service_account": "executor",
+              "namespace": "argo",
+              "workdir_storage_size": "1Gi"
+            }
+          },
+          {
+            "name": "virtual_lab_2",
+            "wf_engine_config": {
+              "name": "argo",
+              "api_endpoint": "type_1",
+              "access_token": "config_1",
+              "service_account": "executor",
+              "namespace": "argo",
+              "workdir_storage_size": "1Gi"
+            }
+          }
+        ]
+      }
+
+env:
+  OIDC_CONFIGURATION_URL: "https://<keycloak-host>/<keycloak-base-path>/realms/<realm>/.well-known/openid-configuration"
+  CONFIG_FILE_URL: "/configuration.json"
