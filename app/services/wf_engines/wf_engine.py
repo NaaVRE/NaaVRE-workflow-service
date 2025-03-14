@@ -2,21 +2,36 @@ import base64
 import json
 import os
 from abc import abstractmethod
+from typing import Optional
+from collections.abc import Mapping
 
 import requests
-from jinja2 import PackageLoader, Environment
+from jinja2 import PackageLoader, Environment, StrictUndefined
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
+from app.models.naavre_wf2 import Node
 from app.models.vl_config import VLConfig
 from app.services.wf_parser import WorkflowParser
 
 
 class WFEngine:
+    template_env: Environment
+    vl_config: VLConfig
+    naavrewf2_payload: Optional[Naavrewf2Payload]
+    parser: Optional[WorkflowParser]
+    secrets: Optional[dict]
+    user_name: Optional[str]
+    virtual_lab_name: Optional[str]
+    nodes: Optional[Mapping[str, Node]]
 
     def __init__(self, vl_config: VLConfig):
         loader = PackageLoader('app', 'templates')
-        self.template_env = Environment(loader=loader, trim_blocks=True,
-                                        lstrip_blocks=True)
+        self.template_env = Environment(
+            loader=loader,
+            trim_blocks=True,
+            lstrip_blocks=True,
+            undefined=StrictUndefined,
+            )
         self.vl_config = vl_config
         self.naavrewf2_payload = None
         self.parser = None

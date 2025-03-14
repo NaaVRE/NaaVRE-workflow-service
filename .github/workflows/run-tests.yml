@@ -46,28 +46,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: conda-incubator/setup-miniconda@v3
+      - uses: actions/setup-python@v5
         with:
-          auto-update-conda: true
-          miniforge-version: latest
+          python-version: '3.13'
+          cache: 'pip'
 
-          python-version: 3.11
-          path: ${{ env.CONDA }}/envs
-          environment-file: environment.yaml
-          activate-environment: jupyterlab
-          use-mamba: true
-
-      - name: Cache Conda environment
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.CONDA }}/envs
-          key: conda-environment-${{ runner.os }}-${{ hashFiles('environment.yaml') }}
-          restore-keys: |
-            conda-environment-${{ runner.os }}-
-        id: cache-conda
+      - run: pip install -r requirements.txt
 
       - name: pytest
         shell: bash -l {0}
         run: |
-           conda activate naavre-workflow-service
            pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header

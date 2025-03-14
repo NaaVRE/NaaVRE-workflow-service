@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
-      runner: ${{ steps.choose-runner.outputs.runner }}
+      runner: "ubuntu-latest"
     steps:
       - id: skip_check
         name: Configure skip-duplicate-actions
@@ -24,12 +24,6 @@ jobs:
         with:
           paths_ignore: '["**/README.md"]'  # FIXME
           do_not_skip: '["workflow_dispatch", "schedule", "release"]'
-      - id: choose-runner
-        uses: QCDIS/choose-action-runner@v2
-        with:
-          preferred-runner: ${{ vars.PREFERRED_ACTIONS_RUNNER }}
-          fallback-runner: ubuntu-latest
-          github-token: ${{ secrets.RUNNER_ACCESS_TOKEN }}
 
   lint:
     uses: ./.github/workflows/lint.yml
@@ -53,7 +47,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download pytest output artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: test_list
           path: ./
