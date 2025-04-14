@@ -1,6 +1,7 @@
 import os
 from abc import ABC
 
+from slugify import slugify
 import jinja2
 import requests
 import yaml
@@ -60,7 +61,7 @@ class ArgoEngine(WFEngine, ABC):
             k8s_secret_name = self.add_secrets_to_k8s()
         else:
             k8s_secret_name = None
-        workflow_name = 'n-a-a-vre-' + self.user_name
+        workflow_name = 'n-a-a-vre-' + slugify(self.user_name)
         service_account = self.vl_config.wf_engine_config.service_account
         workdir_storage_size = (self.vl_config.
                                 wf_engine_config.workdir_storage_size)
