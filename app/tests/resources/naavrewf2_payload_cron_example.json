@@ -1,0 +1,194 @@
+{
+  "virtual_lab": "virtual_lab_1",
+  "params": {
+    "test_param_2": {
+      "value": "test",
+      "default_value": "test"
+    }
+  },
+  "secrets": {
+    "test-secret-2": {
+      "value": "test"
+    }
+  },
+  "cron": "5 8 * * 0",
+  "naavrewf2": {
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": {
+      "7c1d9113-594a-4e73-82db-e4d758f2db6b": {
+        "id": "7c1d9113-594a-4e73-82db-e4d758f2db6b",
+        "position": {
+          "x": 790,
+          "y": 268
+        },
+        "orientation": 0,
+        "type": "splitter",
+        "ports": {
+          "splitter_source": {
+            "id": "splitter_source",
+            "type": "left",
+            "properties": {
+              "color": "#86642d",
+              "parentNodeType": "splitter"
+            },
+            "position": {
+              "x": -2,
+              "y": 50
+            }
+          },
+          "splitter_target": {
+            "id": "splitter_target",
+            "type": "right",
+            "properties": {
+              "color": "#5940bf",
+              "parentNodeType": "splitter"
+            },
+            "position": {
+              "x": 202,
+              "y": 50
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "id": "splitter",
+            "title": "Splitter",
+            "type": "splitter",
+            "container_image": "",
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "splitter_source",
+                "type": "list"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "splitter_target",
+                "type": "list"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": []
+          }
+        },
+        "size": {
+          "width": 202,
+          "height": 102
+        }
+      },
+      "389e7ca3-530d-42e3-8f32-40d7c956a8ae": {
+        "id": "389e7ca3-530d-42e3-8f32-40d7c956a8ae",
+        "position": {
+          "x": 398,
+          "y": 246
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "test-input-2": {
+            "id": "test-input-2",
+            "type": "left",
+            "properties": {
+              "color": "#aa87c5",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 38,
+              "y": 75
+            }
+          },
+          "test-output-2": {
+            "id": "test-output-2",
+            "type": "right",
+            "properties": {
+              "color": "#2d2fd2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 207.5,
+              "y": 75
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "owner": "test-user-2",
+            "virtual_lab": "test-virtual-lab-1",
+            "base_container_image": {
+              "build": "test-build-2",
+              "runtime": "test-runtime-2"
+            },
+            "dependencies": [
+              {
+                "name": "test-dependency-2",
+                "module": "",
+                "asname": ""
+              }
+            ],
+            "inputs": [
+              {
+                "name": "test-input-2",
+                "type": "float"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "test-output-2",
+                "type": "int"
+              }
+            ],
+            "confs": [
+              {
+                "name": "test_conf_2",
+                "assignation": "test_conf_2 = 'abc'"
+              }
+            ],
+            "params": [
+              {
+                "name": "test_param_2",
+                "type": "str",
+                "default_value": "test"
+              }
+            ],
+            "secrets": [
+              {
+                "name": "test-secret-2",
+                "type": "str"
+              }
+            ],
+            "title": "test-cell-2",
+            "description": "",
+            "container_image": "test-image-2",
+            "kernel": "",
+            "source_url": ""
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 152
+        }
+      }
+    },
+    "links": {
+      "e8bf4f68-d05b-445e-9c24-8844b0c9184d": {
+        "id": "e8bf4f68-d05b-445e-9c24-8844b0c9184d",
+        "from": {
+          "nodeId": "389e7ca3-530d-42e3-8f32-40d7c956a8ae",
+          "portId": "test-output-2"
+        },
+        "to": {
+          "nodeId": "7c1d9113-594a-4e73-82db-e4d758f2db6b",
+          "portId": "splitter_source"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {}
+  }
+}

@@ -73,7 +73,8 @@ class ArgoEngine(WFEngine, ABC):
             k8s_secret_name=k8s_secret_name,
             workflow_name=workflow_name,
             workflow_service_account=service_account,
-            workdir_storage_size=workdir_storage_size
+            workdir_storage_size=workdir_storage_size,
+            cron_schedule=self.cron_schedule
         )
         workflow_dict = yaml.safe_load(workflow_yaml)
         return workflow_dict

@@ -5,6 +5,10 @@ metadata:
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
+    {% if cron_schedule %}
+      schedules:
+        - {{ cron_schedule }}
+    {% endif %}
     entrypoint: {{ workflow_name }}
     serviceAccountName: {{ workflow_service_account }}
     volumeClaimTemplates:
