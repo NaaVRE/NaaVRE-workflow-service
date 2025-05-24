@@ -10,6 +10,12 @@ from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
 
 
+def is_cron(workflow_dict):
+    if workflow_dict['kind'] == 'CronWorkflow':
+        return True
+    return False
+
+
 class ArgoEngine(WFEngine, ABC):
     workflow_template: jinja2.Template
     api_endpoint: str
@@ -18,7 +24,7 @@ class ArgoEngine(WFEngine, ABC):
     def __init__(self, vl_config: VLConfig):
         super().__init__(vl_config)
         self.workflow_template = self.template_env.get_template(
-            'argo_workflow.jinja2')
+            'argo_workflow_top.jinja2')
         # Add '/' at the end of the endpoint if not present
         if vl_config.wf_engine_config.api_endpoint[-1] != '/':
             vl_config.wf_engine_config.api_endpoint += '/'
@@ -34,6 +40,9 @@ class ArgoEngine(WFEngine, ABC):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}"
         }
+        # Convert to yaml string
+        workflow_yaml = yaml.safe_dump(workflow_dict, default_flow_style=False)
+        print(workflow_yaml)
         response = requests.post(self.api_endpoint,
                                  json={"workflow": workflow_dict},
                                  headers=headers,
@@ -65,6 +74,7 @@ class ArgoEngine(WFEngine, ABC):
         service_account = self.vl_config.wf_engine_config.service_account
         workdir_storage_size = (self.vl_config.
                                 wf_engine_config.workdir_storage_size)
+
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
             deps_dag=self.parser.get_dependencies_dag(),
