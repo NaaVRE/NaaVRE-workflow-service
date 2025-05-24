@@ -21,10 +21,13 @@ def test_submit():
             workflow_dict = json.load(f)
         f.close()
 
-        naavrewf2Payload_json_payload = workflow_dict.copy()
         submit_response = client.post(
             '/submit/',
             headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')},
-            json=naavrewf2Payload_json_payload,
+            json=workflow_dict,
         )
+        # Print the response for debugging
+        print(submit_response.status_code)
+        print(submit_response.text)
+        print(submit_response.json())
         assert submit_response.status_code == 200

@@ -1,13 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
+{% if cron_schedule %}
+kind: CronWorkflow
+{% else %}
 kind: Workflow
+{% endif %}
 metadata:
   generateName: {{ workflow_name }}-
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
     {% if cron_schedule %}
-      schedules:
-        - {{ cron_schedule }}
+    schedules:
+        - "{{ cron_schedule }}"
     {% endif %}
     entrypoint: {{ workflow_name }}
     serviceAccountName: {{ workflow_service_account }}
