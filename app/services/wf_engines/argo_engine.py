@@ -54,9 +54,11 @@ class ArgoEngine(WFEngine, ABC):
         if is_cron(workflow_dict):
             api_endpoint = self.api_cron_endpoint
             workflow_type = 'cronWorkflow'
+            run_url_resource = 'cron-workflows'
         else:
             api_endpoint = self.api_endpoint
             workflow_type = 'workflow'
+            run_url_resource = 'workflows'
         response = requests.post(api_endpoint,
                                  json={workflow_type: workflow_dict},
                                  headers=headers,
@@ -68,7 +70,7 @@ class ArgoEngine(WFEngine, ABC):
         workflow_name = response.json()["metadata"]["name"]
 
         run_url = (self.vl_config.wf_engine_config.api_endpoint +
-                   f"workflows/"
+                   run_url_resource + "/" +
                    f"{self.vl_config.wf_engine_config.namespace}/"
                    f"{workflow_name}")
         return {'run_url': run_url, 'naavrewf2':
@@ -109,14 +111,39 @@ class ArgoEngine(WFEngine, ABC):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}"
         }
-        workflow_name = workflow_url.split('/')[-1]
-        # If the endpoint does not have a '/' at the end, add it
-        if not self.api_endpoint.endswith('/'):
-            self.api_endpoint += '/'
-        workflow_status_url = self.api_endpoint + workflow_name
+        workflow_status_url = self.get_workflow_status_url(
+                                                    workflow_url=workflow_url)
         response = requests.get(workflow_status_url, headers=headers,
                                 verify=os.getenv('VERIFY_SSL', 'true').
                                 lower() == 'true')
         if response.status_code != 200:
             raise Exception('Error getting workflow status: ' + response.text)
         return response.json()
+
+    def delete(self, workflow_url: str):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}"
+        }
+        workflow_status_url = self.get_workflow_status_url(
+            workflow_url=workflow_url)
+        response = requests.delete(workflow_status_url, headers=headers,
+                                   verify=os.getenv('VERIFY_SSL', 'true').
+                                   lower() == 'true')
+        if response.status_code != 200:
+            raise Exception('Error getting workflow status: ' + response.text)
+        return response.json()
+
+    def get_workflow_status_url(self, workflow_url: str):
+        """
+        Extracts the workflow status URL from the provided workflow URL.
+        """
+        if 'cron-workflows' in workflow_url:
+            api_endpoint = self.api_cron_endpoint
+        else:
+            api_endpoint = self.api_endpoint
+        workflow_name = workflow_url.split('/')[-1]
+        # If the endpoint does not have a '/' at the end, add it
+        if not api_endpoint.endswith('/'):
+            api_endpoint += '/'
+        return api_endpoint + workflow_name

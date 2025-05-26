@@ -58,6 +58,10 @@ class WFEngine:
     def get_wf(self, workflow_url: str):
         pass
 
+    @abstractmethod
+    def delete_wf(self, workflow_url: str):
+        pass
+
     def add_secrets_to_k8s(self):
         secrets_creator_api_endpoint = os.getenv(
             'SECRETS_CREATOR_API_ENDPOINT')
