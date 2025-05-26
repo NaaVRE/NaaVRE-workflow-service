@@ -59,7 +59,7 @@ class WFEngine:
         pass
 
     @abstractmethod
-    def delete_wf(self, workflow_url: str):
+    def delete_wf(self, workflow_url: str, user_jwt: Optional[str] = None):
         pass
 
     def add_secrets_to_k8s(self):

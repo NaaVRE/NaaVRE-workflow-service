@@ -129,10 +129,14 @@ class ArgoEngine(WFEngine, ABC):
             raise Exception('Error getting workflow status: ' + response.text)
         return response.json()
 
-    def delete(self, workflow_url: str):
+    def delete(self, workflow_url: str, user_jwt: str = None):
+        if not self.token:
+            token = user_jwt
+        else:
+            token = self.token
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {token}"
         }
         workflow_status_url = self.get_workflow_status_url(
             workflow_url=workflow_url)
