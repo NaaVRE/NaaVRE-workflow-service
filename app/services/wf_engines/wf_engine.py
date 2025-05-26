@@ -23,6 +23,7 @@ class WFEngine:
     user_name: Optional[str]
     virtual_lab_name: Optional[str]
     nodes: Optional[Mapping[str, Node]]
+    cron_schedule: Optional[str]
 
     def __init__(self, vl_config: VLConfig):
         loader = PackageLoader('app', 'templates')
@@ -47,6 +48,7 @@ class WFEngine:
         self.user_name = naavrewf2_payload.user_name
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
         self.nodes = naavrewf2_payload.naavrewf2.nodes
+        self.cron_schedule = naavrewf2_payload.cron_schedule
 
     @abstractmethod
     def submit(self, user_jwt: Optional[str] = None):
@@ -54,6 +56,10 @@ class WFEngine:
 
     @abstractmethod
     def get_wf(self, workflow_url: str, user_jwt: Optional[str] = None):
+        pass
+
+    @abstractmethod
+    def delete_wf(self, workflow_url: str):
         pass
 
     def add_secrets_to_k8s(self):
