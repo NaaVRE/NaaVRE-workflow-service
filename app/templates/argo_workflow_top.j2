@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+{% if cron_schedule %}
+kind: CronWorkflow
+{% else %}
+kind: Workflow
+{% endif %}
+metadata:
+  generateName: {{ workflow_name }}-
+  labels:
+    vlab_slug: {{ vlab_slug }}
+spec:
+    {% if cron_schedule %}
+    schedule: "{{ cron_schedule }}"
+    workflowSpec:
+{{ include('argo_workflowSpec.j2',
+           workflow_name=workflow_name,
+           workflow_service_account=workflow_service_account,
+           workdir_storage_size=workdir_storage_size,
+           global_params=global_params,
+           deps_dag=deps_dag,
+           nodes=nodes,
+           k8s_secret_name=k8s_secret_name) | indent(6, true) }}
+    {% else %}
+{{ include('argo_workflowSpec.j2',
+           workflow_name=workflow_name,
+           workflow_service_account=workflow_service_account,
+           workdir_storage_size=workdir_storage_size,
+           global_params=global_params,
+           deps_dag=deps_dag,
+           nodes=nodes,
+           k8s_secret_name=k8s_secret_name) | indent(4, true) }}
+    {% endif %}

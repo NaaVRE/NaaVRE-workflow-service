@@ -16,6 +16,13 @@ def is_cron(workflow_dict):
     return False
 
 
+def include_file(env):
+    def _include(name, **kwargs):
+        template = env.get_template(name)
+        return template.render(**kwargs)
+    return _include
+
+
 class ArgoEngine(WFEngine, ABC):
     workflow_template: jinja2.Template
     api_endpoint: str
@@ -23,14 +30,18 @@ class ArgoEngine(WFEngine, ABC):
 
     def __init__(self, vl_config: VLConfig):
         super().__init__(vl_config)
+        self.template_env.globals['include'] = include_file(self.template_env)
         self.workflow_template = self.template_env.get_template(
-            'argo_workflow_top.jinja2')
+            'argo_workflow_top.j2')
         # Add '/' at the end of the endpoint if not present
         if vl_config.wf_engine_config.api_endpoint[-1] != '/':
             vl_config.wf_engine_config.api_endpoint += '/'
         self.api_endpoint = (vl_config.wf_engine_config.api_endpoint +
                              "api/v1/workflows/" +
                              vl_config.wf_engine_config.namespace)
+        self.api_cron_endpoint = (vl_config.wf_engine_config.api_endpoint +
+                                  "api/v1/cron-workflows/" +
+                                  vl_config.wf_engine_config.namespace)
         self.token = (vl_config.wf_engine_config.access_token.replace
                       ('"', '')).replace('Bearer ', '')
 
@@ -40,11 +51,14 @@ class ArgoEngine(WFEngine, ABC):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}"
         }
-        # Convert to yaml string
-        workflow_yaml = yaml.safe_dump(workflow_dict, default_flow_style=False)
-        print(workflow_yaml)
-        response = requests.post(self.api_endpoint,
-                                 json={"workflow": workflow_dict},
+        if is_cron(workflow_dict):
+            api_endpoint = self.api_cron_endpoint
+            workflow_type = 'cronWorkflow'
+        else:
+            api_endpoint = self.api_endpoint
+            workflow_type = 'workflow'
+        response = requests.post(api_endpoint,
+                                 json={workflow_type: workflow_dict},
                                  headers=headers,
                                  verify=os.getenv('VERIFY_SSL', 'true').
                                  lower() == 'true')
