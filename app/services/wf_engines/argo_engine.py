@@ -25,14 +25,20 @@ class ArgoEngine(WFEngine, ABC):
         self.api_endpoint = (vl_config.wf_engine_config.api_endpoint +
                              "api/v1/workflows/" +
                              vl_config.wf_engine_config.namespace)
-        self.token = (vl_config.wf_engine_config.access_token.replace
-                      ('"', '')).replace('Bearer ', '')
+        if vl_config.wf_engine_config.access_token:
+            self.token = (vl_config.wf_engine_config.access_token.replace
+                          ('"', '')).replace('Bearer ',
+                                             '')
 
-    def submit(self):
+    def submit(self, user_jwt: str = None):
         workflow_dict = self.naavrewf2_2_argo_workflow()
+        if not self.token:
+            token = user_jwt
+        else:
+            token = self.token
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {token}"
         }
         response = requests.post(self.api_endpoint,
                                  json={"workflow": workflow_dict},
@@ -78,11 +84,14 @@ class ArgoEngine(WFEngine, ABC):
         workflow_dict = yaml.safe_load(workflow_yaml)
         return workflow_dict
 
-    def get_wf(self, workflow_url: str):
-        # Get the workflow status from the Argo API
+    def get_wf(self, workflow_url: str, user_jwt: str = None):
+        if not self.token:
+            token = user_jwt
+        else:
+            token = self.token
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {token}"
         }
         workflow_name = workflow_url.split('/')[-1]
         # If the endpoint does not have a '/' at the end, add it

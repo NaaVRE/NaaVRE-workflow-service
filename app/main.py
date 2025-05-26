@@ -81,6 +81,8 @@ def valid_access_token(credentials: Annotated[
 
 def _get_wf_engine(virtual_lab: str = None):
     vl_conf = settings.get_vl_config(virtual_lab)
+    if not vl_conf:
+        raise HTTPException(status_code=404, detail="Virtual lab not found")
     if vl_conf and vl_conf.wf_engine_config.name == "argo":
         return ArgoEngine(vl_conf)
     else:
@@ -90,18 +92,20 @@ def _get_wf_engine(virtual_lab: str = None):
 @app.post("/submit")
 def submit(access_token: Annotated[dict, Depends(valid_access_token)],
            naavrewf2_payload: Naavrewf2Payload):
-    naavrewf2_payload.set_user_name(access_token['preferred_username'])
+    naavrewf2_payload.set_user_name(access_token['decoded']
+                                    ['preferred_username'])
 
     wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
     wf_engine.set_payload(naavrewf2_payload)
-    response = wf_engine.submit()
+    response = wf_engine.submit(user_jwt=access_token['raw'])
     return response
 
 
 @app.post("/convert")
 def convert(access_token: Annotated[dict, Depends(valid_access_token)],
             naavrewf2_payload: Naavrewf2Payload):
-    naavrewf2_payload.set_user_name(access_token['preferred_username'])
+    naavrewf2_payload.set_user_name(access_token['decoded']
+                                    ['preferred_username'])
     wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
     wf_engine.set_payload(naavrewf2_payload)
     return wf_engine.naavrewf2_2_argo_workflow()
@@ -117,7 +121,7 @@ def get_status(
     print(f'workflow_url: {workflow_url}')
 
     wf_engine = _get_wf_engine(virtual_lab=virtual_lab)
-    argo_wf = wf_engine.get_wf(workflow_url)
+    argo_wf = wf_engine.get_wf(workflow_url, user_jwt=access_token['raw'])
     return {'status': argo_wf['status']}
 
 

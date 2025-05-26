@@ -49,11 +49,11 @@ class WFEngine:
         self.nodes = naavrewf2_payload.naavrewf2.nodes
 
     @abstractmethod
-    def submit(self):
+    def submit(self, user_jwt: Optional[str] = None):
         pass
 
     @abstractmethod
-    def get_wf(self, workflow_url: str):
+    def get_wf(self, workflow_url: str, user_jwt: Optional[str] = None):
         pass
 
     def add_secrets_to_k8s(self):
