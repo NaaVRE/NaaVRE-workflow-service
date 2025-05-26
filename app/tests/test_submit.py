@@ -1,5 +1,7 @@
 import json
 import os
+
+import requests
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -11,6 +13,28 @@ elif os.path.exists('app/tests/resources/'):
 client = TestClient(app)
 
 
+def get_jwt():
+    # Get the token endpoint
+    resp = requests.get(os.getenv('OIDC_CONFIGURATION_URL'), verify=False)
+    token_endpoint = resp.json()["token_endpoint"]
+
+    # Prepare the payload
+    payload = {
+        "grant_type": "password",
+        "client_id": os.getenv('CLIENT_ID'),
+        "username": os.getenv('USERNAME'),
+        "password": os.getenv('PASSWORD'),
+        # "client_secret": client_secret,  # Uncomment if needed
+        "scope": "openid"
+    }
+
+    # Request the token
+    token_resp = requests.post(token_endpoint, data=payload, verify=False)
+    token_resp.raise_for_status()
+    jwt = token_resp.json()["access_token"]
+    return jwt
+
+
 def test_submit():
     workflows_json_path = os.path.join(base_path)
     workflow_files = os.listdir(workflows_json_path)
@@ -20,10 +44,10 @@ def test_submit():
             print('Testing workflow: ' + workflow_file)
             workflow_dict = json.load(f)
         f.close()
-
+        jwt = get_jwt()
         submit_response = client.post(
             '/submit/',
-            headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')},
+            headers={'Authorization': 'Bearer ' + jwt},
             json=workflow_dict,
         )
         # Print the response for debugging

@@ -49,10 +49,7 @@ class ArgoEngine(WFEngine, ABC):
 
     def submit(self, user_jwt: str = None):
         workflow_dict = self.naavrewf2_2_argo_workflow()
-        if not self.token:
-            token = user_jwt
-        else:
-            token = self.token
+        token = self.get_token(user_jwt=user_jwt)
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}"
@@ -112,10 +109,7 @@ class ArgoEngine(WFEngine, ABC):
         return workflow_dict
 
     def get_wf(self, workflow_url: str, user_jwt: str = None):
-        if not self.token:
-            token = user_jwt
-        else:
-            token = self.token
+        token = self.get_token(user_jwt=user_jwt)
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}"
@@ -130,10 +124,7 @@ class ArgoEngine(WFEngine, ABC):
         return response.json()
 
     def delete(self, workflow_url: str, user_jwt: str = None):
-        if not self.token:
-            token = user_jwt
-        else:
-            token = self.token
+        token = self.get_token(user_jwt=user_jwt)
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}"
@@ -160,3 +151,9 @@ class ArgoEngine(WFEngine, ABC):
         if not api_endpoint.endswith('/'):
             api_endpoint += '/'
         return api_endpoint + workflow_name
+
+    def get_token(self, user_jwt):
+        if hasattr(self, 'token'):
+            return self.token
+        else:
+            return user_jwt

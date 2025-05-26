@@ -28,6 +28,8 @@ on:
     secrets:
       auth_token:
         required: true
+      configuration:
+        required: true
 
 env:
   DEBUG: ${{ inputs.debug }}
@@ -36,6 +38,7 @@ env:
   DISABLE_AUTH: ${{ inputs.disable_auth }}
   ROOT_PATH: ${{ inputs.root_path }}
   AUTH_TOKEN: ${{ secrets.auth_token }}
+  CONFIG_FILE_URL: /tmp/configuration.json
 
 
 jobs:
@@ -58,4 +61,5 @@ jobs:
       - name: pytest
         shell: bash -l {0}
         run: |
-           pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header
+          echo "${{ secrets.configuration }}" > "${{ env.CONFIG_FILE_URL }}"
+          pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header
