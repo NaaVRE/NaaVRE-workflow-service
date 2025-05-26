@@ -3,10 +3,11 @@ PyJWT[crypto]==2.9.0
 requests==2.32.3
 uvicorn==0.30.6
 pydantic==2.9.2
-Jinja2==3.1.4
+Jinja2==3.1.6
 pre-commit==3.8.0
 jsonschema==4.23.0
 PyYAML==6.0.2
 pydantic-settings==2.5.2
 cachetools==5.5.0
 python-slugify~=8.0.4
+httpx==0.28.1
