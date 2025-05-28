@@ -42,10 +42,9 @@ class ArgoEngine(WFEngine, ABC):
         self.api_cron_endpoint = (vl_config.wf_engine_config.api_endpoint +
                                   "api/v1/cron-workflows/" +
                                   vl_config.wf_engine_config.namespace)
-        if vl_config.wf_engine_config.access_token:
-            self.token = (vl_config.wf_engine_config.access_token.replace
-                          ('"', '')).replace('Bearer ',
-                                             '')
+        if vl_config.wf_engine_config.authentication['type'] == 'token':
+            self.token = (vl_config.wf_engine_config.authentication['token'].
+                          replace('"', '')).replace('Bearer ', '')
 
     def submit(self, user_jwt: str = None):
         workflow_dict = self.naavrewf2_2_argo_workflow()

@@ -1,14 +1,16 @@
 {
   "vl_configurations": [
     {
-      "name": "virtual_lab_1",
+      "name": "test-virtual-lab-1",
       "wf_engine_config": {
         "name": "argo",
-        "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
-        "access_token": "eyJhbGciOg...",
+        "api_endpoint": "https://staging.demo.naavre.net/argowf/",
         "service_account": "executor",
-        "namespace": "default",
-        "workdir_storage_size": "1Gi"
+        "namespace": "argo",
+        "workdir_storage_size": "1Gi",
+        "authentication": {
+          "type": "oidc"
+        }
       }
     },
     {
@@ -19,7 +21,11 @@
         "access_token": "eyJhbGciOg...",
         "service_account": "executor",
         "namespace": "argo",
-        "workdir_storage_size": "1Gi"
+        "workdir_storage_size": "1Gi",
+        "authentication": {
+          "type": "token",
+          "token": "VALUE"
+        }
       }
     }
   ]
