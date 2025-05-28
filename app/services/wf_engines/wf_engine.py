@@ -51,15 +51,15 @@ class WFEngine:
         self.cron_schedule = naavrewf2_payload.cron_schedule
 
     @abstractmethod
-    def submit(self):
+    def submit(self, user_jwt: Optional[str] = None):
         pass
 
     @abstractmethod
-    def get_wf(self, workflow_url: str):
+    def get_wf(self, workflow_url: str, user_jwt: Optional[str] = None):
         pass
 
     @abstractmethod
-    def delete_wf(self, workflow_url: str):
+    def delete_wf(self, workflow_url: str, user_jwt: Optional[str] = None):
         pass
 
     def add_secrets_to_k8s(self):

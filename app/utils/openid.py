@@ -36,7 +36,8 @@ class OpenIDValidator:
         return r.json()
 
     def validate(self, access_token):
-        if os.getenv('DISABLE_AUTH', 'false').lower() == 'true':
+        disable_auth = os.getenv('DISABLE_AUTH', 'false').lower()
+        if disable_auth == 'true':
             return self.validate_fake_token(access_token)
         else:
             return self.validate_token(access_token)
@@ -49,7 +50,7 @@ class OpenIDValidator:
         signing_key = jwks_client.get_signing_key_from_jwt(access_token)
         token_header = jwt.get_unverified_header(access_token)
         try:
-            data = jwt.decode(
+            decoded = jwt.decode(
                 access_token,
                 signing_key.key,
                 algorithms=[token_header['alg']],
@@ -59,7 +60,7 @@ class OpenIDValidator:
         except jwt.exceptions.InvalidTokenError as e:
             logger.debug(msg="Authentication failed", exc_info=e)
             raise
-        return data
+        return {'decoded': decoded, 'raw': access_token}
 
     def validate_fake_token(self, access_token):
         """ Validate fake token for testing purpose
@@ -69,7 +70,7 @@ class OpenIDValidator:
         """
         token_header = jwt.get_unverified_header(access_token)
         try:
-            data = jwt.decode(
+            decoded = jwt.decode(
                 access_token,
                 'fake-secret',
                 algorithms=[token_header['alg']],
@@ -79,4 +80,4 @@ class OpenIDValidator:
         except jwt.exceptions.InvalidTokenError as e:
             logger.debug(msg="Authentication failed", exc_info=e)
             raise
-        return data
+        return {'decoded': decoded, 'raw': access_token}

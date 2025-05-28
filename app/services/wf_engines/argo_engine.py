@@ -42,14 +42,17 @@ class ArgoEngine(WFEngine, ABC):
         self.api_cron_endpoint = (vl_config.wf_engine_config.api_endpoint +
                                   "api/v1/cron-workflows/" +
                                   vl_config.wf_engine_config.namespace)
-        self.token = (vl_config.wf_engine_config.access_token.replace
-                      ('"', '')).replace('Bearer ', '')
+        if vl_config.wf_engine_config.access_token:
+            self.token = (vl_config.wf_engine_config.access_token.replace
+                          ('"', '')).replace('Bearer ',
+                                             '')
 
-    def submit(self):
+    def submit(self, user_jwt: str = None):
         workflow_dict = self.naavrewf2_2_argo_workflow()
+        token = self.get_token(user_jwt=user_jwt)
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {token}"
         }
         if is_cron(workflow_dict):
             api_endpoint = self.api_cron_endpoint
@@ -105,11 +108,11 @@ class ArgoEngine(WFEngine, ABC):
         workflow_dict = yaml.safe_load(workflow_yaml)
         return workflow_dict
 
-    def get_wf(self, workflow_url: str):
-        # Get the workflow status from the Argo API
+    def get_wf(self, workflow_url: str, user_jwt: str = None):
+        token = self.get_token(user_jwt=user_jwt)
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {token}"
         }
         workflow_status_url = self.get_workflow_status_url(
                                                     workflow_url=workflow_url)
@@ -120,10 +123,11 @@ class ArgoEngine(WFEngine, ABC):
             raise Exception('Error getting workflow status: ' + response.text)
         return response.json()
 
-    def delete(self, workflow_url: str):
+    def delete(self, workflow_url: str, user_jwt: str = None):
+        token = self.get_token(user_jwt=user_jwt)
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {token}"
         }
         workflow_status_url = self.get_workflow_status_url(
             workflow_url=workflow_url)
@@ -147,3 +151,9 @@ class ArgoEngine(WFEngine, ABC):
         if not api_endpoint.endswith('/'):
             api_endpoint += '/'
         return api_endpoint + workflow_name
+
+    def get_token(self, user_jwt):
+        if hasattr(self, 'token'):
+            return self.token
+        else:
+            return user_jwt
