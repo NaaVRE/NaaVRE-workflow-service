@@ -20,7 +20,7 @@ def get_jwt():
 
     # Prepare the payload
     payload = {
-        "grant_type": "password",
+        "grant_type": "authorization_code",
         "client_id": os.getenv('CLIENT_ID'),
         "username": os.getenv('USERNAME'),
         "password": os.getenv('PASSWORD'),
@@ -32,6 +32,7 @@ def get_jwt():
     token_resp = requests.post(token_endpoint, data=payload, verify=False)
     token_resp.raise_for_status()
     jwt = token_resp.json()["access_token"]
+    os.environ['AUTH_TOKEN'] = 'True'
     return jwt
 
 

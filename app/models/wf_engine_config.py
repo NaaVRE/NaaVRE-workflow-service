@@ -10,7 +10,7 @@ logger.setLevel(logging.DEBUG)
 class WfEngineConfig(BaseModel):
     name: str
     api_endpoint: str
-    access_token: Optional[str] | None = None
     service_account: Optional[str] | None = None
     namespace: str
     workdir_storage_size: str = '1Gi'
+    authentication: dict | None = None
