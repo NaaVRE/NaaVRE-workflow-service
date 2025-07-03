@@ -36,6 +36,15 @@ jobs:
   # - disable call-collect-tests, split-tests, and call-pytest
   # - change call-build-container requirement (needs) from call-pytest to configure-workflow
 
+
+  call-start-minikube:
+    uses: ./.github/workflows/start-minikube.yml
+    needs: [configure-workflow]
+    if: ${{ needs.configure-workflow.outputs.should_skip != 'true' }}
+    with:
+      runs-on: ${{ needs.configure-workflow.outputs.runner }}
+
+
   call-collect-tests:
     uses: ./.github/workflows/collect-tests.yml
     with:
