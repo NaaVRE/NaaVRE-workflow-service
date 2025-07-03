@@ -22,9 +22,6 @@ on:
       root_path:
         required: true
         type: string
-      test:
-        required: true
-        type: string
     secrets:
       auth_token:
         required: true
@@ -68,6 +65,25 @@ jobs:
         run: |
           echo "Testing minikube host"
           curl -k https://minikube.local/
+
+      - name: Add the third-party Helm repos
+        run: |
+            helm repo add argo https://argoproj.github.io/argo-helm
+            helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+            helm repo add bitnami https://charts.bitnami.com/bitnami
+
+      - name: Install argo workflows from NaaVRE-helm
+        run: |
+          git clone https://github.com/NaaVRE/NaaVRE-helm.git
+          cd NaaVRE-helm
+          cp ./values/values-example-basic.yaml ./values/values-deploy-minikube-github.yaml
+          helm dependency update naavre
+          helm dependency build naavre
+          context="minikube"
+          namespace="naavre"
+          release_name="naavre"
+          helm template "$release_name" values/ --output-dir values/rendered -f "./values/values-deploy-$context.yaml" && \
+          helm --kube-context "$context" -n "$namespace" upgrade --create-namespace --install "$release_name" naavre/ $(find values/rendered/values/templates -type f | xargs -I{} echo -n " -f {}")
           
 
       - run: pip install -r requirements.txt
@@ -75,4 +91,4 @@ jobs:
 #      - name: pytest
 #        shell: bash -l {0}
 #        run: |
-#           pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header
+#           pytest -s --ignore=docker --ignore=cypress --no-header
