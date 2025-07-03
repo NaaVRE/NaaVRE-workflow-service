@@ -84,8 +84,7 @@ jobs:
       auth_token: ${{ secrets.AUTH_TOKEN }}
 
   call-build-container:
-#    needs: [call-pytest]
-    needs: [configure-workflow]
+    needs: [configure-workflow,call-pytest]
     uses: ./.github/workflows/build-container.yml
     with:
       oci_tag: ghcr.io/naavre/naavre-workflow-service
@@ -93,7 +92,7 @@ jobs:
       push: ${{ github.event_name == 'release' }}
 
   call-helm-chart-release:
-    needs: [call-build-container]
+    needs: [call-build-container,call-pytest]
     uses: ./.github/workflows/helm-chart-release.yml
     with:
       oci_repo: ghcr.io/naavre/charts

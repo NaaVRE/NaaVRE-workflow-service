@@ -54,9 +54,19 @@ jobs:
       - name: start minikube
         id: minikube
         uses: medyagh/setup-minikube@v0.0.19
+        with:
+          addons: ingress,ingress-dns
 
       - name: Try the cluster
         run: kubectl get pods -A
+
+      - name: Get the minikube IP and add it to /etc/hosts
+        run: |
+          echo "$(minikube ip) minikube.local" | sudo tee -a /etc/hosts
+
+      - name: Test the minikube IP
+        run: |
+          curl -k https://minikube.local
 
       - name: Install helm
         run: |
