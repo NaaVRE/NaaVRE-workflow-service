@@ -2,6 +2,7 @@
     "virtual_lab": "test-virtual-lab-1",
     "params": {},
     "secrets": {},
+    "cron_schedule": "0 0 * * *",
     "naavrewf2": {
         "nodes": {
             "ea911b63-9595-43c4-a389-97d5e7963d91": {

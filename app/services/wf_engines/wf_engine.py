@@ -19,10 +19,12 @@ class WFEngine:
     vl_config: VLConfig
     naavrewf2_payload: Optional[Naavrewf2Payload]
     parser: Optional[WorkflowParser]
+    params: Optional[dict]
     secrets: Optional[dict]
     user_name: Optional[str]
     virtual_lab_name: Optional[str]
     nodes: Optional[Mapping[str, Node]]
+    cron_schedule: Optional[str]
 
     def __init__(self, vl_config: VLConfig):
         loader = PackageLoader('app', 'templates')
@@ -35,6 +37,7 @@ class WFEngine:
         self.vl_config = vl_config
         self.naavrewf2_payload = None
         self.parser = None
+        self.params = None
         self.secrets = None
         self.user_name = None
         self.virtual_lab_name = None
@@ -43,10 +46,12 @@ class WFEngine:
     def set_payload(self, naavrewf2_payload: Naavrewf2Payload):
         self.naavrewf2_payload = naavrewf2_payload
         self.parser = WorkflowParser(naavrewf2_payload.naavrewf2)
+        self.params = naavrewf2_payload.params
         self.secrets = naavrewf2_payload.secrets
         self.user_name = naavrewf2_payload.user_name
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
         self.nodes = naavrewf2_payload.naavrewf2.nodes
+        self.cron_schedule = naavrewf2_payload.cron_schedule
 
     @abstractmethod
     def submit(self):
@@ -54,6 +59,10 @@ class WFEngine:
 
     @abstractmethod
     def get_wf(self, workflow_url: str):
+        pass
+
+    @abstractmethod
+    def delete_wf(self, workflow_url: str):
         pass
 
     def add_secrets_to_k8s(self):

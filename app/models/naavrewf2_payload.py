@@ -15,6 +15,7 @@ class Naavrewf2Payload(BaseModel):
     secrets: Optional[dict] = None
     naavrewf2: Naavrewf2
     user_name: Optional[str] | None = None
+    cron_schedule: Optional[str] | None = None
 
     def set_user_name(self, user_name: str):
         self.user_name = user_name
