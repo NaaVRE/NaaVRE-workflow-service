@@ -79,7 +79,7 @@ jobs:
           cp ./values/values-example-basic.yaml ./values/values-deploy-minikube-github.yaml
           helm dependency update naavre
           helm dependency build naavre
-          context="minikube"
+          context="minikube-github"
           namespace="naavre"
           release_name="naavre"
           helm template "$release_name" values/ --output-dir values/rendered -f "./values/values-deploy-$context.yaml" && \
