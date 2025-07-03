@@ -36,11 +36,11 @@ jobs:
   # - disable call-collect-tests, split-tests, and call-pytest
   # - change call-build-container requirement (needs) from call-pytest to configure-workflow
 
-#  call-collect-tests:
-#    uses: ./.github/workflows/collect-tests.yml
-#    with:
-#      oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
-#
+  call-collect-tests:
+    uses: ./.github/workflows/collect-tests.yml
+    with:
+      oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
+
   split-tests:
     needs: [call-collect-tests]
     runs-on: ubuntu-latest
