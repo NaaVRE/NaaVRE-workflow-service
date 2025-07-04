@@ -83,7 +83,7 @@ jobs:
           namespace="naavre"
           release_name="naavre"
           helm template "$release_name" values/ --output-dir values/rendered -f "./values/values-deploy-$context.yaml" && \
-          helm --kube-context "$context" -n "$namespace" upgrade --create-namespace --install "$release_name" naavre/ $(find values/rendered/values/templates -type f | xargs -I{} echo -n " -f {}")
+          helm -n "$namespace" upgrade --create-namespace --install "$release_name" naavre/ $(find values/rendered/values/templates -type f | xargs -I{} echo -n " -f {}")
           
 
       - run: pip install -r requirements.txt
