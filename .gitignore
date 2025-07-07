@@ -162,3 +162,5 @@ cython_debug/
 .idea/
 /dev2.env
 /config2.yaml
+/NaaVRE-helm/
+/minkube_configuration.json

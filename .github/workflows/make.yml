@@ -74,10 +74,6 @@ jobs:
     with:
       runs-on: ${{ needs.configure-workflow.outputs.runner }}
       debug: ${{ vars.DEBUG }}
-      oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
-      verify_ssl: ${{ vars.VERIFY_SSL }}
-      disable_auth: ${{ vars.DISABLE_AUTH }}
-      root_path: ${{ vars.ROOT_PATH }}
     secrets:
       auth_token: ${{ secrets.AUTH_TOKEN }}
 

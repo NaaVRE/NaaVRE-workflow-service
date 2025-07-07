@@ -3,11 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - python==3.11
-  - r=4.3
-  - r-rlang=1.1.3
-  - r-lobstr=1.1.2
-  - r-purrr=1.0.2
-  - r-renv=1.0.5
   - pip
   - pip:
       - -r requirements.txt

@@ -4,7 +4,7 @@
       "name": "virtual_lab_1",
       "wf_engine_config": {
         "name": "argo",
-        "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
+        "api_endpoint": "https://minikube.local/argowf/",
         "access_token": "eyJhbGciOg...",
         "service_account": "executor",
         "namespace": "default",

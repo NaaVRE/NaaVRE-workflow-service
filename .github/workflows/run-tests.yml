@@ -10,29 +10,9 @@ on:
       debug:
         required: true
         type: string
-      oidc_configuration_url:
-        required: true
-        type: string
-      verify_ssl:
-        required: true
-        type: string
-      disable_auth :
-        required: true
-        type: string
-      root_path:
-        required: true
-        type: string
-    secrets:
-      auth_token:
-        required: true
 
 env:
   DEBUG: ${{ inputs.debug }}
-  OIDC_CONFIGURATION_URL: ${{ inputs.oidc_configuration_url }}
-  VERIFY_SSL: ${{ inputs.verify_ssl }}
-  DISABLE_AUTH: ${{ inputs.disable_auth }}
-  ROOT_PATH: ${{ inputs.root_path }}
-  AUTH_TOKEN: ${{ secrets.auth_token }}
 
 
 jobs:
@@ -57,38 +37,15 @@ jobs:
       - name: Try the cluster
         run: kubectl get pods -A
 
-      - name: Get the minikube IP and add it to /etc/hosts
+      - name: Run setup-tests.sh
+        shell: bash -l {0}
         run: |
-          echo "$(minikube ip) minikube.local" | sudo tee -a /etc/hosts
-
-      - name: Test minikube host
-        run: |
-          echo "Testing minikube host"
-          curl -k https://minikube.local/
-
-      - name: Add the third-party Helm repos
-        run: |
-            helm repo add argo https://argoproj.github.io/argo-helm
-            helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
-            helm repo add bitnami https://charts.bitnami.com/bitnami
-
-      - name: Install argo workflows from NaaVRE-helm
-        run: |
-          git clone https://github.com/NaaVRE/NaaVRE-helm.git
-          cd NaaVRE-helm
-          cp ./values/values-example-basic.yaml ./values/values-deploy-minikube-github.yaml
-          helm dependency update naavre
-          helm dependency build naavre
-          context="minikube-github"
-          namespace="naavre"
-          release_name="naavre"
-          helm template "$release_name" values/ --output-dir values/rendered -f "./values/values-deploy-$context.yaml" && \
-          helm -n "$namespace" upgrade --create-namespace --install "$release_name" naavre/ $(find values/rendered/values/templates -type f | xargs -I{} echo -n " -f {}")
-          
+          chmod +x ./tests/setup-tests.sh
+          ./tests/setup-tests.sh
 
       - run: pip install -r requirements.txt
 
-#      - name: pytest
-#        shell: bash -l {0}
-#        run: |
-#           pytest -s --ignore=docker --ignore=cypress --no-header
+      - name: pytest
+        shell: bash -l {0}
+        run: |
+           pytest -s --ignore=docker --ignore=cypress --no-header
