@@ -164,3 +164,4 @@ cython_debug/
 /config2.yaml
 /NaaVRE-helm/
 /minkube_configuration.json
+/auth_token.txt
