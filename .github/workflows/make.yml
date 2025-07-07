@@ -74,8 +74,6 @@ jobs:
     with:
       runs-on: ${{ needs.configure-workflow.outputs.runner }}
       debug: ${{ vars.DEBUG }}
-    secrets:
-      auth_token: ${{ secrets.AUTH_TOKEN }}
 
   call-build-container:
     needs: [configure-workflow,call-pytest]
