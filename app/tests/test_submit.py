@@ -17,7 +17,7 @@ tests_resources_dir = Path(__file__).parent / "resources"
 
 
 def test_submit():
-    workflows_json_path = os.path.join(base_path)
+    workflows_json_path = os.path.join(base_path, 'naavrewf2_payload')
     workflow_files = os.listdir(workflows_json_path)
     for workflow_file in workflow_files:
         workflow_path = os.path.join(workflows_json_path, workflow_file)
@@ -39,7 +39,7 @@ def test_submit():
         assert run_url is not None
 
         get_wf_response = client.get(
-            '/status/'+workflow_dict['virtual_lab'],
+            '/status/' + workflow_dict['virtual_lab'],
             params={'workflow_url': submit_response.json()['run_url']},
             headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')}
         )
@@ -52,7 +52,7 @@ def test_submit():
 
         # Delete the workflow after testing
         delete_wf_response = client.delete(
-            '/delete/'+workflow_dict['virtual_lab'],
+            '/delete/' + workflow_dict['virtual_lab'],
             params={'workflow_url': submit_response.json()['run_url']},
             headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')}
         )

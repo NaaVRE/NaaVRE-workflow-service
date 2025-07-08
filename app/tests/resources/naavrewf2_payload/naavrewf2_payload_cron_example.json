@@ -1,5 +1,5 @@
 {
-    "virtual_lab": "test-virtual-lab-1",
+    "virtual_lab": "virtual_lab_1",
     "params": {},
     "secrets": {},
     "cron_schedule": "0 0 * * *",
@@ -16,7 +16,7 @@
                         "created": "2025-05-24T14:15:11.047635Z",
                         "modified": "2025-05-25T20:24:58.582938Z",
                         "owner": "user",
-                        "virtual_lab": "test-virtual-lab-1",
+                        "virtual_lab": "virtual_lab_1",
                         "container_image": "ghcr.io/qcdis/naavre-cells-test-3/create-file-user:524bf89",
                         "base_container_image": {
                             "build": "ghcr.io/qcdis/naavre/naavre-cell-build-python:v0.22.11",
@@ -85,7 +85,7 @@
                         "created": "2025-05-24T14:20:37.123732Z",
                         "modified": "2025-05-25T20:26:05.727577Z",
                         "owner": "user",
-                        "virtual_lab": "test-virtual-lab-1",
+                        "virtual_lab": "virtual_lab_1",
                         "container_image": "ghcr.io/qcdis/naavre-cells-test-3/read-file-lines-user:609fd2e",
                         "base_container_image": {
                             "build": "ghcr.io/qcdis/naavre/naavre-cell-build-python:v0.22.11",
