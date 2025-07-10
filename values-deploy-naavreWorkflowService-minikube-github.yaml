@@ -1,0 +1,68 @@
+global:
+  namespace: naavre
+
+  ingress:
+    domain: naavre-dev.minikube.test
+    commonAnnotations: {}
+    tls:
+      enabled: false
+
+  secrets:
+    k8sSecretCreator:
+      apiToken: SECRET_K8S_SECRET_CREATOR_API_TOKEN
+    naavreCatalogueService:
+      secretKey: SECRET_NAAVRE_CATALOGUE_SERVICE_SECRET_KEY
+      auth:
+        superuser:
+          email: "admin@example.org"
+          username: admin
+          password: SECRET_NAAVRE_CATALOGUE_SERVICE_ADMIN_PASSWORD
+      postgresql:
+        password: SECRET_NAAVRE_CATALOGUE_SERVICE_POSTGRESQL_PASSWORD
+    naavrePaasFrontend:
+      secretKey: SECRET_NAAVRE_PAAS_FRONTEND_SECRET_KEY
+    keycloak:
+      adminPassword: SECRET_KEYCLOAK_ADMIN_PASSWORD
+      naavreClientSecret: SECRET_KEYCLOAK_NAAVRE_CLIENT_SECRET
+      users:
+        - username: my-user
+          password: USER_PASSWORD
+      postgresql:
+        password: SECRET_KEYCLOAK_POSTGRESQL_PASSWORD
+
+jupyterhub:
+  enabled: false
+  vlabs:
+    openlab:
+      slug: openlab
+      title: "NaaVRE Open Lab"
+      description: "Open experimentation with virtual labs"
+      image:
+        name: ghcr.io/naavre/flavors/naavre-fl-vanilla-jupyter
+        tag: v0.0.1
+      configuration:
+        base_image_tags_url: https://github.com/NaaVRE/flavors/releases/download/v0.0.1/base_image_tags.json
+        module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
+        cell_github_url: "https://github.com/QCDIS/NaaVRE-cells"
+        cell_github_token: GITHUB_TOKEN
+        registry_url: "ghcr.io/user/repo"
+
+k8sSecretCreator:
+  enabled: true
+
+naavreCatalogueService:
+  enabled: false
+
+naavreContainerizerService:
+  enabled: false
+
+naavreWorkflowService:
+  enabled: false
+
+naavrePaasFrontend:
+  enabled: false
+
+argoWorkflows:
+  server:
+    sso:
+      insecureSkipVerify: true
