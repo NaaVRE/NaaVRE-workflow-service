@@ -15,6 +15,7 @@ client = TestClient(app)
 logger = logging.getLogger(__name__)
 tests_resources_dir = Path(__file__).parent / "resources"
 
+user_auth_token =  os.getenv('AUTH_TOKEN')
 
 def test_submit():
     workflows_json_path = os.path.join(base_path, 'naavrewf2_payload')
@@ -28,7 +29,7 @@ def test_submit():
 
         submit_response = client.post(
             '/submit/',
-            headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')},
+            headers={'Authorization': 'Bearer ' + user_auth_token},
             json=workflow_dict,
         )
         # Print the response for debugging
@@ -41,7 +42,7 @@ def test_submit():
         get_wf_response = client.get(
             '/status/' + workflow_dict['virtual_lab'],
             params={'workflow_url': submit_response.json()['run_url']},
-            headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')}
+            headers={'Authorization': 'Bearer ' + user_auth_token}
         )
 
         assert get_wf_response.status_code == 200
@@ -54,7 +55,7 @@ def test_submit():
         delete_wf_response = client.delete(
             '/delete/' + workflow_dict['virtual_lab'],
             params={'workflow_url': submit_response.json()['run_url']},
-            headers={'Authorization': 'Bearer ' + os.getenv('AUTH_TOKEN')}
+            headers={'Authorization': 'Bearer ' + user_auth_token}
         )
         assert delete_wf_response.status_code == 200
         delete_wf_response_json = delete_wf_response.json()

@@ -23,7 +23,7 @@ echo "SECRETS_CREATOR_API_ENDPOINT=https://$MINIKUBE_HOST/k8s-secret-creator/1.0
 export SECRETS_CREATOR_API_TOKEN="SECRETS_CREATOR_API_TOKEN"
 echo "SECRETS_CREATOR_API_TOKEN=SECRETS_CREATOR_API_TOKEN" >> $GITHUB_ENV
 
-#Get the minikube IP and add it to /etc/hosts if not already present
+Get the minikube IP and add it to /etc/hosts if not already present
 MINIKUBE_IP=$(minikube ip)
 export MINIKUBE_IP
 if ! grep -q "$MINIKUBE_IP" /etc/hosts; then
@@ -49,20 +49,46 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 
 
 #Install argo workflows from NaaVRE-helm
-git clone https://github.com/NaaVRE/NaaVRE-helm.git
+#git clone https://github.com/NaaVRE/NaaVRE-helm.git
+#cp values-deploy-naavreWorkflowService-minikube-github.yaml NaaVRE-helm/values/
 cd NaaVRE-helm
-git checkout 24-add-testing-against-argo-running-in-minikube
 helm dependency update naavre
 helm dependency build naavre
 context="naavreWorkflowService-minikube-github"
 namespace="naavre"
 release_name="naavre"
+kubectl create namespace "$namespace"
 helm template "$release_name" values/ --output-dir values/rendered -f "./values/values-deploy-$context.yaml" && \
 helm -n "$namespace" upgrade --create-namespace --install "$release_name" naavre/ $(find values/rendered/values/templates -type f | xargs -I{} echo -n " -f {}")
+# Exit if the installation fails
+if [ $? -ne 0 ]; then
+    echo "Helm installation failed"
+    exit 1
+else
+    echo "Helm installation succeeded"
+fi
 cd ../
 
 
 #Get user access token for the workflow service and set the environment variable AUTH_TOKEN
+# Wait for https://$MINIKUBE_HOST/auth/realms/ vre/.well-known/openid-configuration to be available and fail if it is not available
+echo "Waiting for OIDC configuration URL to be available"
+timeout=200
+start_time=$(date +%s)
+while true; do
+    if curl -k --silent --fail https://$MINIKUBE_HOST/auth/realms/vre/; then
+        echo "OIDC configuration URL is available"
+        break
+    fi
+    current_time=$(date +%s)
+    elapsed_time=$((current_time - start_time))
+    if [ $elapsed_time -ge $timeout ]; then
+        echo "OIDC configuration URL is not available after 5 minutes"
+        exit 1
+    fi
+    sleep 5
+done
+
 echo "Getting access token for the workflow service"
 curl -k -X POST https://$MINIKUBE_HOST/auth/realms/vre/protocol/openid-connect/token   \
   -H "Content-Type: application/x-www-form-urlencoded"   -d "grant_type=password"   \
@@ -75,9 +101,39 @@ echo "AUTH_TOKEN=$(cat auth_token.txt)" >> $GITHUB_ENV
 
 #Get Argo workflow summation token and set it to configuration.json
 echo "Getting Argo workflow submission token"
-ARGO_TOKEN=`kubectl get secret  argo-vreapi.service-account-token -o=jsonpath='{.data.token}' -n naavre  | base64 --decode`
+ARGO_TOKEN="$(kubectl get secret argo-vreapi.service-account-token -o=jsonpath='{.data.token}' -n naavre | base64 --decode)"
 export ARGO_TOKEN
+# Wait for the Argo workflow service to be available
+timeout=200
+start_time=$(date +%s)
+while true; do
+    if curl -k --silent --fail https://$MINIKUBE_HOST/argowf/; then
+        echo "Argo workflow service is available"
+        break
+    fi
+    current_time=$(date +%s)
+    elapsed_time=$((current_time - start_time))
+    if [ $elapsed_time -ge $timeout ]; then
+        echo "Argo workflow service is not available"
+        exit 1
+    fi
+    sleep 5
+done
+
+# Test if the ARGO_TOKEN works on https://$MINIKUBE_HOST/argowf
+echo  "Running curl -o /dev/null -s -w \"%{http_code}\" -k https://$MINIKUBE_HOST/argowf/api/v1/workflows/naavre -H \"Authorization: Bearer $ARGO_TOKEN\""
+status_code=$(curl -o /dev/null -s -w "%{http_code}" -k https://$MINIKUBE_HOST/argowf/api/v1/workflows/naavre -H "Authorization: Bearer $ARGO_TOKEN")
+echo "Argo API returned status code $status_code"
+
+if [ "$status_code" -ne 200 ]; then
+    echo "Argo API returned status code $status_code"
+    exit 1
+fi
+
+
+
 jq --arg token "$ARGO_TOKEN" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minkube_configuration.json
+jq --arg token "$ARGO_TOKEN" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.namespace = $namespace else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
 
 # Export environment variables to dev3.env
 echo "Exporting environment variables to dev3.env"
