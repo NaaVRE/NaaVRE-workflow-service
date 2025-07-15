@@ -23,7 +23,7 @@ echo "SECRETS_CREATOR_API_ENDPOINT=https://$MINIKUBE_HOST/k8s-secret-creator/1.0
 export SECRETS_CREATOR_API_TOKEN="SECRETS_CREATOR_API_TOKEN"
 echo "SECRETS_CREATOR_API_TOKEN=SECRETS_CREATOR_API_TOKEN" >> $GITHUB_ENV
 
-Get the minikube IP and add it to /etc/hosts if not already present
+#Get the minikube IP and add it to /etc/hosts if not already present
 MINIKUBE_IP=$(minikube ip)
 export MINIKUBE_IP
 if ! grep -q "$MINIKUBE_IP" /etc/hosts; then
@@ -90,13 +90,10 @@ while true; do
 done
 
 echo "Getting access token for the workflow service"
-curl -k -X POST https://$MINIKUBE_HOST/auth/realms/vre/protocol/openid-connect/token   \
-  -H "Content-Type: application/x-www-form-urlencoded"   -d "grant_type=password"   \
-  -d "client_id=naavre"   -d "username=my-user"   -d "password=USER_PASSWORD"   -d "scope=openid" | jq -r '.access_token' > auth_token.txt
+AUTH_TOKEN="$(curl -k -X POST https://$MINIKUBE_HOST/auth/realms/vre/protocol/openid-connect/token -H 'Content-Type: application/x-www-form-urlencoded'   -d 'grant_type=password' -d 'client_id=naavre'   -d 'username=my-user'   -d 'password=USER_PASSWORD'   -d 'scope=openid' | jq -r '.access_token')"
 echo "Setting the AUTH_TOKEN environment variable"
-AUTH_TOKEN=$(cat auth_token.txt)
 export AUTH_TOKEN
-echo "AUTH_TOKEN=$(cat auth_token.txt)" >> $GITHUB_ENV
+echo "AUTH_TOKEN=$AUTH_TOKEN" >> $GITHUB_ENV
 
 
 #Get Argo workflow summation token and set it to configuration.json
@@ -121,15 +118,12 @@ while true; do
 done
 
 # Test if the ARGO_TOKEN works on https://$MINIKUBE_HOST/argowf
-echo  "Running curl -o /dev/null -s -w \"%{http_code}\" -k https://$MINIKUBE_HOST/argowf/api/v1/workflows/naavre -H \"Authorization: Bearer $ARGO_TOKEN\""
 status_code=$(curl -o /dev/null -s -w "%{http_code}" -k https://$MINIKUBE_HOST/argowf/api/v1/workflows/naavre -H "Authorization: Bearer $ARGO_TOKEN")
 echo "Argo API returned status code $status_code"
-
 if [ "$status_code" -ne 200 ]; then
     echo "Argo API returned status code $status_code"
     exit 1
 fi
-
 
 
 jq --arg token "$ARGO_TOKEN" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minkube_configuration.json
@@ -138,18 +132,20 @@ jq --arg namespace "naavre" '.vl_configurations |= map(if .name == "virtual_lab_
 
 # Export environment variables to dev3.env
 echo "Exporting environment variables to dev3.env"
-echo "AUTH_TOKEN=$AUTH_TOKEN" > dev3.env
-echo "ARGO_TOKEN=$ARGO_TOKEN" >> dev3.env
-echo "OIDC_CONFIGURATION_URL=$OIDC_CONFIGURATION_URL" >> dev3.env
-echo "VERIFY_SSL=$VERIFY_SSL" >> dev3.env
-echo "DISABLE_AUTH=$DISABLE_AUTH" >> dev3.env
-echo "CONFIG_FILE_URL=$CONFIG_FILE_URL" >> dev3.env
-echo "SECRETS_CREATOR_API_ENDPOINT=$SECRETS_CREATOR_API_ENDPOINT" >> dev3.env
-echo "SECRETS_CREATOR_API_TOKEN=$SECRETS_CREATOR_API_TOKEN" >> dev3.env
-echo "DISABLE_OAUTH=False" >> dev3.env
-echo "CLIENT_ID=$CLIENT_ID" >> dev3.env
-echo "USERNAME=$USERNAME" >> dev3.env
-echo "PASSWORD=$PASSWORD" >> dev3.env
+{
+  echo "AUTH_TOKEN=$AUTH_TOKEN"
+  echo "ARGO_TOKEN=$ARGO_TOKEN"
+  echo "OIDC_CONFIGURATION_URL=$OIDC_CONFIGURATION_URL"
+  echo "VERIFY_SSL=$VERIFY_SSL"
+  echo "DISABLE_AUTH=$DISABLE_AUTH"
+  echo "CONFIG_FILE_URL=$CONFIG_FILE_URL"
+  echo "SECRETS_CREATOR_API_ENDPOINT=$SECRETS_CREATOR_API_ENDPOINT"
+  echo "SECRETS_CREATOR_API_TOKEN=$SECRETS_CREATOR_API_TOKEN"
+  echo "DISABLE_OAUTH=False"
+  echo "CLIENT_ID=$CLIENT_ID"
+  echo "USERNAME=$USERNAME"
+  echo "PASSWORD=$PASSWORD"
+} > dev3.env
 
 
 
