@@ -133,7 +133,8 @@ fi
 
 
 jq --arg token "$ARGO_TOKEN" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-jq --arg token "$ARGO_TOKEN" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.namespace = $namespace else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
+# Set namesapce in minkube_configuration.json in the virtual_lab_1
+jq --arg namespace "naavre" '.vl_configurations |= map(if .name == "virtual_lab_1" then .namespace = $namespace else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
 
 # Export environment variables to dev3.env
 echo "Exporting environment variables to dev3.env"
