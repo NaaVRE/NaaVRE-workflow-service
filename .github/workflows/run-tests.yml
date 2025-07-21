@@ -43,7 +43,9 @@ jobs:
           chmod +x ./scripts/setup-tests.sh
           ./scripts/setup-tests.sh
 
-      - run: pip install -r requirements.txt
+      - run: |
+            pip install -r requirements.txt
+            pip install pytest
 
 
       - name: pytest
