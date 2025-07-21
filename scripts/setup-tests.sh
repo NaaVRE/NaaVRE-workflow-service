@@ -22,6 +22,12 @@ export SECRETS_CREATOR_API_ENDPOINT="https://$MINIKUBE_HOST/k8s-secret-creator/1
 echo "SECRETS_CREATOR_API_ENDPOINT=https://$MINIKUBE_HOST/k8s-secret-creator/1.0.0" >> $GITHUB_ENV
 export SECRETS_CREATOR_API_TOKEN="SECRETS_CREATOR_API_TOKEN"
 echo "SECRETS_CREATOR_API_TOKEN=SECRETS_CREATOR_API_TOKEN" >> $GITHUB_ENV
+export ARGO_SERVICE_ACCOUNT_EXECUTOR="argo-executor"
+echo "ARGO_SERVICE_ACCOUNT_EXECUTOR=argo-executor" >> $GITHUB_ENV
+export ARGO_VRE_API_SERVICE_ACCOUNT="argo-vreapi"
+echo "ARGO_VRE_API_SERVICE_ACCOUNT=argo-vreapi" >> $GITHUB_ENV
+export ARGO_SERCERT_TOKEN_NAME=argo-vreapi.service-account-token
+echo "ARGO_SERCERT_TOKEN_NAME=argo-vreapi.service-account-token" >> $GITHUB_ENV
 
 #Get the minikube IP and add it to /etc/hosts if not already present
 MINIKUBE_IP=$(minikube ip)
@@ -98,7 +104,7 @@ echo "AUTH_TOKEN=$AUTH_TOKEN" >> $GITHUB_ENV
 
 #Get Argo workflow summation token and set it to configuration.json
 echo "Getting Argo workflow submission token"
-ARGO_TOKEN="$(kubectl get secret argo-vreapi.service-account-token -o=jsonpath='{.data.token}' -n naavre | base64 --decode)"
+ARGO_TOKEN="$(kubectl get secret ${ARGO_SERCERT_TOKEN_NAME} -o=jsonpath='{.data.token}' -n naavre | base64 --decode)"
 export ARGO_TOKEN
 # Wait for the Argo workflow service to be available
 timeout=200
@@ -125,10 +131,47 @@ if [ "$status_code" -ne 200 ]; then
     exit 1
 fi
 
+# Wait for the executor service account to be created
+timeout=200
+start_time=$(date +%s)
+while true; do
+    if kubectl get serviceaccount $ARGO_SERVICE_ACCOUNT_EXECUTOR -n naavre > /dev/null 2>&1; then
+        echo "Service account $ARGO_SERVICE_ACCOUNT_EXECUTOR is available"
+        break
+    fi
+    current_time=$(date +%s)
+    elapsed_time=$((current_time - start_time))
+    if [ $elapsed_time -ge $timeout ]; then
+        echo "Service account $ARGO_SERVICE_ACCOUNT_EXECUTOR is not available"
+        exit 1
+    fi
+    sleep 5
+done
+
+# Wait for $ARGO_VRE_API_SERVICE_ACCOUNT service account to be created
+timeout=200
+start_time=$(date +%s)
+while true; do
+    if kubectl get serviceaccount $ARGO_VRE_API_SERVICE_ACCOUNT -n naavre > /dev/null 2>&1; then
+        echo "Service account $ARGO_VRE_API_SERVICE_ACCOUNT is available"
+        break
+    fi
+    current_time=$(date +%s)
+    elapsed_time=$((current_time - start_time))
+    if [ $elapsed_time -ge $timeout ]; then
+        echo "Service account $ARGO_VRE_API_SERVICE_ACCOUNT is not available"
+        exit 1
+    fi
+    sleep 5
+done
+
 
 jq --arg token "$ARGO_TOKEN" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minkube_configuration.json
 # Set namesapce in minkube_configuration.json in the virtual_lab_1
 jq --arg namespace "naavre" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.namespace = $namespace else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
+# Set service_account in minkube_configuration.json in the virtual_lab_1
+jq --arg service_account "$ARGO_SERVICE_ACCOUNT_EXECUTOR" '.vl_configurations |= map(if .name == "virtual_lab_1" then .wf_engine_config.service_account = $service_account else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
+
 
 # Export environment variables to dev3.env
 echo "Exporting environment variables to dev3.env"

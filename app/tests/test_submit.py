@@ -39,25 +39,26 @@ def test_submit():
         run_url = submit_response.json()['run_url']
         assert run_url is not None
 
-        get_wf_response = client.get(
+        wf_status_response = client.get(
             '/status/' + workflow_dict['virtual_lab'],
             params={'workflow_url': run_url},
             headers={'Authorization': 'Bearer ' + user_auth_token}
         )
 
-        assert get_wf_response.status_code == 200
-        get_wf_response_json = get_wf_response.json()
-        if 'phase' in get_wf_response_json['status']:
-            assert get_wf_response_json['status']['phase'] != 'Failed'
-            assert get_wf_response_json['status']['phase'] != 'Error'
-        print(get_wf_response_json)
+        assert wf_status_response.status_code == 200
+        wf_status_response_json = wf_status_response.json()
+        if 'phase' in wf_status_response_json['status']:
+            assert wf_status_response_json['status']['phase'] != 'Failed'
+            assert wf_status_response_json['status']['phase'] != 'Error'
+        print(wf_status_response_json)
 
         # Delete the workflow after testing
-        delete_wf_response = client.delete(
+        wf_delete_response = client.delete(
             '/delete/' + workflow_dict['virtual_lab'],
             params={'workflow_url': run_url},
             headers={'Authorization': 'Bearer ' + user_auth_token}
         )
-        assert delete_wf_response.status_code == 200
-        delete_wf_response_json = delete_wf_response.json()
+        assert wf_delete_response.status_code == 200
+        delete_wf_response_json = wf_delete_response.json()
         print(delete_wf_response_json)
+        assert delete_wf_response_json['status'] == 'deleted'
