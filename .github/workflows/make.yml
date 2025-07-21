@@ -36,13 +36,14 @@ jobs:
   # - disable call-collect-tests, split-tests, and call-pytest
   # - change call-build-container requirement (needs) from call-pytest to configure-workflow
 
+
 #  call-collect-tests:
 #    uses: ./.github/workflows/collect-tests.yml
 #    with:
 #      oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
-#
+
 #  split-tests:
-#    needs: [call-collect-tests]
+#    needs: [call-collect-tests,call-start-minikube]
 #    runs-on: ubuntu-latest
 #    outputs:
 #      test_list: ${{ steps.split-output.outputs.test_list }}
@@ -64,28 +65,18 @@ jobs:
 #          echo $MATRIX
 #          echo "test_list=$MATRIX" >> $GITHUB_OUTPUT
 #
-#  call-pytest:
-#    uses: ./.github/workflows/run-tests.yml
-#    needs: [configure-workflow,split-tests]
-#    if: ${{ needs.configure-workflow.outputs.should_skip != 'true' }}
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        test: ${{ fromJson(needs.split-tests.outputs.test_list) }}
-#    with:
-#      runs-on: ${{ needs.configure-workflow.outputs.runner }}
-#      debug: ${{ vars.DEBUG }}
-#      oidc_configuration_url: ${{ vars.OIDC_CONFIGURATION_URL }}
-#      verify_ssl: ${{ vars.VERIFY_SSL }}
-#      disable_auth: ${{ vars.DISABLE_AUTH }}
-#      root_path: ${{ vars.ROOT_PATH }}
-#      test: ${{ matrix.test }}
-#    secrets:
-#      auth_token: ${{ secrets.AUTH_TOKEN }}
+  call-pytest:
+    uses: ./.github/workflows/run-tests.yml
+    needs: [configure-workflow]
+    if: ${{ needs.configure-workflow.outputs.should_skip != 'true' }}
+    strategy:
+      fail-fast: false
+    with:
+      runs-on: ${{ needs.configure-workflow.outputs.runner }}
+      debug: ${{ vars.DEBUG }}
 
   call-build-container:
-#    needs: [call-pytest]
-    needs: [configure-workflow]
+    needs: [configure-workflow,call-pytest]
     uses: ./.github/workflows/build-container.yml
     with:
       oci_tag: ghcr.io/naavre/naavre-workflow-service
@@ -93,7 +84,7 @@ jobs:
       push: ${{ github.event_name == 'release' }}
 
   call-helm-chart-release:
-    needs: [call-build-container]
+    needs: [call-build-container,call-pytest]
     uses: ./.github/workflows/helm-chart-release.yml
     with:
       oci_repo: ghcr.io/naavre/charts

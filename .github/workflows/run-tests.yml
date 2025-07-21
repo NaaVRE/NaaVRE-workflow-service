@@ -10,32 +10,9 @@ on:
       debug:
         required: true
         type: string
-      oidc_configuration_url:
-        required: true
-        type: string
-      verify_ssl:
-        required: true
-        type: string
-      disable_auth :
-        required: true
-        type: string
-      root_path:
-        required: true
-        type: string
-      test:
-        required: true
-        type: string
-    secrets:
-      auth_token:
-        required: true
 
 env:
   DEBUG: ${{ inputs.debug }}
-  OIDC_CONFIGURATION_URL: ${{ inputs.oidc_configuration_url }}
-  VERIFY_SSL: ${{ inputs.verify_ssl }}
-  DISABLE_AUTH: ${{ inputs.disable_auth }}
-  ROOT_PATH: ${{ inputs.root_path }}
-  AUTH_TOKEN: ${{ secrets.auth_token }}
 
 
 jobs:
@@ -51,9 +28,27 @@ jobs:
           python-version: '3.13'
           cache: 'pip'
 
-      - run: pip install -r requirements.txt
+      - name: start minikube
+        id: minikube
+        uses: medyagh/setup-minikube@v0.0.19
+        with:
+          addons: ingress,ingress-dns
+
+      - name: Try the cluster
+        run: kubectl get pods -A
+
+      - name: Run setup-tests.sh
+        shell: bash -l {0}
+        run: |
+          chmod +x ./scripts/setup-tests.sh
+          ./scripts/setup-tests.sh
+
+      - run: |
+            pip install -r requirements.txt
+            pip install pytest
+
 
       - name: pytest
         shell: bash -l {0}
         run: |
-           pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header
+           pytest -s --ignore=docker --ignore=cypress --no-header
