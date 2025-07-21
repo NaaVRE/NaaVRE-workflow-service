@@ -15,7 +15,8 @@ client = TestClient(app)
 logger = logging.getLogger(__name__)
 tests_resources_dir = Path(__file__).parent / "resources"
 
-user_auth_token =  os.getenv('AUTH_TOKEN')
+user_auth_token = os.getenv('AUTH_TOKEN')
+
 
 def test_submit():
     workflows_json_path = os.path.join(base_path, 'naavrewf2_payload')
