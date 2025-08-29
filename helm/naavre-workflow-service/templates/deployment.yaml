@@ -13,10 +13,11 @@ spec:
       {{- include "naavre-workflow-service.selectorLabels" . | nindent 6}}
   template:
     metadata:
-      {{- with .Values.podAnnotations}}
       annotations:
+        checksum/VirtualLabsConfiguration: {{ .Values.conf.virtual_labs_configuration.rawJson | sha256sum }}
+        {{- with .Values.podAnnotations}}
         {{- toYaml . | nindent 8}}
-      {{- end}}
+        {{- end}}
       labels:
         {{- include "naavre-workflow-service.labels" . | nindent 8}}
           {{- with .Values.podLabels}}
