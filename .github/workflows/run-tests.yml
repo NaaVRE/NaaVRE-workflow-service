@@ -14,7 +14,6 @@ on:
 env:
   DEBUG: ${{ inputs.debug }}
 
-
 jobs:
   test:
     runs-on: ${{ inputs.runs-on }}
@@ -45,11 +44,11 @@ jobs:
           ./setup-tests.sh -f ../values-deploy-naavreWorkflowService-minikube-github.yaml
 
       - run: |
-            pip install -r requirements.txt
-            pip install pytest
+          pip install -r requirements.txt
+          pip install pytest
 
 
       - name: pytest
         shell: bash -l {0}
         run: |
-           pytest -s --ignore=docker --ignore=cypress --no-header
+          pytest -s --ignore=docker --ignore=cypress --no-header
