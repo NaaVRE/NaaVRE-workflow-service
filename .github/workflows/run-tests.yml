@@ -40,7 +40,7 @@ jobs:
       - name: Run setup-tests.sh
         shell: bash -l {0}
         run: |
-          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/36-move-setup-testssh-for-testing-in-minikube-here/scripts/setup-tests.sh
+          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/scripts/setup-tests.sh
           chmod +x setup-tests.sh
           ./setup-tests.sh -f ../values-deploy-naavreWorkflowService-minikube-github.yaml
 
