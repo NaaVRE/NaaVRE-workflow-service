@@ -1,6 +1,6 @@
 global:
   namespace: naavre
-
+  insecureSkipVerifySSL: true
   ingress:
     domain: naavre-dev.minikube.test
     commonAnnotations: {}
@@ -61,8 +61,3 @@ naavreWorkflowService:
 
 naavrePaasFrontend:
   enabled: false
-
-argoWorkflows:
-  server:
-    sso:
-      insecureSkipVerify: true
