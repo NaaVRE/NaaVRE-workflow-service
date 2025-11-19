@@ -1,0 +1,12 @@
+global:
+  namespace: naavre
+jupyterhub:
+  vlabs:
+    openlab:
+      image:
+        tag: v0.0.25
+      configuration:
+        base_image_tags_url: https://github.com/NaaVRE/flavors/releases/download/v0.0.25/base_image_tags.json
+        cell_github_url: https://github.com/QCDIS/NaaVRE-cells-test-3
+        cell_github_token: ghp_XXXXXXXXXXXXXXXX
+        registry_url: ghcr.io/qcdis/naavre-cells-test-3

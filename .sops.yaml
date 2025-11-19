@@ -1,0 +1,3 @@
+creation_rules:
+  - kms: 'arn:aws:kms:eu-west-3:050752621342:key/4680e482-89c6-4210-b541-0453aa4a41ef,arn:aws:kms:eu-central-1:050752621342:key/6a9ef814-a13a-4299-b406-2e75b3ef1554'
+    pgp: 'E90351D346AFCF25477190F1434316312E1CF3B1'
