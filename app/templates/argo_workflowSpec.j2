@@ -5,7 +5,7 @@ volumeClaimTemplates:
     name: workdir
   spec:
     accessModes: [ "ReadWriteMany" ]
-    persistentVolumeReclaimPolicy: Delete
+    persistentVolumeReclaimPolicy: Retain
     resources:
       requests:
         storage: {{ workdir_storage_size }}
