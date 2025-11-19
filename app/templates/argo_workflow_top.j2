@@ -9,7 +9,7 @@ metadata:
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
-    {% if public-bucket-claim-name and user-bucket-claim-name %}
+    {% if public_bucket_claim_name and user_bucket_claim_name %}
     volumes:
     - name: public-bucket
       persistentVolumeClaim:
