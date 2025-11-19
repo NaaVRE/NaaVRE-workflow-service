@@ -95,7 +95,8 @@ class ArgoEngine(WFEngine, ABC):
             workflow_name=workflow_name,
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
-            cron_schedule=self.cron_schedule
+            cron_schedule=self.cron_schedule,
+            unescaped_username=self.user_name
         )
         workflow_dict = yaml.safe_load(workflow_yaml)
         return workflow_dict

@@ -9,6 +9,13 @@ volumeClaimTemplates:
     resources:
       requests:
         storage: {{ workdir_storage_size }}
+    volumes:
+    - name: public-bucket
+        persistentVolumeClaim:
+          claimName: csi-s3-naa-vre-public-bucket
+    - name: user-bucket
+        persistentVolumeClaim:
+          claimName: csi-s3-naa-vre-user-data-bucket
 arguments:
   parameters:
   {% for param_name, param in global_params.items() %}
@@ -150,6 +157,11 @@ templates:
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
+    - name: public-bucket
+      mountPath: /mnt/public-bucket
+    - name: user-bucket
+      mountPath: /mnt/user-bucket
+      subPath: "{{ unescaped_username }}"
     env:
     {%  for s in secrets %}
       - name: {{ s.name }}

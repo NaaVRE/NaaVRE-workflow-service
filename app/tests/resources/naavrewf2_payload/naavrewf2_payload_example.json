@@ -1,161 +1,161 @@
 {
-    "virtual_lab": "virtual_lab_1",
-    "params": {},
-    "secrets": {},
-    "naavrewf2": {
-        "nodes": {
-            "ea911b63-9595-43c4-a389-97d5e7963d91": {
-                "id": "ea911b63-9595-43c4-a389-97d5e7963d91",
-                "type": "workflow-cell",
-                "properties": {
-                    "cell": {
-                        "url": "http://naavre-dev.minikube.test/NaaVRE-catalogue-service/workflow-cells/359905fe-5228-4d29-97cb-0e5394e9fb4f/",
-                        "title": "create-file-user",
-                        "description": "create-file-user",
-                        "created": "2025-05-24T14:15:11.047635Z",
-                        "modified": "2025-05-25T20:24:58.582938Z",
-                        "owner": "user",
-                        "virtual_lab": "virtual_lab_1",
-                        "container_image": "ghcr.io/qcdis/naavre-cells-test-3/create-file-user:524bf89",
-                        "base_container_image": {
-                            "build": "ghcr.io/qcdis/naavre/naavre-cell-build-python:v0.22.11",
-                            "runtime": "ghcr.io/qcdis/naavre/naavre-cell-runtime-python:v0.22.11"
-                        },
-                        "dependencies": [
-                            {
-                                "name": "join",
-                                "module": "os.path",
-                                "asname": null
-                            },
-                            {
-                                "name": "os",
-                                "module": "",
-                                "asname": null
-                            },
-                            {
-                                "name": "listdir",
-                                "module": "os",
-                                "asname": null
-                            },
-                            {
-                                "name": "isfile",
-                                "module": "os.path",
-                                "asname": null
-                            }
-                        ],
-                        "inputs": [],
-                        "outputs": [
-                            {
-                                "name": "file_path",
-                                "type": "str"
-                            }
-                        ],
-                        "confs": [
-                            {
-                                "name": "conf_data_folder",
-                                "assignation": "conf_data_folder = os.path.join('/tmp', 'data')"
-                            }
-                        ],
-                        "params": [],
-                        "secrets": [],
-                        "kernel": "ipython",
-                        "source_url": "https://github.com/QCDIS/NaaVRE-cells-test-3/tree/92916033f69a2d328b66b933cd01ff3f9ba24777/create-file-user"
-                    }
-                },
-                "ports": {
-                    "file_path": {
-                        "id": "file_path",
-                        "type": "right",
-                        "properties": {
-                            "color": "#d2bf79",
-                            "parentNodeType": "workflow-cell"
-                        }
-                    }
-                }
+  "virtual_lab": "openlab",
+  "params": {},
+  "secrets": {},
+  "naavrewf2": {
+    "nodes": {
+      "ea911b63-9595-43c4-a389-97d5e7963d91": {
+        "id": "ea911b63-9595-43c4-a389-97d5e7963d91",
+        "type": "workflow-cell",
+        "properties": {
+          "cell": {
+            "url": "http://naavre-dev.minikube.test/NaaVRE-catalogue-service/workflow-cells/359905fe-5228-4d29-97cb-0e5394e9fb4f/",
+            "title": "create-file-user",
+            "description": "create-file-user",
+            "created": "2025-05-24T14:15:11.047635Z",
+            "modified": "2025-05-25T20:24:58.582938Z",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "container_image": "ghcr.io/qcdis/naavre-cells-test-3/create-file-user:524bf89",
+            "base_container_image": {
+              "build": "ghcr.io/qcdis/naavre/naavre-cell-build-python:v0.22.11",
+              "runtime": "ghcr.io/qcdis/naavre/naavre-cell-runtime-python:v0.22.11"
             },
-            "61ad68d3-fb7f-4b8d-bd3b-d2cb29a858cd": {
-                "id": "61ad68d3-fb7f-4b8d-bd3b-d2cb29a858cd",
-                "type": "workflow-cell",
-                "properties": {
-                    "cell": {
-                        "url": "http://naavre-dev.minikube.test/NaaVRE-catalogue-service/workflow-cells/db821467-f723-4037-b594-4ea627df70b5/",
-                        "title": "read-file-lines-user",
-                        "description": "read-file-lines-user",
-                        "created": "2025-05-24T14:20:37.123732Z",
-                        "modified": "2025-05-25T20:26:05.727577Z",
-                        "owner": "user",
-                        "virtual_lab": "virtual_lab_1",
-                        "container_image": "ghcr.io/qcdis/naavre-cells-test-3/read-file-lines-user:609fd2e",
-                        "base_container_image": {
-                            "build": "ghcr.io/qcdis/naavre/naavre-cell-build-python:v0.22.11",
-                            "runtime": "ghcr.io/qcdis/naavre/naavre-cell-runtime-python:v0.22.11"
-                        },
-                        "dependencies": [
-                            {
-                                "name": "listdir",
-                                "module": "os",
-                                "asname": null
-                            },
-                            {
-                                "name": "isfile",
-                                "module": "os.path",
-                                "asname": null
-                            },
-                            {
-                                "name": "join",
-                                "module": "os.path",
-                                "asname": null
-                            },
-                            {
-                                "name": "os",
-                                "module": "",
-                                "asname": null
-                            }
-                        ],
-                        "inputs": [
-                            {
-                                "name": "file_path",
-                                "type": "str"
-                            }
-                        ],
-                        "outputs": [],
-                        "confs": [
-                            {
-                                "name": "conf_data_folder",
-                                "assignation": "conf_data_folder = os.path.join('/tmp', 'data')"
-                            }
-                        ],
-                        "params": [],
-                        "secrets": [],
-                        "kernel": "ipython",
-                        "source_url": "https://github.com/QCDIS/NaaVRE-cells-test-3/tree/000d376fce14ca01006f67d7e6b0b953dab687c7/read-file-lines-user"
-                    }
-                },
-                "ports": {
-                    "file_path": {
-                        "id": "file_path",
-                        "type": "left",
-                        "properties": {
-                            "color": "#d2bf79",
-                            "parentNodeType": "workflow-cell"
-                        }
-                    }
-                }
-            }
+            "dependencies": [
+              {
+                "name": "join",
+                "module": "os.path",
+                "asname": null
+              },
+              {
+                "name": "os",
+                "module": "",
+                "asname": null
+              },
+              {
+                "name": "listdir",
+                "module": "os",
+                "asname": null
+              },
+              {
+                "name": "isfile",
+                "module": "os.path",
+                "asname": null
+              }
+            ],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "file_path",
+                "type": "str"
+              }
+            ],
+            "confs": [
+              {
+                "name": "conf_data_folder",
+                "assignation": "conf_data_folder = os.path.join('/tmp', 'data')"
+              }
+            ],
+            "params": [],
+            "secrets": [],
+            "kernel": "ipython",
+            "source_url": "https://github.com/QCDIS/NaaVRE-cells-test-3/tree/92916033f69a2d328b66b933cd01ff3f9ba24777/create-file-user"
+          }
         },
-        "links": {
-            "c483c7b0-b0f0-4bd0-a3dc-c7ba5e69ae31": {
-                "id": "c483c7b0-b0f0-4bd0-a3dc-c7ba5e69ae31",
-                "from": {
-                    "nodeId": "ea911b63-9595-43c4-a389-97d5e7963d91",
-                    "portId": "file_path"
-                },
-                "to": {
-                    "nodeId": "61ad68d3-fb7f-4b8d-bd3b-d2cb29a858cd",
-                    "portId": "file_path"
-                }
+        "ports": {
+          "file_path": {
+            "id": "file_path",
+            "type": "right",
+            "properties": {
+              "color": "#d2bf79",
+              "parentNodeType": "workflow-cell"
             }
+          }
         }
+      },
+      "61ad68d3-fb7f-4b8d-bd3b-d2cb29a858cd": {
+        "id": "61ad68d3-fb7f-4b8d-bd3b-d2cb29a858cd",
+        "type": "workflow-cell",
+        "properties": {
+          "cell": {
+            "url": "http://naavre-dev.minikube.test/NaaVRE-catalogue-service/workflow-cells/db821467-f723-4037-b594-4ea627df70b5/",
+            "title": "read-file-lines-user",
+            "description": "read-file-lines-user",
+            "created": "2025-05-24T14:20:37.123732Z",
+            "modified": "2025-05-25T20:26:05.727577Z",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "container_image": "ghcr.io/qcdis/naavre-cells-test-3/read-file-lines-user:609fd2e",
+            "base_container_image": {
+              "build": "ghcr.io/qcdis/naavre/naavre-cell-build-python:v0.22.11",
+              "runtime": "ghcr.io/qcdis/naavre/naavre-cell-runtime-python:v0.22.11"
+            },
+            "dependencies": [
+              {
+                "name": "listdir",
+                "module": "os",
+                "asname": null
+              },
+              {
+                "name": "isfile",
+                "module": "os.path",
+                "asname": null
+              },
+              {
+                "name": "join",
+                "module": "os.path",
+                "asname": null
+              },
+              {
+                "name": "os",
+                "module": "",
+                "asname": null
+              }
+            ],
+            "inputs": [
+              {
+                "name": "file_path",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [
+              {
+                "name": "conf_data_folder",
+                "assignation": "conf_data_folder = os.path.join('/tmp', 'data')"
+              }
+            ],
+            "params": [],
+            "secrets": [],
+            "kernel": "ipython",
+            "source_url": "https://github.com/QCDIS/NaaVRE-cells-test-3/tree/000d376fce14ca01006f67d7e6b0b953dab687c7/read-file-lines-user"
+          }
+        },
+        "ports": {
+          "file_path": {
+            "id": "file_path",
+            "type": "left",
+            "properties": {
+              "color": "#d2bf79",
+              "parentNodeType": "workflow-cell"
+            }
+          }
+        }
+      }
     },
-    "user_name": null
+    "links": {
+      "c483c7b0-b0f0-4bd0-a3dc-c7ba5e69ae31": {
+        "id": "c483c7b0-b0f0-4bd0-a3dc-c7ba5e69ae31",
+        "from": {
+          "nodeId": "ea911b63-9595-43c4-a389-97d5e7963d91",
+          "portId": "file_path"
+        },
+        "to": {
+          "nodeId": "61ad68d3-fb7f-4b8d-bd3b-d2cb29a858cd",
+          "portId": "file_path"
+        }
+      }
+    }
+  },
+  "user_name": null
 }
