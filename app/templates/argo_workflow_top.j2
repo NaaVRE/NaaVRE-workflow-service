@@ -19,7 +19,8 @@ spec:
            global_params=global_params,
            deps_dag=deps_dag,
            nodes=nodes,
-           k8s_secret_name=k8s_secret_name) | indent(6, true) }}
+           k8s_secret_name=k8s_secret_name,
+           unescaped_username=unescaped_username) | indent(6, true) }}
     {% else %}
 {{ include('argo_workflowSpec.j2',
            workflow_name=workflow_name,
@@ -28,5 +29,6 @@ spec:
            global_params=global_params,
            deps_dag=deps_dag,
            nodes=nodes,
-           k8s_secret_name=k8s_secret_name) | indent(4, true) }}
+           k8s_secret_name=k8s_secret_name,
+           unescaped_username=unescaped_username) | indent(4, true) }}
     {% endif %}

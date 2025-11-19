@@ -11,11 +11,11 @@ volumeClaimTemplates:
         storage: {{ workdir_storage_size }}
     volumes:
     - name: public-bucket
-        persistentVolumeClaim:
-          claimName: csi-s3-naa-vre-public-bucket
+      persistentVolumeClaim:
+        claimName: csi-s3-naa-vre-public-bucket
     - name: user-bucket
-        persistentVolumeClaim:
-          claimName: csi-s3-naa-vre-user-data-bucket
+      persistentVolumeClaim:
+        claimName: csi-s3-naa-vre-user-data-bucket
 arguments:
   parameters:
   {% for param_name, param in global_params.items() %}
