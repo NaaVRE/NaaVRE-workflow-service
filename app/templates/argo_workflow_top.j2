@@ -9,6 +9,13 @@ metadata:
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
+    volumes:
+    - name: public-bucket
+      persistentVolumeClaim:
+        claimName: csi-s3-naa-vre-public-bucket
+    - name: user-data
+      persistentVolumeClaim:
+        claimName: csi-s3-naa-vre-user-data-bucket
     {% if cron_schedule %}
     schedule: "{{ cron_schedule }}"
     workflowSpec:
