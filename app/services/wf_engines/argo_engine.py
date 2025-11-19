@@ -96,7 +96,9 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            unescaped_username=self.user_name
+            unescaped_username=self.user_name,
+            public_bucket_claim_name ="csi-s3-naa-vre-public-bucket",
+            user_bucket_claim_name="csi-s3-naa-vre-user-data-bucket"
         )
         workflow_dict = yaml.safe_load(workflow_yaml)
         return workflow_dict
