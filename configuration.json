@@ -8,7 +8,19 @@
         "access_token": "eyJhbGciOg...",
         "service_account": "executor",
         "namespace": "default",
-        "workdir_storage_size": "1Gi"
+        "workdir_storage_size": "1Gi",
+        "extraVolumeMounts": [
+          {
+            "name": "naa-vre-public",
+            "readOnly": true,
+            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-public"
+          },
+          {
+            "name": "naa-vre-user-data",
+            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
+            "subPath": "{unescaped_username}"
+          }
+        ]
       }
     },
     {

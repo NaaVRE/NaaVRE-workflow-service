@@ -9,15 +9,23 @@ metadata:
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
-    {% if public_bucket_claim_name and user_bucket_claim_name %}
+
+
+
+
+{% if len(extraVolumeMounts) > 0 %}
     volumes:
-    - name: public-bucket
+    {% for vol in extraVolumeMounts %}
+    - name: {{ vol.name }}
       persistentVolumeClaim:
-        claimName: {{ public_bucket_claim_name }}
-    - name: user-data
-      persistentVolumeClaim:
-        claimName: {{ user_bucket_claim_name }}
-    {% endif %}
+        claimName: {{ vol.name }}
+    {% endfor %}
+{% endif %}
+
+
+
+
+
     {% if cron_schedule %}
     schedule: "{{ cron_schedule }}"
     workflowSpec:

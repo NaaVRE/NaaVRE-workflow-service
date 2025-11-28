@@ -150,11 +150,27 @@ templates:
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
-    - name: public-bucket
-      mountPath: /mnt/vol
-    - name: user-data
-      mountPath: /mnt/userdata
-      subPath: "{{ unescaped_username }}"
+
+
+
+
+
+    {% extraVolumeMounts | toYAML(indent=4) | trim %}
+    {% if len(extraVolumeMounts) > 0 %}
+    {% for vol in extraVolumeMounts %}
+    - name: {{ vol.name }}
+      mountPath: {{ vol.mountPath }}
+      {% if vol.subPath %}
+      subPath: {{ vol.subPath }}
+      {% endif %}
+      {% if
+      {% endfor %}
+      {% endif %}
+
+
+
+
+
     env:
     {%  for s in secrets %}
       - name: {{ s.name }}
