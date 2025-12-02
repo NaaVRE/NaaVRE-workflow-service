@@ -10,3 +10,6 @@ jupyterhub:
         cell_github_url: https://github.com/QCDIS/NaaVRE-cells-test-3
         cell_github_token: ghp_XXXXXXXXXXXXXXXX
         registry_url: ghcr.io/qcdis/naavre-cells-test-3
+
+naavreWorkflowService:
+  enabled: false

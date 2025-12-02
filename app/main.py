@@ -48,7 +48,6 @@ if os.path.exists(config_file):
 else:
     # Start going up the directory tree until we find the configuration file
     current_dir = os.getcwd()
-    print(current_dir)
     while current_dir != '/':
         config_path = os.path.join(current_dir,
                                    os.getenv('CONFIG_FILE_URL',

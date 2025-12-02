@@ -17,7 +17,7 @@ conf:
       {
         "vl_configurations": [
           {
-            "name": "virtual_lab_1",
+            "name": "openlab",
             "wf_engine_config": {
               "name": "argo",
               "api_endpoint": "type_1",
