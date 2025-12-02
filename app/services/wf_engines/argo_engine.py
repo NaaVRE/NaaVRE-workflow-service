@@ -44,7 +44,7 @@ class ArgoEngine(WFEngine, ABC):
                                   vl_config.wf_engine_config.namespace)
         self.token = (vl_config.wf_engine_config.access_token.replace
                       ('"', '')).replace('Bearer ', '')
-        self.extra_volume_mounts = vl_config.wf_engine_config.extra_volume_mounts
+        self.extraVolumeMounts = vl_config.wf_engine_config.extraVolumeMounts
 
     def submit(self):
         workflow_dict = self.naavrewf2_2_argo_workflow()
@@ -97,7 +97,7 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts = self.extra_volume_mounts
+            extraVolumeMounts = self.extraVolumeMounts
         )
         workflow_dict = yaml.safe_load(workflow_yaml.format(
             unescaped_username=self.user_name))

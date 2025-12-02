@@ -13,7 +13,7 @@ spec:
 
 
 
-{% if len(extraVolumeMounts) > 0 %}
+{% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 %}
     volumes:
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}

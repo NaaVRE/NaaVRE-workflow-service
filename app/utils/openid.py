@@ -36,7 +36,8 @@ class OpenIDValidator:
         return r.json()
 
     def validate(self, access_token):
-        if os.getenv('DISABLE_AUTH', 'false').lower() == 'true':
+        diable_auth = os.getenv('DISABLE_AUTH', 'false').lower() == 'true'
+        if diable_auth:
             return self.validate_fake_token(access_token)
         else:
             return self.validate_token(access_token)

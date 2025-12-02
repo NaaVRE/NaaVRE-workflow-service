@@ -14,3 +14,4 @@ class WfEngineConfig(BaseModel):
     service_account: Optional[str] | None = None
     namespace: str
     workdir_storage_size: str = '1Gi'
+    extraVolumeMounts: Optional[list[dict]] | None = None

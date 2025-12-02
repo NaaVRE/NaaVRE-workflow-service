@@ -150,9 +150,6 @@ templates:
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
-
-    {% toyaml(extraVolumeMounts) %}
-
     env:
     {%  for s in secrets %}
       - name: {{ s.name }}
