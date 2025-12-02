@@ -37,7 +37,7 @@ spec:
            deps_dag=deps_dag,
            nodes=nodes,
            k8s_secret_name=k8s_secret_name,
-           unescaped_username=unescaped_username) | indent(6, true) }}
+           extraVolumeMounts=extraVolumeMounts) | indent(6, true) }}
     {% else %}
 {{ include('argo_workflowSpec.j2',
            workflow_name=workflow_name,
@@ -47,5 +47,5 @@ spec:
            deps_dag=deps_dag,
            nodes=nodes,
            k8s_secret_name=k8s_secret_name,
-           unescaped_username=unescaped_username) | indent(4, true) }}
+           extraVolumeMounts=extraVolumeMounts) | indent(4, true) }}
     {% endif %}

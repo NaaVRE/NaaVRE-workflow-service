@@ -150,6 +150,15 @@ templates:
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
+
+    {% if extraVolumeMounts is defined %}
+    {% for vol in extraVolumeMounts %}
+    - name: {{ vol.name }}
+      mountPath: {{ vol.mountPath }}
+    {% endfor %}
+    {% endif %}
+
+
     env:
     {%  for s in secrets %}
       - name: {{ s.name }}
