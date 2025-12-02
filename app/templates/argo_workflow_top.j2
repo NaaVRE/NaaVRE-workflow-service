@@ -9,23 +9,14 @@ metadata:
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
-
-
-
-
-{% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 %}
+    {% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 %}
     volumes:
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
       persistentVolumeClaim:
         claimName: {{ vol.name }}
     {% endfor %}
-{% endif %}
-
-
-
-
-
+    {% endif %}
     {% if cron_schedule %}
     schedule: "{{ cron_schedule }}"
     workflowSpec:
