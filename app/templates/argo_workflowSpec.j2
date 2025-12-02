@@ -155,6 +155,12 @@ templates:
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
       mountPath: {{ vol.mountPath }}
+      {% if vol.subPath is defined %}
+      subPath: {{ vol.subPath }}
+      {% endif %}
+      {% if vol.readOnly is defined %}
+      readOnly: {{ vol.readOnly }}
+      {% endif %}
     {% endfor %}
     {% endif %}
 
