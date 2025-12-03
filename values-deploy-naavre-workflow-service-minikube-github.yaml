@@ -9,7 +9,7 @@ jupyterhub:
         base_image_tags_url: https://github.com/NaaVRE/flavors/releases/download/v0.0.39/base_image_tags.json
         cell_github_url: https://github.com/NaaVRE/cells-vl-tests
         cell_github_token: ghp_XXXXXXXXXXXXXXXX
-        registry_url: ghcr.io/qcdis/naavre-cells-test-3
+        registry_url: ghcr.io/qcdis/naavre-cells-vl-tests
         module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
   singleuser:
     storage:
