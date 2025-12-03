@@ -8,7 +8,6 @@ import cachetools.func
 import jwt
 import requests
 import uvicorn
-from cryptography.exceptions import InvalidKey
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jwt import InvalidKeyError

@@ -1,10 +1,10 @@
 import os
 from abc import ABC
 
-from slugify import slugify
 import jinja2
 import requests
 import yaml
+from slugify import slugify
 
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
@@ -20,6 +20,7 @@ def include_file(env):
     def _include(name, **kwargs):
         template = env.get_template(name)
         return template.render(**kwargs)
+
     return _include
 
 
@@ -75,7 +76,7 @@ class ArgoEngine(WFEngine, ABC):
                    f"{self.vl_config.wf_engine_config.namespace}/"
                    f"{workflow_name}")
         return {'run_url': run_url, 'naavrewf2':
-                self.naavrewf2_payload.naavrewf2}
+            self.naavrewf2_payload.naavrewf2}
 
     def naavrewf2_2_argo_workflow(self):
         if self.secrets:
@@ -97,7 +98,7 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts = self.extraVolumeMounts
+            extraVolumeMounts=self.extraVolumeMounts
         )
         workflow_dict = yaml.safe_load(workflow_yaml.format(
             unescaped_username=self.user_name))
@@ -110,7 +111,7 @@ class ArgoEngine(WFEngine, ABC):
             "Authorization": f"Bearer {self.token}"
         }
         workflow_status_url = self.get_workflow_status_url(
-                                                    workflow_url=workflow_url)
+            workflow_url=workflow_url)
         response = requests.get(workflow_status_url, headers=headers,
                                 verify=os.getenv('VERIFY_SSL', 'true').
                                 lower() == 'true')
