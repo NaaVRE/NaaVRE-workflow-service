@@ -10,6 +10,19 @@ jupyterhub:
         cell_github_url: https://github.com/QCDIS/NaaVRE-cells-test-3
         cell_github_token: ghp_XXXXXXXXXXXXXXXX
         registry_url: ghcr.io/qcdis/naavre-cells-test-3
-
-naavreWorkflowService:
-  enabled: false
+  singleuser:
+    storage:
+      extraVolumes:
+        - name: naa-vre-public
+          persistentVolumeClaim:
+            claimName: naa-vre-public
+        - name: naa-vre-user-data
+          persistentVolumeClaim:
+            claimName: naa-vre-user-data
+      extraVolumeMounts:
+        - name: naa-vre-public
+          readOnly: true
+          mountPath: /home/jovyan/Cloud Storage/naa-vre-public
+        - name: naa-vre-user-data
+          mountPath: /home/jovyan/Cloud Storage/naa-vre-user-data/
+          subPath: '{unescaped_username}'
