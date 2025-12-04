@@ -2,6 +2,7 @@ from pathlib import Path
 import json
 import logging
 import os
+v0.0.38from time import sleep
 
 from fastapi.testclient import TestClient
 
@@ -51,7 +52,19 @@ def test_submit():
         if 'phase' in wf_status_response_json['status']:
             assert wf_status_response_json['status']['phase'] != 'Failed'
             assert wf_status_response_json['status']['phase'] != 'Error'
-        print(wf_status_response_json)
+            while 'Running' in wf_status_response_json['status']['phase'] or \
+                  'Pending' in wf_status_response_json['status']['phase']:
+                sleep(5)
+                wf_status_response = client.get(
+                    '/status/' + workflow_dict['virtual_lab'],
+                    params={'workflow_url': run_url},
+                    headers={'Authorization': 'Bearer ' + user_auth_token}
+                )
+                assert wf_status_response.status_code == 200
+                wf_status_response_json = wf_status_response.json()
+                assert wf_status_response_json['status']['phase'] != 'Failed'
+                assert wf_status_response_json['status']['phase'] != 'Error'
+            print(wf_status_response_json)
 
         # Delete the workflow after testing
         wf_delete_response = client.delete(

@@ -1,19 +1,11 @@
 {
   "virtual_lab": "openlab",
+  "params": {},
+  "secrets": {},
   "naavrewf2": {
-    "offset": {
-      "x": 2,
-      "y": -4
-    },
-    "scale": 1,
     "nodes": {
       "0e55aacf-b4de-4e2a-a80e-b673cfc56d78": {
         "id": "0e55aacf-b4de-4e2a-a80e-b673cfc56d78",
-        "position": {
-          "x": 455.58331298828125,
-          "y": 185
-        },
-        "orientation": 0,
         "type": "workflow-cell",
         "ports": {
           "path": {
@@ -146,9 +138,7 @@
           "portId": "path"
         }
       }
-    },
-    "selected": {},
-    "hovered": {}
-  }
+    }
+  },
+  "user_name": null
 }
-

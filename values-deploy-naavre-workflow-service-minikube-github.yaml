@@ -4,7 +4,7 @@ jupyterhub:
   vlabs:
     openlab:
       image:
-        tag: v0.0.25
+        tag: v0.0.38
       configuration:
         base_image_tags_url: https://github.com/NaaVRE/flavors/releases/download/v0.0.39/base_image_tags.json
         cell_github_url: https://github.com/NaaVRE/cells-vl-tests
