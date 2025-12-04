@@ -79,8 +79,8 @@ def valid_access_token(credentials: Annotated[
         # log the exception for debugging purposes
         logging.debug(msg="Invalid public key", exc_info=ex)
         raise HTTPException(status_code=400,
-                            detail={"error": "invalid_public_key", "message":
-                                "Malformed public key"})
+                            detail={"error": "invalid_public_key",
+                                    "message": "Malformed public key"})
     except Exception as ex:
         logging.debug(msg="Internal server error", exc_info=ex)
         raise HTTPException(status_code=500, detail="Internal server error")
