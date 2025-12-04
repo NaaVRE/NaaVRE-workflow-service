@@ -23,6 +23,7 @@ def include_file(env):
 
     return _include
 
+
 class ArgoEngine(WFEngine, ABC):
     workflow_template: jinja2.Template
     api_endpoint: str
@@ -74,8 +75,8 @@ class ArgoEngine(WFEngine, ABC):
                    run_url_resource + "/" +
                    f"{self.vl_config.wf_engine_config.namespace}/"
                    f"{workflow_name}")
-        return {'run_url': run_url, 'naavrewf2':
-            self.naavrewf2_payload.naavrewf2}
+        return {'run_url': run_url,
+                'naavrewf2': self.naavrewf2_payload.naavrewf2}
 
     def naavrewf2_2_argo_workflow(self):
         if self.secrets:
