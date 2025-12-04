@@ -10,6 +10,7 @@ import requests
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jwt import InvalidKeyError
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.services.wf_engines.argo_engine import ArgoEngine
@@ -48,7 +49,6 @@ if os.path.exists(config_file):
 else:
     # Start going up the directory tree until we find the configuration file
     current_dir = os.getcwd()
-    print(current_dir)
     while current_dir != '/':
         config_path = os.path.join(current_dir,
                                    os.getenv('CONFIG_FILE_URL',
@@ -75,7 +75,14 @@ def valid_access_token(credentials: Annotated[
         return token_validator.validate(credentials.credentials)
     except (jwt.exceptions.InvalidTokenError, jwt.exceptions.PyJWKClientError):
         raise HTTPException(status_code=401, detail="Not authenticated")
-    except Exception:
+    except InvalidKeyError as ex:
+        # log the exception for debugging purposes
+        logging.debug(msg="Invalid public key", exc_info=ex)
+        raise HTTPException(status_code=400,
+                            detail={"error": "invalid_public_key",
+                                    "message": "Malformed public key"})
+    except Exception as ex:
+        logging.debug(msg="Internal server error", exc_info=ex)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 

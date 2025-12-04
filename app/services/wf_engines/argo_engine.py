@@ -1,10 +1,10 @@
 import os
 from abc import ABC
 
-from slugify import slugify
 import jinja2
 import requests
 import yaml
+from slugify import slugify
 
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
@@ -20,6 +20,7 @@ def include_file(env):
     def _include(name, **kwargs):
         template = env.get_template(name)
         return template.render(**kwargs)
+
     return _include
 
 
@@ -44,6 +45,7 @@ class ArgoEngine(WFEngine, ABC):
                                   vl_config.wf_engine_config.namespace)
         self.token = (vl_config.wf_engine_config.access_token.replace
                       ('"', '')).replace('Bearer ', '')
+        self.extraVolumeMounts = vl_config.wf_engine_config.extraVolumeMounts
 
     def submit(self):
         workflow_dict = self.naavrewf2_2_argo_workflow()
@@ -73,8 +75,8 @@ class ArgoEngine(WFEngine, ABC):
                    run_url_resource + "/" +
                    f"{self.vl_config.wf_engine_config.namespace}/"
                    f"{workflow_name}")
-        return {'run_url': run_url, 'naavrewf2':
-                self.naavrewf2_payload.naavrewf2}
+        return {'run_url': run_url,
+                'naavrewf2': self.naavrewf2_payload.naavrewf2}
 
     def naavrewf2_2_argo_workflow(self):
         if self.secrets:
@@ -95,9 +97,19 @@ class ArgoEngine(WFEngine, ABC):
             workflow_name=workflow_name,
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
-            cron_schedule=self.cron_schedule
+            cron_schedule=self.cron_schedule,
+            extraVolumeMounts=self.extraVolumeMounts
         )
-        workflow_dict = yaml.safe_load(workflow_yaml)
+
+        workflow_dict = yaml.safe_load(
+            workflow_yaml.replace('{unescaped_username}', self.user_name))
+
+        if os.getenv('DEBUG') == 'true':
+            print("Generated Argo Workflow YAML:")
+            # Save to /tmp/ for inspection
+            with open(f"/tmp/{workflow_name}_workflow.yaml", "w") as f:
+                f.write(workflow_yaml)
+            print(yaml.dump(workflow_dict, sort_keys=False))
         return workflow_dict
 
     def get_wf(self, workflow_url: str):
@@ -107,7 +119,7 @@ class ArgoEngine(WFEngine, ABC):
             "Authorization": f"Bearer {self.token}"
         }
         workflow_status_url = self.get_workflow_status_url(
-                                                    workflow_url=workflow_url)
+            workflow_url=workflow_url)
         response = requests.get(workflow_status_url, headers=headers,
                                 verify=os.getenv('VERIFY_SSL', 'true').
                                 lower() == 'true')
