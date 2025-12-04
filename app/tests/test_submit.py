@@ -65,7 +65,6 @@ def test_submit():
                 assert wf_status_response_json['status']['phase'] != 'Failed'
                 assert wf_status_response_json['status']['phase'] != 'Error'
             print(wf_status_response_json)
-
         # Delete the workflow after testing
         wf_delete_response = client.delete(
             '/delete/' + workflow_dict['virtual_lab'],
