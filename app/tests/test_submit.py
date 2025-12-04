@@ -34,6 +34,7 @@ def test_submit():
             headers={'Authorization': 'Bearer ' + user_auth_token},
             json=workflow_dict,
         )
+
         # Print the response for debugging
         print(submit_response.json())
         assert submit_response.status_code == 200
