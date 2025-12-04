@@ -23,7 +23,6 @@ def include_file(env):
 
     return _include
 
-
 class ArgoEngine(WFEngine, ABC):
     workflow_template: jinja2.Template
     api_endpoint: str
@@ -100,8 +99,16 @@ class ArgoEngine(WFEngine, ABC):
             cron_schedule=self.cron_schedule,
             extraVolumeMounts=self.extraVolumeMounts
         )
-        workflow_dict = yaml.safe_load(workflow_yaml.format(
-            unescaped_username=self.user_name))
+
+        workflow_dict = yaml.safe_load(
+            workflow_yaml.replace('{unescaped_username}', self.user_name))
+
+        if os.getenv('DEBUG') == 'true':
+            print("Generated Argo Workflow YAML:")
+            # Save to /tmp/ for inspection
+            with open(f"/tmp/{workflow_name}_workflow.yaml", "w") as f:
+                f.write(workflow_yaml)
+            print(yaml.dump(workflow_dict, sort_keys=False))
         return workflow_dict
 
     def get_wf(self, workflow_url: str):

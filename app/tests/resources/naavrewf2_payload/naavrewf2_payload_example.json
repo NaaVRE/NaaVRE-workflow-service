@@ -1,5 +1,7 @@
 {
   "virtual_lab": "openlab",
+  "params": {},
+  "secrets": {},
   "naavrewf2": {
     "offset": {
       "x": 2,
