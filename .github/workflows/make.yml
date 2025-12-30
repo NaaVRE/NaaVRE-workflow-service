@@ -77,7 +77,7 @@ jobs:
     with:
       runs-on: ${{ needs.configure-workflow.outputs.runner }}
       debug: ${{ vars.DEBUG }}
-      verify_ssl: ${{ vars.VERIFY_SSL }}
+      verify_ssl: false
       disable_auth: ${{ vars.DISABLE_AUTH }}
       test: ${{ matrix.test }}
 
