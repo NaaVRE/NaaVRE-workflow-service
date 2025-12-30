@@ -6,25 +6,18 @@ jupyterhub:
       image:
         tag: v0.0.38
       configuration:
-        base_image_tags_url: https://github.com/NaaVRE/flavors/releases/download/v0.0.39/base_image_tags.json
+        base_image_tags_url: https://github.com/NaaVRE/flavors/releases/latest/download/base_image_tags.json
         cell_github_url: https://github.com/NaaVRE/cells-vl-tests
         cell_github_token: ghp_XXXXXXXXXXXXXXXX
         registry_url: ghcr.io/naavre/naavre-cells-vl-tests
-
         module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
-  singleuser:
-    storage:
-      extraVolumes:
-        - name: naa-vre-public
-          persistentVolumeClaim:
-            claimName: naa-vre-public
-        - name: naa-vre-user-data
-          persistentVolumeClaim:
-            claimName: naa-vre-user-data
-      extraVolumeMounts:
-        - name: naa-vre-public
-          readOnly: true
-          mountPath: /home/jovyan/Cloud Storage/naa-vre-public
-        - name: naa-vre-user-data
-          mountPath: /home/jovyan/Cloud Storage/naa-vre-user-data/
-          subPath: '{unescaped_username}'
+
+naavreContainerizerService:
+  enabled: false
+
+naavreWorkflowService:
+  enabled: false
+
+k8sSecretCreator:
+  enabled: false
+
