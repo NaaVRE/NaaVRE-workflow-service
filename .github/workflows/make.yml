@@ -1,7 +1,7 @@
 name: make
 on:
   release:
-    types: [published]
+    types: [ published ]
   push:
     branches:
       - '**'
@@ -22,8 +22,8 @@ jobs:
         name: Configure skip-duplicate-actions
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          paths_ignore: '["**/README.md"]'  # FIXME
-          do_not_skip: '["workflow_dispatch", "schedule", "release"]'
+          paths_ignore: '["**/README.md"]'
+          do_not_skip: '["workflow_dispatch", "schedule", "release" ,"push"]'
 
   lint:
     uses: ./.github/workflows/lint.yml
@@ -32,29 +32,61 @@ jobs:
     with:
       runs-on: ubuntu-latest
 
+  call-collect-tests:
+    uses: ./.github/workflows/collect-tests.yml
+
+
+  split-tests:
+    needs: [ call-collect-tests ]
+    runs-on: ubuntu-latest
+    outputs:
+      test_list: ${{ steps.split-output.outputs.test_list }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download pytest output artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test_list
+          path: ./
+
+      - name: Generate matrix from pytest_output
+        id: split-output
+        run: |
+          cat test_list.json
+          # Merge test parameters, to run them sequentially within a runner
+          MATRIX=$(jq -c '. | map(.module + "::" + .test) | unique' test_list.json)
+          echo $MATRIX
+          echo "test_list=$MATRIX" >> $GITHUB_OUTPUT
+
   call-pytest:
     uses: ./.github/workflows/run-tests.yml
-    needs: [ configure-workflow ]
+    needs: [ configure-workflow, split-tests ]
     if: ${{ needs.configure-workflow.outputs.should_skip != 'true' }}
     strategy:
       fail-fast: false
+      matrix:
+        test: ${{ fromJson(needs.split-tests.outputs.test_list) }}
     with:
       runs-on: ${{ needs.configure-workflow.outputs.runner }}
       debug: ${{ vars.DEBUG }}
+      verify_ssl: false
+      disable_auth: ${{ vars.DISABLE_AUTH }}
+      test: ${{ matrix.test }}
 
   call-build-container:
-    needs: [ configure-workflow,call-pytest ]
+    needs: [ call-pytest ]
     uses: ./.github/workflows/build-container.yml
     with:
-      oci_tag: ghcr.io/naavre/naavre-workflow-service
+      oci_tag: ghcr.io/naavre/naavre-containerizer-service
       version: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
       push: ${{ github.event_name == 'release' }}
 
   call-helm-chart-release:
-    needs: [ call-build-container,call-pytest ]
+    needs: [ call-build-container ]
     uses: ./.github/workflows/helm-chart-release.yml
     with:
       oci_repo: ghcr.io/naavre/charts
       version: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
       push: ${{ github.event_name == 'release' }}
-
