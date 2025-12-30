@@ -6,12 +6,6 @@ on:
       runs-on:
         default: ubuntu-latest
         type: string
-      oidc_configuration_url:
-        required: true
-        type: string
-env:
-  DEBUG: ${{ inputs.debug }}
-  OIDC_CONFIGURATION_URL: ${{ inputs.oidc_configuration_url }}
 
 jobs:
   collect-tests:
