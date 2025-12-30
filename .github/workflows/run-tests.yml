@@ -1,5 +1,5 @@
+# yaml
 name: Run tests
-
 
 on:
   workflow_call:
@@ -10,9 +10,16 @@ on:
       debug:
         required: true
         type: string
+      test:
+        required: true
+        type: string
 
 env:
   DEBUG: ${{ inputs.debug }}
+  DISABLE_AUTH: ${{ inputs.disable_auth }}
+  VERIFY_SSL: ${{ inputs.verify_ssl }}
+  REGISTRY_TOKEN_FOR_TESTS: ${{ secrets.registry_token_for_tests }}
+  CELL_GITHUB_TOKEN: ${{ secrets.cell_github_token }}
 
 jobs:
   test:
@@ -21,11 +28,6 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-          cache: 'pip'
 
       - name: start minikube
         id: minikube
@@ -41,14 +43,15 @@ jobs:
         run: |
           wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/scripts/setup-tests.sh
           chmod +x setup-tests.sh
-          ./setup-tests.sh -f values-deploy-naavre-workflow-service-minikube-github.yaml
+          ./setup-tests.sh -f values-deploy-naavre-containerizer-service-minikube-github.yaml
 
-      - run: |
+      - name: Install pytest
+        run: | 
           pip install -r requirements.txt
           pip install pytest
-
 
       - name: pytest
         shell: bash -l {0}
         run: |
-          pytest -s --ignore=docker --ignore=cypress --no-header
+          pip install pytest
+          pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header --log-cli-level=DEBUG -vv --tb=long
