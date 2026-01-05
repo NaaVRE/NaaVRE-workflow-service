@@ -98,7 +98,7 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts=self.extraVolumeMounts
+            extraVolumeMounts=self.extraVolumeMounts or []
         )
 
         workflow_dict = yaml.safe_load(

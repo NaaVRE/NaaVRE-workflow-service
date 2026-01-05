@@ -4,7 +4,7 @@ jupyterhub:
   vlabs:
     openlab:
       image:
-        tag: v0.0.38
+        tag: latest
       configuration:
         base_image_tags_url: https://github.com/NaaVRE/flavors/releases/latest/download/base_image_tags.json
         cell_github_url: https://github.com/NaaVRE/cells-vl-tests
@@ -20,4 +20,3 @@ naavreWorkflowService:
 
 k8sSecretCreator:
   enabled: false
-
