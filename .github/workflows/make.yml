@@ -79,7 +79,7 @@ jobs:
     needs: [ call-pytest ]
     uses: ./.github/workflows/build-container.yml
     with:
-      oci_tag: ghcr.io/naavre/naavre-containerizer-service
+      oci_tag: ghcr.io/naavre/naavre-workflow-service
       version: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
       push: ${{ github.event_name == 'release' }}
 
