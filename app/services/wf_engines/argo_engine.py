@@ -92,7 +92,7 @@ class ArgoEngine(WFEngine, ABC):
             vlab_slug=self.virtual_lab_name,
             deps_dag=self.parser.get_dependencies_dag(),
             nodes=self.nodes,
-            global_params=self.params,
+            global_params=self.params or {},
             k8s_secret_name=k8s_secret_name,
             workflow_name=workflow_name,
             workflow_service_account=service_account,
