@@ -131,10 +131,12 @@ def get_cron_status(
         workflow_url: str = Query()):
     wf_engine = _get_wf_engine(virtual_lab=virtual_lab)
     workflow = wf_engine.get_wf(workflow_url)
-    list_of_wfs = wf_engine.get_wfs_for_recurring_wf(workflow)
+    list_of_wfs = wf_engine.get_wfs_for_recurring_wf(workflow_url)
     workflows_urls = []
+    api_endpoint = (wf_engine.vl_config.wf_engine_config.api_endpoint +
+                    "workflows/")
     for wf in list_of_wfs:
-        workflows_urls.append(wf['url'])
+        workflows_urls.append(api_endpoint + wf['metadata']['name'])
     return {'status': workflow['status'],
             'workflows_urls': workflows_urls}
 
