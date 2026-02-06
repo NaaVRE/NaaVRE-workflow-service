@@ -43,8 +43,7 @@ def check_recurring_workflow(workflow_dict=None, run_url=None):
         )
         assert wf_status_response.status_code == 200
         wf_status_response_json = wf_status_response.json()
-        active = wf_status_response_json['status']['active']
-        print(active)
+        assert 'active' in wf_status_response_json['status']
         for workflow_url in wf_status_response_json['workflows_urls']:
             wf_status_response = client.get(
                 '/status/' + workflow_dict['virtual_lab'],
