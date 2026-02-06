@@ -43,8 +43,18 @@ def check_recurring_workflow(workflow_dict=None, run_url=None):
         )
         assert wf_status_response.status_code == 200
         wf_status_response_json = wf_status_response.json()
-        assert wf_status_response_json['status']['phase'] != 'Failed'
-        assert wf_status_response_json['status']['phase'] != 'Error'
+        active = wf_status_response_json['status']['active']
+        print(active)
+        for workflow_url in wf_status_response_json['workflows_urls']:
+            wf_status_response = client.get(
+                '/status/' + workflow_dict['virtual_lab'],
+                params={'workflow_url': workflow_url},
+                headers={'Authorization': 'Bearer ' + user_auth_token}
+            )
+            assert wf_status_response.status_code == 200
+            wf_status_response_json = wf_status_response.json()
+            assert wf_status_response_json['status']['phase'] != 'Failed'
+            assert wf_status_response_json['status']['phase'] != 'Error'
 
 
 def test_submit():
