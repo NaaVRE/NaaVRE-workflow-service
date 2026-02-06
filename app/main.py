@@ -120,8 +120,23 @@ def get_status(
         virtual_lab: str,
         workflow_url: str = Query()):
     wf_engine = _get_wf_engine(virtual_lab=virtual_lab)
-    argo_wf = wf_engine.get_wf(workflow_url)
-    return {'status': argo_wf['status']}
+    workflow = wf_engine.get_wf(workflow_url)
+    return {'status': workflow['status']}
+
+
+@app.get('/status_recurring_wf/{virtual_lab}')
+def get_cron_status(
+        access_token: Annotated[dict, Depends(valid_access_token)],
+        virtual_lab: str,
+        workflow_url: str = Query()):
+    wf_engine = _get_wf_engine(virtual_lab=virtual_lab)
+    workflow = wf_engine.get_wf(workflow_url)
+    list_of_wfs = wf_engine.get_wfs_for_recurring_wf(workflow)
+    workflows_urls = []
+    for wf in list_of_wfs:
+        workflows_urls.append(wf['url'])
+    return {'status': workflow['status'],
+            'workflows_urls': workflows_urls}
 
 
 @app.delete('/delete/{virtual_lab}')

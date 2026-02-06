@@ -154,3 +154,6 @@ class ArgoEngine(WFEngine, ABC):
         if not api_endpoint.endswith('/'):
             api_endpoint += '/'
         return api_endpoint + workflow_name
+
+    def get_wfs_for_recurring_wf(self, workflow_url: str):
+        return []

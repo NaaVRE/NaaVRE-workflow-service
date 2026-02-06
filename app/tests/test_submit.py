@@ -1,9 +1,11 @@
-from pathlib import Path
 import json
 import logging
 import os
+from datetime import datetime
+from pathlib import Path
 from time import sleep
 
+from croniter import croniter
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -19,12 +21,40 @@ tests_resources_dir = Path(__file__).parent / "resources"
 user_auth_token = os.getenv('AUTH_TOKEN')
 
 
+def check_recurring_workflow(workflow_dict=None, run_url=None):
+    schedule = workflow_dict['cron_schedule']
+    base_time = datetime.now()
+    cron = croniter(schedule, base_time)
+    next_execution_time = cron.get_next(datetime)
+    # If next_execution_time is more than 5 minutes in the future, skip waiting
+    # and checking the workflow status
+    if (next_execution_time - datetime.now()).total_seconds() < 300:
+        while datetime.now() < next_execution_time:
+            # Sleep until the scheduled execution time
+            sleep_time = next_execution_time - datetime.now()
+            if sleep_time.total_seconds() > 0:
+                sleep(
+                    sleep_time.total_seconds() + 5)
+        # Check the workflow status after the scheduled execution time
+        wf_status_response = client.get(
+            '/status_recurring_wf/' + workflow_dict['virtual_lab'],
+            params={'workflow_url': run_url},
+            headers={'Authorization': 'Bearer ' + user_auth_token}
+        )
+        assert wf_status_response.status_code == 200
+        wf_status_response_json = wf_status_response.json()
+        assert wf_status_response_json['status']['phase'] != 'Failed'
+        assert wf_status_response_json['status']['phase'] != 'Error'
+
+
 def test_submit():
     workflows_json_path = os.path.join(base_path, 'naavrewf2_payload')
     workflow_files = os.listdir(workflows_json_path)
     for workflow_file in workflow_files:
         workflow_path = os.path.join(workflows_json_path, workflow_file)
         with open(workflow_path) as f:
+            if 'naavrewf2_payload_cron_example.json' not in workflow_file:
+                continue
             print('Testing workflow: ' + workflow_file)
             workflow_dict = json.load(f)
         f.close()
@@ -66,7 +96,9 @@ def test_submit():
                 assert wf_status_response_json['status']['phase'] != 'Failed'
                 assert wf_status_response_json['status']['phase'] != 'Error'
             print(wf_status_response_json)
-        # Delete the workflow after testing
+        if 'cron-workflows' in run_url:
+            check_recurring_workflow(workflow_dict=workflow_dict,
+                                     run_url=run_url)
         wf_delete_response = client.delete(
             '/delete/' + workflow_dict['virtual_lab'],
             params={'workflow_url': run_url},

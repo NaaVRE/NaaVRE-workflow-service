@@ -1,15 +1,11 @@
-import base64
-import json
-import os
 from abc import abstractmethod
-from typing import Optional
 from collections.abc import Mapping
+from typing import Optional
 
-import requests
 from jinja2 import PackageLoader, Environment, StrictUndefined
 
-from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.naavre_wf2 import Node
+from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
 from app.services.wf_parser import WorkflowParser
 
@@ -65,31 +61,6 @@ class WFEngine:
     def delete_wf(self, workflow_url: str):
         pass
 
-    def add_secrets_to_k8s(self):
-        secrets_creator_api_endpoint = os.getenv(
-            'SECRETS_CREATOR_API_ENDPOINT')
-        # Make sure that the secrets_creator_api_endpoint has a '/' at the end
-        if not secrets_creator_api_endpoint.endswith('/'):
-            secrets_creator_api_endpoint += '/'
-        secrets_creator_api_endpoint_access_token = os.getenv(
-            'SECRETS_CREATOR_API_TOKEN')
-        body = {}
-        # Assumes secures are a dictionary of
-        # secret_name: {value: secret_value}
-        for secret_name, secret_value_k_v in self.secrets.items():
-            body[secret_name] = base64.b64encode(
-                secret_value_k_v['value'].encode()).decode()
-
-        resp = requests.post(
-            f"{secrets_creator_api_endpoint}",
-            verify=os.getenv('VERIFY_SSL', 'true').lower() == 'true',
-            headers={
-                'accept': 'application/json',
-                'X-Auth': secrets_creator_api_endpoint_access_token,
-                'Content-Type': 'application/json'
-            },
-            data=json.dumps(body),
-        )
-        resp.raise_for_status()
-        secret_name = resp.json()['secretName']
-        return secret_name
+    @abstractmethod
+    def get_wfs_for_recurring_wf(self, workflow_url: str):
+        pass

@@ -2,7 +2,7 @@
     "virtual_lab": "openlab",
     "params": {},
     "secrets": {},
-    "cron_schedule": "0 0 * * *",
+    "cron_schedule": "* * * * *",
     "naavrewf2": {
         "nodes": {
             "ea911b63-9595-43c4-a389-97d5e7963d91": {
