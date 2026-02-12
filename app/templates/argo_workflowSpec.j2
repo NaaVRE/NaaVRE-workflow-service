@@ -220,7 +220,7 @@ templates:
         --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d.port_id }}{{ '}}' }}'
         {% endfor %}
         {% for p in params %}
-        --{{ p.name }} {{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
+        --{{ p.name }}={{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
         {% endfor %}
         --id {{ node.id[:7] }};
     {% endif %}
