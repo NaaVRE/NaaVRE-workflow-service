@@ -9,7 +9,7 @@ metadata:
   labels:
     vlab_slug: {{ vlab_slug }}
 spec:
-    {% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 %}
+    {% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 and not cron_schedule %}
     volumes:
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
@@ -28,7 +28,8 @@ spec:
            deps_dag=deps_dag,
            nodes=nodes,
            k8s_secret_name=k8s_secret_name,
-           extraVolumeMounts=extraVolumeMounts) | indent(6, true) }}
+           extraVolumeMounts=extraVolumeMounts,
+           cron_schedule=cron_schedule) | indent(6, true) }}
     {% else %}
 {{ include('argo_workflowSpec.j2',
            workflow_name=workflow_name,
@@ -38,5 +39,6 @@ spec:
            deps_dag=deps_dag,
            nodes=nodes,
            k8s_secret_name=k8s_secret_name,
-           extraVolumeMounts=extraVolumeMounts) | indent(4, true) }}
+           extraVolumeMounts=extraVolumeMounts,
+           cron_schedule=cron_schedule) | indent(4, true) }}
     {% endif %}

@@ -40,6 +40,7 @@ jobs:
         uses: medyagh/setup-minikube@v0.0.19
         with:
           addons: ingress,ingress-dns
+          minikube-version: '1.38.0'
 
       - name: Try the cluster
         run: kubectl get pods -A

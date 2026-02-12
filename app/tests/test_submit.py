@@ -1,9 +1,11 @@
-from pathlib import Path
 import json
 import logging
 import os
+from datetime import datetime
+from pathlib import Path
 from time import sleep
 
+from croniter import croniter
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -17,6 +19,61 @@ logger = logging.getLogger(__name__)
 tests_resources_dir = Path(__file__).parent / "resources"
 
 user_auth_token = os.getenv('AUTH_TOKEN')
+
+
+def check_recurring_workflow(workflow_dict=None, run_url=None):
+    schedule = workflow_dict['cron_schedule']
+    base_time = datetime.now()
+    cron = croniter(schedule, base_time)
+    next_execution_time = cron.get_next(datetime)
+    # If next_execution_time is more than 5 minutes in the future, skip waiting
+    # and checking the workflow status
+    if (next_execution_time - datetime.now()).total_seconds() < 300:
+        while datetime.now() < next_execution_time:
+            # Sleep until the scheduled execution time
+            sleep_time = next_execution_time - datetime.now()
+            if sleep_time.total_seconds() > 0:
+                sleep(
+                    sleep_time.total_seconds() + 5)
+        # Check the workflow status after the scheduled execution time
+        wf_status_response = client.get(
+            '/status_recurring_wf/' + workflow_dict['virtual_lab'],
+            params={'workflow_url': run_url},
+            headers={'Authorization': 'Bearer ' + user_auth_token}
+        )
+        assert wf_status_response.status_code == 200
+        wf_status_response_json = wf_status_response.json()
+        assert 'active' in wf_status_response_json['status']
+        for workflow_url in wf_status_response_json['workflows_urls']:
+            wf_status_response = client.get(
+                '/status/' + workflow_dict['virtual_lab'],
+                params={'workflow_url': workflow_url},
+                headers={'Authorization': 'Bearer ' + user_auth_token}
+            )
+            assert wf_status_response.status_code == 200
+            wf_status_response_json = wf_status_response.json()
+            assert wf_status_response_json['status']['phase'] != 'Failed'
+            assert wf_status_response_json['status']['phase'] != 'Error'
+            wait_for_wf(wf_status_response_json=wf_status_response_json,
+                        workflow_dict=workflow_dict,
+                        run_url=workflow_url)
+
+
+def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
+                run_url=None):
+    print(wf_status_response_json['status']['phase'])
+    while 'Running' in wf_status_response_json['status']['phase'] or \
+            'Pending' in wf_status_response_json['status']['phase']:
+        sleep(5)
+        wf_status_response = client.get(
+            '/status/' + workflow_dict['virtual_lab'],
+            params={'workflow_url': run_url},
+            headers={'Authorization': 'Bearer ' + user_auth_token}
+        )
+        assert wf_status_response.status_code == 200
+        wf_status_response_json = wf_status_response.json()
+    assert wf_status_response_json['status']['phase'] != 'Failed'
+    assert wf_status_response_json['status']['phase'] != 'Error'
 
 
 def test_submit():
@@ -53,20 +110,12 @@ def test_submit():
         if 'phase' in wf_status_response_json['status']:
             assert wf_status_response_json['status']['phase'] != 'Failed'
             assert wf_status_response_json['status']['phase'] != 'Error'
-            while 'Running' in wf_status_response_json['status']['phase'] or \
-                  'Pending' in wf_status_response_json['status']['phase']:
-                sleep(5)
-                wf_status_response = client.get(
-                    '/status/' + workflow_dict['virtual_lab'],
-                    params={'workflow_url': run_url},
-                    headers={'Authorization': 'Bearer ' + user_auth_token}
-                )
-                assert wf_status_response.status_code == 200
-                wf_status_response_json = wf_status_response.json()
-                assert wf_status_response_json['status']['phase'] != 'Failed'
-                assert wf_status_response_json['status']['phase'] != 'Error'
-            print(wf_status_response_json)
-        # Delete the workflow after testing
+            wait_for_wf(wf_status_response_json=wf_status_response_json,
+                        workflow_dict=workflow_dict,
+                        run_url=run_url)
+        if 'cron_schedule' in workflow_dict:
+            check_recurring_workflow(workflow_dict=workflow_dict,
+                                     run_url=run_url)
         wf_delete_response = client.delete(
             '/delete/' + workflow_dict['virtual_lab'],
             params={'workflow_url': run_url},

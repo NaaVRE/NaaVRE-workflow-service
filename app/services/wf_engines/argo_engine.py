@@ -154,3 +154,20 @@ class ArgoEngine(WFEngine, ABC):
         if not api_endpoint.endswith('/'):
             api_endpoint += '/'
         return api_endpoint + workflow_name
+
+    def get_wfs_for_recurring_wf(self, workflow_url: str):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}"
+        }
+        label_selector = ("label=workflows.argoproj.io%2Fcron-workflow%3D" +
+                          workflow_url.split('/')[-1])
+        api_endpoint = self.api_endpoint + "?" + label_selector
+        workflows_response = requests.get(api_endpoint, headers=headers,
+                                          verify=os.getenv('VERIFY_SSL',
+                                                           'true').lower() ==
+                                          'true')
+        if workflows_response.status_code != 200:
+            raise Exception('Error getting workflows for recurring workflow: '
+                            + workflows_response.text)
+        return workflows_response.json().get('items', [])
