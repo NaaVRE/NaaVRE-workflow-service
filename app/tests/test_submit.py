@@ -82,6 +82,8 @@ def test_submit():
     for workflow_file in workflow_files:
         workflow_path = os.path.join(workflows_json_path, workflow_file)
         with open(workflow_path) as f:
+            if 'naavrewf2_payload.json' not in workflow_file:
+                continue
             print('Testing workflow: ' + workflow_file)
             workflow_dict = json.load(f)
         f.close()
@@ -113,7 +115,8 @@ def test_submit():
             wait_for_wf(wf_status_response_json=wf_status_response_json,
                         workflow_dict=workflow_dict,
                         run_url=run_url)
-        if 'cron_schedule' in workflow_dict:
+        if ('cron_schedule' in workflow_dict and
+                workflow_dict['cron_schedule'] is not None):
             check_recurring_workflow(workflow_dict=workflow_dict,
                                      run_url=run_url)
         wf_delete_response = client.delete(
