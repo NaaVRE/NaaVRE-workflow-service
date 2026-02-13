@@ -82,7 +82,7 @@ def test_submit():
     for workflow_file in workflow_files:
         workflow_path = os.path.join(workflows_json_path, workflow_file)
         with open(workflow_path) as f:
-            if 'naavrewf2_payload_example.json' not in workflow_file:
+            if 'naavrewf2_payload.json' not in workflow_file:
                 continue
             print('Testing workflow: ' + workflow_file)
             workflow_dict = json.load(f)
