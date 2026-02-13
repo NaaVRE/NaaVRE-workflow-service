@@ -115,7 +115,8 @@ def test_submit():
             wait_for_wf(wf_status_response_json=wf_status_response_json,
                         workflow_dict=workflow_dict,
                         run_url=run_url)
-        if 'cron_schedule' in workflow_dict:
+        if ('cron_schedule' in workflow_dict and
+                workflow_dict['cron_schedule'] is not None):
             check_recurring_workflow(workflow_dict=workflow_dict,
                                      run_url=run_url)
         wf_delete_response = client.delete(
