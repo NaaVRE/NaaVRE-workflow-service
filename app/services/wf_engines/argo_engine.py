@@ -1,3 +1,4 @@
+import base64
 import os
 from abc import ABC
 
@@ -8,6 +9,7 @@ from slugify import slugify
 
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
+import json
 
 
 def is_cron(workflow_dict):
@@ -48,7 +50,7 @@ class ArgoEngine(WFEngine, ABC):
         self.extraVolumeMounts = vl_config.wf_engine_config.extraVolumeMounts
 
     def submit(self):
-        workflow_dict = self.naavrewf2_2_argo_workflow()
+        workflow_dict = self.naavrewf2_2_argo_workflow(create_secrets=True)
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}"
@@ -78,8 +80,8 @@ class ArgoEngine(WFEngine, ABC):
         return {'run_url': run_url,
                 'naavrewf2': self.naavrewf2_payload.naavrewf2}
 
-    def naavrewf2_2_argo_workflow(self):
-        if self.secrets:
+    def naavrewf2_2_argo_workflow(self, create_secrets: bool = True):
+        if self.secrets and create_secrets:
             k8s_secret_name = self.add_secrets_to_k8s()
         else:
             k8s_secret_name = None
@@ -171,3 +173,32 @@ class ArgoEngine(WFEngine, ABC):
             raise Exception('Error getting workflows for recurring workflow: '
                             + workflows_response.text)
         return workflows_response.json().get('items', [])
+
+    def add_secrets_to_k8s(self):
+        secrets_creator_api_endpoint = os.getenv(
+            'SECRETS_CREATOR_API_ENDPOINT')
+        # Make sure that the secrets_creator_api_endpoint has a '/' at the end
+        if not secrets_creator_api_endpoint.endswith('/'):
+            secrets_creator_api_endpoint += '/'
+        secrets_creator_api_endpoint_access_token = os.getenv(
+            'SECRETS_CREATOR_API_TOKEN')
+        body = {}
+        # Assumes secures are a dictionary of
+        # secret_name: {value: secret_value}
+        for secret_name, secret_value_k_v in self.secrets.items():
+            body[secret_name] = base64.b64encode(
+                secret_value_k_v['value'].encode()).decode()
+
+        resp = requests.post(
+            f"{secrets_creator_api_endpoint}",
+            verify=os.getenv('VERIFY_SSL', 'true').lower() == 'true',
+            headers={
+                'accept': 'application/json',
+                'X-Auth': secrets_creator_api_endpoint_access_token,
+                'Content-Type': 'application/json'
+            },
+            data=json.dumps(body),
+        )
+        resp.raise_for_status()
+        secret_name = resp.json()['secretName']
+        return secret_name
