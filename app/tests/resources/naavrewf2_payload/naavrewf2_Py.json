@@ -2,8 +2,8 @@
   "virtual_lab": "openlab",
   "naavrewf2": {
     "offset": {
-      "x": -407.36,
-      "y": -36.59
+      "x": -465.36,
+      "y": -148.59
     },
     "scale": 0.557,
     "nodes": {
@@ -570,15 +570,15 @@
           }
         },
         "size": {
-          "width": 252,
-          "height": 313
+          "width": 0,
+          "height": 0
         }
       },
       "f4b8f36b-c26b-43f9-a9a2-0a63ceb88ae1": {
         "id": "f4b8f36b-c26b-43f9-a9a2-0a63ceb88ae1",
         "position": {
-          "x": 1299.5600478844697,
-          "y": 366.89847842219564
+          "x": 1168.500801923967,
+          "y": 365.1031462857504
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -664,8 +664,8 @@
       "234dffd7-a379-421a-ac2f-60d93bebe540": {
         "id": "234dffd7-a379-421a-ac2f-60d93bebe540",
         "position": {
-          "x": 1183.9443573899407,
-          "y": 685.9980880860164
+          "x": 1149.8330467974806,
+          "y": 659.0681060393375
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -811,11 +811,11 @@
           "height": 61
         }
       },
-      "4540299a-3670-4083-8fcf-ea6fffb51bfd": {
-        "id": "4540299a-3670-4083-8fcf-ea6fffb51bfd",
+      "6b04410b-1757-466a-9162-ff3cdd506eee": {
+        "id": "6b04410b-1757-466a-9162-ff3cdd506eee",
         "position": {
-          "x": 1624.5994970360018,
-          "y": 633.6963998856796
+          "x": 1634.0993051854243,
+          "y": 624.0394973070017
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -831,23 +831,11 @@
               "x": -2,
               "y": 30
             }
-          },
-          "new_lines": {
-            "id": "new_lines",
-            "type": "right",
-            "properties": {
-              "color": "#481f93",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": 252,
-              "y": 30
-            }
           }
         },
         "properties": {
           "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/6fe42337-afb1-4396-9e12-77295d3758fb/",
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/553677c5-1fde-49c9-9818-713b25fbe043/",
             "owner": "user",
             "virtual_lab": "openlab",
             "shared_with_scopes": [],
@@ -860,150 +848,6 @@
             "inputs": [
               {
                 "name": "lines",
-                "type": "list"
-              }
-            ],
-            "outputs": [
-              {
-                "name": "new_lines",
-                "type": "list"
-              }
-            ],
-            "confs": [],
-            "params": [],
-            "secrets": [],
-            "title": "parallel-processing-user",
-            "description": "parallel-processing-user",
-            "created": "2026-02-18T16:11:22.798585Z",
-            "modified": "2026-02-18T16:11:22.842905Z",
-            "version": 2,
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/parallel-processing-user:aaa3bac",
-            "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/c26b2e8a2ff64b300937ddfac9cc52358bc7364a/parallel-processing-user",
-            "is_draft": false,
-            "next_version": null
-          }
-        },
-        "size": {
-          "width": 252,
-          "height": 61
-        }
-      },
-      "0b125f17-4039-4472-9675-916fe20a6487": {
-        "id": "0b125f17-4039-4472-9675-916fe20a6487",
-        "position": {
-          "x": 2054.891917252168,
-          "y": 969.1498881431767
-        },
-        "orientation": 0,
-        "type": "workflow-cell",
-        "ports": {
-          "lines": {
-            "id": "lines",
-            "type": "left",
-            "properties": {
-              "color": "#862d73",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": -2,
-              "y": 30
-            }
-          },
-          "new_lines": {
-            "id": "new_lines",
-            "type": "right",
-            "properties": {
-              "color": "#481f93",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": 252,
-              "y": 30
-            }
-          }
-        },
-        "properties": {
-          "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/6fe42337-afb1-4396-9e12-77295d3758fb/",
-            "owner": "user",
-            "virtual_lab": "openlab",
-            "shared_with_scopes": [],
-            "shared_with_users": [],
-            "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.9",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.9"
-            },
-            "dependencies": [],
-            "inputs": [
-              {
-                "name": "lines",
-                "type": "list"
-              }
-            ],
-            "outputs": [
-              {
-                "name": "new_lines",
-                "type": "list"
-              }
-            ],
-            "confs": [],
-            "params": [],
-            "secrets": [],
-            "title": "parallel-processing-user",
-            "description": "parallel-processing-user",
-            "created": "2026-02-18T16:11:22.798585Z",
-            "modified": "2026-02-18T16:11:22.842905Z",
-            "version": 2,
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/parallel-processing-user:aaa3bac",
-            "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/c26b2e8a2ff64b300937ddfac9cc52358bc7364a/parallel-processing-user",
-            "is_draft": false,
-            "next_version": null
-          }
-        },
-        "size": {
-          "width": 252,
-          "height": 61
-        }
-      },
-      "e538167c-f921-4be1-8bf0-cc8cf14b348e": {
-        "id": "e538167c-f921-4be1-8bf0-cc8cf14b348e",
-        "position": {
-          "x": 2415.070888169394,
-          "y": 904.2729306487697
-        },
-        "orientation": 0,
-        "type": "workflow-cell",
-        "ports": {
-          "new_lines": {
-            "id": "new_lines",
-            "type": "left",
-            "properties": {
-              "color": "#481f93",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": -2,
-              "y": 30
-            }
-          }
-        },
-        "properties": {
-          "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/bdbfa118-c4d9-409a-bcff-db6932849951/",
-            "owner": "user",
-            "virtual_lab": "openlab",
-            "shared_with_scopes": [],
-            "shared_with_users": [],
-            "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.9",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.9"
-            },
-            "dependencies": [],
-            "inputs": [
-              {
-                "name": "new_lines",
                 "type": "list"
               }
             ],
@@ -1011,14 +855,75 @@
             "confs": [],
             "params": [],
             "secrets": [],
-            "title": "use-parallel-data-user",
-            "description": "use-parallel-data-user",
-            "created": "2026-02-18T16:11:28.873319Z",
-            "modified": "2026-02-18T16:11:28.885116Z",
-            "version": 1,
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/use-parallel-data-user:b9199f4",
+            "title": "parallel-processing-user",
+            "description": "parallel-processing-user",
+            "created": "2026-02-18T16:36:19.072508Z",
+            "modified": "2026-02-18T16:36:19.087898Z",
+            "version": 3,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/parallel-processing-user:91c251b",
             "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/f25082775fc71d85fb9758e0f2be56252d954ec4/use-parallel-data-user",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/b092fe93bc62f4a5a5b0becd870ca19bec849f19/parallel-processing-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "f0f78117-bb3e-4535-81d0-357e9137215b": {
+        "id": "f0f78117-bb3e-4535-81d0-357e9137215b",
+        "position": {
+          "x": 2007.5283895660348,
+          "y": 943.6086175942547
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "lines": {
+            "id": "lines",
+            "type": "left",
+            "properties": {
+              "color": "#862d73",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/553677c5-1fde-49c9-9818-713b25fbe043/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.9",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.9"
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "lines",
+                "type": "list"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "parallel-processing-user",
+            "description": "parallel-processing-user",
+            "created": "2026-02-18T16:36:19.072508Z",
+            "modified": "2026-02-18T16:36:19.087898Z",
+            "version": 3,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/parallel-processing-user:91c251b",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/b092fe93bc62f4a5a5b0becd870ca19bec849f19/parallel-processing-user",
             "is_draft": false,
             "next_version": null
           }
@@ -1206,37 +1111,26 @@
           "portId": "splitter_source"
         }
       },
-      "dc9e36f3-26c2-4ef4-b8c6-7198b6eb8f09": {
-        "id": "dc9e36f3-26c2-4ef4-b8c6-7198b6eb8f09",
+      "35670338-e4a1-4a85-8564-5dad2f9a6863": {
+        "id": "35670338-e4a1-4a85-8564-5dad2f9a6863",
         "from": {
           "nodeId": "234dffd7-a379-421a-ac2f-60d93bebe540",
           "portId": "lines"
         },
         "to": {
-          "nodeId": "4540299a-3670-4083-8fcf-ea6fffb51bfd",
+          "nodeId": "6b04410b-1757-466a-9162-ff3cdd506eee",
           "portId": "lines"
         }
       },
-      "d2eb0910-2a04-4cdf-adde-d78c8fdd0f83": {
-        "id": "d2eb0910-2a04-4cdf-adde-d78c8fdd0f83",
+      "c33e3428-4b63-4d6e-bbb1-bf4c9265b476": {
+        "id": "c33e3428-4b63-4d6e-bbb1-bf4c9265b476",
         "from": {
           "nodeId": "c80c39d2-19fe-430f-9ef7-7599ee9aae84",
           "portId": "splitter_target"
         },
         "to": {
-          "nodeId": "0b125f17-4039-4472-9675-916fe20a6487",
+          "nodeId": "f0f78117-bb3e-4535-81d0-357e9137215b",
           "portId": "lines"
-        }
-      },
-      "bf4aa065-ad06-492a-9e10-ee53068b389e": {
-        "id": "bf4aa065-ad06-492a-9e10-ee53068b389e",
-        "from": {
-          "nodeId": "0b125f17-4039-4472-9675-916fe20a6487",
-          "portId": "new_lines"
-        },
-        "to": {
-          "nodeId": "e538167c-f921-4be1-8bf0-cc8cf14b348e",
-          "portId": "new_lines"
         }
       }
     },
