@@ -2,10 +2,10 @@
   "virtual_lab": "openlab",
   "naavrewf2": {
     "offset": {
-      "x": -800.85,
-      "y": -193.46
+      "x": -407.36,
+      "y": -36.59
     },
-    "scale": 0.681,
+    "scale": 0.557,
     "nodes": {
       "0fbea7f8-cc5b-44a7-be9d-d42fe7b1cebd": {
         "id": "0fbea7f8-cc5b-44a7-be9d-d42fe7b1cebd",
@@ -577,8 +577,8 @@
       "f4b8f36b-c26b-43f9-a9a2-0a63ceb88ae1": {
         "id": "f4b8f36b-c26b-43f9-a9a2-0a63ceb88ae1",
         "position": {
-          "x": 1095.980629539951,
-          "y": 512.3123486682807
+          "x": 1299.5600478844697,
+          "y": 366.89847842219564
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -664,8 +664,8 @@
       "234dffd7-a379-421a-ac2f-60d93bebe540": {
         "id": "234dffd7-a379-421a-ac2f-60d93bebe540",
         "position": {
-          "x": 1096.6960352422898,
-          "y": 618.8839941262846
+          "x": 1183.9443573899407,
+          "y": 685.9980880860164
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -742,8 +742,8 @@
       "c80c39d2-19fe-430f-9ef7-7599ee9aae84": {
         "id": "c80c39d2-19fe-430f-9ef7-7599ee9aae84",
         "position": {
-          "x": 1466.7400881057265,
-          "y": 815.6534508076357
+          "x": 1665.8452335195966,
+          "y": 972.2530033803428
         },
         "orientation": 0,
         "type": "splitter",
@@ -811,72 +811,11 @@
           "height": 61
         }
       },
-      "7e96b100-a500-4f71-8297-4d0ce0d7c564": {
-        "id": "7e96b100-a500-4f71-8297-4d0ce0d7c564",
-        "position": {
-          "x": 2320.1419779907783,
-          "y": 548.3994126284875
-        },
-        "orientation": 0,
-        "type": "workflow-cell",
-        "ports": {
-          "new_lines": {
-            "id": "new_lines",
-            "type": "left",
-            "properties": {
-              "color": "#481f93",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": -2,
-              "y": 30
-            }
-          }
-        },
-        "properties": {
-          "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/bdbfa118-c4d9-409a-bcff-db6932849951/",
-            "owner": "user",
-            "virtual_lab": "openlab",
-            "shared_with_scopes": [],
-            "shared_with_users": [],
-            "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.9",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.9"
-            },
-            "dependencies": [],
-            "inputs": [
-              {
-                "name": "new_lines",
-                "type": "list"
-              }
-            ],
-            "outputs": [],
-            "confs": [],
-            "params": [],
-            "secrets": [],
-            "title": "use-parallel-data-user",
-            "description": "use-parallel-data-user",
-            "created": "2026-02-18T16:11:28.873319Z",
-            "modified": "2026-02-18T16:11:28.885116Z",
-            "version": 1,
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/use-parallel-data-user:b9199f4",
-            "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/f25082775fc71d85fb9758e0f2be56252d954ec4/use-parallel-data-user",
-            "is_draft": false,
-            "next_version": null
-          }
-        },
-        "size": {
-          "width": 252,
-          "height": 61
-        }
-      },
       "4540299a-3670-4083-8fcf-ea6fffb51bfd": {
         "id": "4540299a-3670-4083-8fcf-ea6fffb51bfd",
         "position": {
-          "x": 1640.259452293273,
-          "y": 577.7679882525703
+          "x": 1624.5994970360018,
+          "y": 633.6963998856796
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -950,75 +889,142 @@
           "height": 61
         }
       },
-      "ba3a0788-816e-451a-b488-cf8584140c05": {
-        "id": "ba3a0788-816e-451a-b488-cf8584140c05",
+      "0b125f17-4039-4472-9675-916fe20a6487": {
+        "id": "0b125f17-4039-4472-9675-916fe20a6487",
         "position": {
-          "x": 1982.4033583138316,
-          "y": 558.678414096916
+          "x": 2054.891917252168,
+          "y": 969.1498881431767
         },
         "orientation": 0,
-        "type": "merger",
+        "type": "workflow-cell",
         "ports": {
-          "merger_source": {
-            "id": "merger_source",
+          "lines": {
+            "id": "lines",
             "type": "left",
             "properties": {
-              "color": "#1f9384",
-              "parentNodeType": "merger"
+              "color": "#862d73",
+              "parentNodeType": "workflow-cell"
             },
             "position": {
               "x": -2,
               "y": 30
             }
           },
-          "merger_target": {
-            "id": "merger_target",
+          "new_lines": {
+            "id": "new_lines",
             "type": "right",
             "properties": {
-              "color": "#562d86",
-              "parentNodeType": "merger"
+              "color": "#481f93",
+              "parentNodeType": "workflow-cell"
             },
             "position": {
-              "x": 202,
+              "x": 252,
               "y": 30
             }
           }
         },
         "properties": {
           "cell": {
-            "url": "merger",
-            "title": "Merger",
-            "description": "Merge the output of multiple containers back into a single list.",
-            "type": "merger",
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/6fe42337-afb1-4396-9e12-77295d3758fb/",
+            "owner": "user",
+            "virtual_lab": "openlab",
             "shared_with_scopes": [],
             "shared_with_users": [],
-            "version": 1,
-            "next_version": null,
-            "container_image": "",
             "base_container_image": {
-              "build": "",
-              "runtime": ""
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.9",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.9"
             },
             "dependencies": [],
             "inputs": [
               {
-                "name": "merger_source",
+                "name": "lines",
                 "type": "list"
               }
             ],
             "outputs": [
               {
-                "name": "merger_target",
+                "name": "new_lines",
                 "type": "list"
               }
             ],
             "confs": [],
             "params": [],
-            "secrets": []
+            "secrets": [],
+            "title": "parallel-processing-user",
+            "description": "parallel-processing-user",
+            "created": "2026-02-18T16:11:22.798585Z",
+            "modified": "2026-02-18T16:11:22.842905Z",
+            "version": 2,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/parallel-processing-user:aaa3bac",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/c26b2e8a2ff64b300937ddfac9cc52358bc7364a/parallel-processing-user",
+            "is_draft": false,
+            "next_version": null
           }
         },
         "size": {
-          "width": 202,
+          "width": 252,
+          "height": 61
+        }
+      },
+      "e538167c-f921-4be1-8bf0-cc8cf14b348e": {
+        "id": "e538167c-f921-4be1-8bf0-cc8cf14b348e",
+        "position": {
+          "x": 2415.070888169394,
+          "y": 904.2729306487697
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "new_lines": {
+            "id": "new_lines",
+            "type": "left",
+            "properties": {
+              "color": "#481f93",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/bdbfa118-c4d9-409a-bcff-db6932849951/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.9",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.9"
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "new_lines",
+                "type": "list"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "use-parallel-data-user",
+            "description": "use-parallel-data-user",
+            "created": "2026-02-18T16:11:28.873319Z",
+            "modified": "2026-02-18T16:11:28.885116Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/use-parallel-data-user:b9199f4",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/f25082775fc71d85fb9758e0f2be56252d954ec4/use-parallel-data-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
           "height": 61
         }
       }
@@ -1211,36 +1217,25 @@
           "portId": "lines"
         }
       },
-      "7a85afd9-66dd-481e-aca9-2afe26d52050": {
-        "id": "7a85afd9-66dd-481e-aca9-2afe26d52050",
+      "d2eb0910-2a04-4cdf-adde-d78c8fdd0f83": {
+        "id": "d2eb0910-2a04-4cdf-adde-d78c8fdd0f83",
         "from": {
           "nodeId": "c80c39d2-19fe-430f-9ef7-7599ee9aae84",
           "portId": "splitter_target"
         },
         "to": {
-          "nodeId": "4540299a-3670-4083-8fcf-ea6fffb51bfd",
+          "nodeId": "0b125f17-4039-4472-9675-916fe20a6487",
           "portId": "lines"
         }
       },
-      "6d516661-48c2-48e8-bdef-24019419b1d2": {
-        "id": "6d516661-48c2-48e8-bdef-24019419b1d2",
+      "bf4aa065-ad06-492a-9e10-ee53068b389e": {
+        "id": "bf4aa065-ad06-492a-9e10-ee53068b389e",
         "from": {
-          "nodeId": "4540299a-3670-4083-8fcf-ea6fffb51bfd",
+          "nodeId": "0b125f17-4039-4472-9675-916fe20a6487",
           "portId": "new_lines"
         },
         "to": {
-          "nodeId": "ba3a0788-816e-451a-b488-cf8584140c05",
-          "portId": "merger_source"
-        }
-      },
-      "74645c6a-23fd-4f20-8a96-c066b51f97e1": {
-        "id": "74645c6a-23fd-4f20-8a96-c066b51f97e1",
-        "from": {
-          "nodeId": "ba3a0788-816e-451a-b488-cf8584140c05",
-          "portId": "merger_target"
-        },
-        "to": {
-          "nodeId": "7e96b100-a500-4f71-8297-4d0ce0d7c564",
+          "nodeId": "e538167c-f921-4be1-8bf0-cc8cf14b348e",
           "portId": "new_lines"
         }
       }
@@ -1261,4 +1256,3 @@
   },
   "cron_schedule": null
 }
-
