@@ -190,7 +190,7 @@ templates:
         {% endfor %}
         {% for p in params %}
         --{{ p.name }}={{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
-        {% endfor %}r
+        {% endfor %}
         --id {{ node.id[:7] }};
     {% elif node.properties.cell.kernel == 'IRkernel' %}
       - source /venv/bin/activate; Rscript /app/task.R

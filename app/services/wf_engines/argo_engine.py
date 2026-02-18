@@ -177,6 +177,9 @@ class ArgoEngine(WFEngine, ABC):
     def add_secrets_to_k8s(self):
         secrets_creator_api_endpoint = os.getenv(
             'SECRETS_CREATOR_API_ENDPOINT')
+        if not secrets_creator_api_endpoint:
+            raise Exception("SECRETS_CREATOR_API_ENDPOINT environment "
+                            "variable is not set")
         # Make sure that the secrets_creator_api_endpoint has a '/' at the end
         if not secrets_creator_api_endpoint.endswith('/'):
             secrets_creator_api_endpoint += '/'
