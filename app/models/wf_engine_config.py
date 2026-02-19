@@ -15,3 +15,5 @@ class WfEngineConfig(BaseModel):
     namespace: str
     workdir_storage_size: str = '1Gi'
     extraVolumeMounts: Optional[list[dict]] | None = None
+    secrets_creator_api_endpoint: Optional[str] | None = None
+    secrets_creator_api_token: Optional[str] | None = None
