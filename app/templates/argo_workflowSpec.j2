@@ -73,15 +73,6 @@ templates:
 {% set params = [] if is_special_node else node.properties.cell.params %}
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
-{# {% if 'visualize-' in title %}
-- name: {{ title }}-server-tmp
-  container:
-    image: busybox
-    imagePullPolicy: IfNotPresent
-    command: ["/bin/bash", "-c"]
-    args:
-      - echo "Starting server"
-{% endif %} #}
 - name: {{ title }}-tmp
   {% if deps_dag[node.id]|length > 0 %}
   inputs:
@@ -102,55 +93,18 @@ templates:
           path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
     {% endif %}
     {% endfor %}
-  {% if is_special_node and not is_visualizer %}
+  {% if is_special_node %}
   {% set special_dep = deps_dag[node.id][0] %}
   script:
     image: python:alpine3.9
     imagePullPolicy: IfNotPresent
     command: [python]
     source: |
-      import json
-      {{ special_dep.port_id }} = {{ '{{inputs.parameters.' }}{{ special_dep.port_id }}{{ '}}' }}
-      {% for port in ports.values() %}
-      {% if port.type == 'right' %}
       {% if is_splitter %}
-      {# splitter logic #}
-      list_of_lists = []
-      for elem in {{special_dep.port_id}}:
-        list = [elem]
-        list_of_lists.append(list)
-      f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
-      f_out.write(json.dumps(list_of_lists))
-      f_out.close()
+      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node) | indent(6) }}
       {% else %}
-      {# Merger logic #}
-      {{special_dep.port_id}} = [item for items in {{special_dep.port_id}} for item in json.loads(items)]
-      f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
-      f_out.write(json.dumps({{special_dep.port_id}}))
-      f_out.close()
+      {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
-      {% endif %}
-      {% endfor %}
-  {% elif is_visualizer %}
-  container:
-    image: "qcdis/geotiff_viewer:v0.2.6"
-    imagePullPolicy: IfNotPresent
-    command: ["/bin/sh", "-c"]
-    args:
-      - python /app/python_scripts/main.py
-        {% for d in deps_dag[node.id] %}
-        {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% set stdinname = d.og_port_id if is_from_special else d.port_id %}
-        {% set stdinname_base = stdinname.split('_')[:-1]|join('_') %}
-        --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d.port_id }}{{ '}}' }}'
-        {% endfor %}
-        {% for p in params %}
-        --{{ p.name }} '{{ '{{workflow.parameters.' }}{{ p.name }}{{ '}}' }}'
-        {% endfor %}
-        && npm start
-  metadata:
-    labels:
-      app: naavre-visualizer
   {% else %}
   container:
     image: "{{ node.properties.cell.container_image }}"

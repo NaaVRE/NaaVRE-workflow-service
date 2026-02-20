@@ -1,0 +1,14 @@
+import json
+{{ special_dep.port_id }} = {{ '{{inputs.parameters.' }}{{ special_dep.port_id }}{{ '}}' }}
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+list_of_lists = json.loads( {{ special_dep.port_id }} )
+
+output_file_name = "{{port.id}}_{{ node.id[:7] }}.json"
+output_path = "/tmp/" + output_file_name
+f_out = open(output_path, "w")
+f_out.write(json.dumps(list_of_lists))
+f_out.close()
+
+{% endif %}
+{% endfor %}
