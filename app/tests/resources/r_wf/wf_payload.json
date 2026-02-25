@@ -1,0 +1,14 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "nodes": "{py_wf.naavrewf.chart.nodes}",
+    "links": "{py_wf.naavrewf.chart.links}"
+  },
+  "params": {
+    "param_neg_string": {
+      "value": "-starts with hyphen",
+      "default_value": "-starts with hyphen"
+    }
+  },
+  "cron_schedule": null
+}

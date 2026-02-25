@@ -1,0 +1,19 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "nodes": "{py_wf.naavrewf.chart.nodes}",
+    "links": "{py_wf.naavrewf.chart.links}"
+  },
+  "params": {
+    "param_with_dash": {
+      "value": "-param",
+      "default_value": "-param"
+    }
+  },
+  "secrets": {
+    "secret_password": {
+      "value": "secret"
+    }
+  },
+  "cron_schedule": "* * * * *"
+}

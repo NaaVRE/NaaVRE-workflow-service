@@ -77,23 +77,29 @@ def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
 
 
 def test_submit():
-    workflows_json_path = os.path.join(base_path, 'naavrewf2_payload')
-    workflow_files = os.listdir(workflows_json_path)
-    for workflow_file in workflow_files:
-        workflow_path = os.path.join(workflows_json_path, workflow_file)
-        with open(workflow_path) as f:
-            print('Testing workflow: ' + workflow_file)
+    workflow_dirs = os.path.join(base_path)
+    workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
+                           f.is_dir()]
+    for workflow_test_folder in workflow_test_files:
+        print('Testing workflow: ' + workflow_test_folder)
+        workflow_payload_path = os.path.join(workflow_test_folder,
+                                             'wf_payload.json')
+        with open(workflow_payload_path) as f:
             workflow_dict = json.load(f)
-        f.close()
+        workflow_file_path = os.path.join(workflow_test_folder, 'wf.naavrewf')
+        with open(workflow_file_path) as f:
+            workflow_file = json.load(f)
+        nodes = workflow_file['chart']['nodes']
+        links = workflow_file['chart']['links']
+
+        workflow_dict['naavrewf2']['nodes'] = nodes
+        workflow_dict['naavrewf2']['links'] = links
 
         submit_response = client.post(
             '/submit/',
             headers={'Authorization': 'Bearer ' + user_auth_token},
             json=workflow_dict,
         )
-
-        # Print the response for debugging
-        print(submit_response.json())
         assert submit_response.status_code == 200
         # Check run_url that the workflow was submitted successfully
         run_url = submit_response.json()['run_url']
