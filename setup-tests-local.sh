@@ -163,7 +163,9 @@ deploy_naavre(){
     cp "../$VALUES_FILE" .
   fi
   # Add the third-party Helm repos
-  ./deploy.sh repo-add
+  if [ "$DEPLOY_NAAAVRE" == "true" ]; then
+    ./deploy.sh repo-add
+  fi
   cp "$VALUES_FILE" secrets-minikube.yaml
   # Read CELL_GITHUB_TOKEN from dev.env if it exists
   if [ -f "../dev.env" ]; then
