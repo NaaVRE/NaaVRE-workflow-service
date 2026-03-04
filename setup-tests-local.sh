@@ -115,7 +115,6 @@ export "SECRETS_CREATOR_SECRET_NAME=$namespace-k8s-secret-creator"
 export ARGO_SERVICE_ACCOUNT_EXECUTOR="argo-executor"
 export ARGO_VRE_API_SERVICE_ACCOUNT="argo-vreapi"
 export ARGO_SERCERT_TOKEN_NAME=argo-vreapi.service-account-token
-export USER_EMAIL=$USERNAME@nowhere.no
 
 
 
@@ -253,7 +252,7 @@ setup_authentication() {
       echo "USERNAME is empty. Please check the values file."
       exit 1
   fi
-
+  export USER_EMAIL=$USERNAME@nowhere.no
   export USER_FIRST_NAME=$USERNAME
   export USER_LAST_NAME=$USERNAME
 
@@ -626,6 +625,7 @@ export_variables(){
     echo "ARGO_TOKEN=$ARGO_TOKEN"
     echo "SECRETS_CREATOR_API_ENDPOINT"="$SECRETS_CREATOR_API_ENDPOINT"
     echo "SECRETS_CREATOR_API_TOKEN"="$SECRETS_CREATOR_API_TOKEN"
+    echo "USER_EMAIL"="$USER_EMAIL"
   } > dev-setup.env
 
   # Marge dev-setup.env to dev.env
