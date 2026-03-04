@@ -161,7 +161,14 @@ templates:
     command: ["/bin/bash", "-c"]
     args:
     {% if node.properties.cell.kernel == 'ipython' %}
-      - source /venv/bin/activate; python /app/task.py
+      - source /venv/bin/activate;
+        {% for port in ports.values() %}
+        {% if port.type == 'right' %}
+          touch /tmp/{{ port.id }}_{{ node.id[:7] }}.json;
+        {% endif %}
+        {% endfor %}
+
+         python /app/task.py
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
         {% set stdinname = d.og_port_id if is_from_special else d.port_id %}
