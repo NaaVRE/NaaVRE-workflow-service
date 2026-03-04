@@ -52,6 +52,15 @@ jobs:
           chmod +x setup-tests-local.sh
           ./setup-tests-local.sh -f values-deploy-naavre-workflow-service-minikube-github.yaml  -d -c -n -u -p -v
 
+      - name: Check if AUTH_TOKEN is set
+        run: |
+          if [ -z "$AUTH_TOKEN" ]; then
+            echo "AUTH_TOKEN is not set. Exiting."
+            exit 1
+          else
+            echo "AUTH_TOKEN is set."
+          fi
+
       - name: Install pytest
         run: | 
           pip install -r requirements.txt
