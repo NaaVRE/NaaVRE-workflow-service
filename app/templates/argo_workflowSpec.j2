@@ -131,26 +131,6 @@ templates:
       {% endif %}
       {% endif %}
       {% endfor %}
-  {% elif is_visualizer %}
-  container:
-    image: "qcdis/geotiff_viewer:v0.2.6"
-    imagePullPolicy: IfNotPresent
-    command: ["/bin/sh", "-c"]
-    args:
-      - python /app/python_scripts/main.py
-        {% for d in deps_dag[node.id] %}
-        {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% set stdinname = d.og_port_id if is_from_special else d.port_id %}
-        {% set stdinname_base = stdinname.split('_')[:-1]|join('_') %}
-        --{{ stdinname_base }} '{{ '{{inputs.parameters.' }}{{ d.port_id }}{{ '}}' }}'
-        {% endfor %}
-        {% for p in params %}
-        --{{ p.name }} '{{ '{{workflow.parameters.' }}{{ p.name }}{{ '}}' }}'
-        {% endfor %}
-        && npm start
-  metadata:
-    labels:
-      app: naavre-visualizer
   {% else %}
   container:
     image: "{{ node.properties.cell.container_image }}"
@@ -193,7 +173,8 @@ templates:
         {% endfor %}
         --id={{ node.id[:7] }};
     {% elif node.properties.cell.kernel == 'IRkernel' %}
-      - source /venv/bin/activate; Rscript /app/task.R
+      -
+        source /venv/bin/activate; Rscript /app/task.R
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
         {% set stdinname = d.og_port_id if is_from_special else d.port_id %}
