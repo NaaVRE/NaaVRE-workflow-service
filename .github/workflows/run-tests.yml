@@ -52,14 +52,10 @@ jobs:
           chmod +x setup-tests-local.sh
           ./setup-tests-local.sh -f values-deploy-naavre-workflow-service-minikube-github.yaml  -d -c -n -u -p -v
 
-      - name: Check if AUTH_TOKEN is set
+      - name: Test auth token with python jwt library
         run: |
-          if [ -z "$AUTH_TOKEN" ]; then
-            echo "AUTH_TOKEN is not set. Exiting."
-            exit 1
-          else
-            echo "AUTH_TOKEN is set."
-          fi
+          pip install pyjwt
+          python3 -c "import jwt; import os; token = os.getenv('AUTH_TOKEN'); decoded = jwt.decode(token, options={'verify_signature': False}); print(decoded)"
 
       - name: Install pytest
         run: | 
