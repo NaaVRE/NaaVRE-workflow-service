@@ -1,8 +1,8 @@
 {
   "virtual_lab": "openlab",
   "naavrewf2": {
-    "nodes": "{py_wf.naavrewf.chart.nodes}",
-    "links": "{py_wf.naavrewf.chart.links}"
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}"
   },
   "params": {
     "param_with_dash": {
