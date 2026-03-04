@@ -16,7 +16,6 @@ print_usage() {
   echo "Options:"
   echo "  -f, --values        Path to the Helm values file to use for deployment"
   echo "  -d, --delete-naavre-dir  Delete the NaaVRE-helm directory before cloning it again"
-  echo "  -c, --clone-naavre-dir   Clone the NaaVRE-helm repository if it does not exist"
   echo "  -n, --delete-namespace        Delete the NaaVRE namespace before installation"
   echo "  -u, --uninstall-naavre        Uninstall NaaVRE before installation"
   echo "  -p, --delete-pv-pvc        Delete PV and PVC before creating them again"
@@ -41,10 +40,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     -d|--delete-naavre-dir)
       DELETE_NAAAVRE_DIR="true"
-      shift # past argument
-      ;;
-    -c|--clone-naavre-dir)
-      CLONE_NAAAVRE_DIR="true"
       shift # past argument
       ;;
     -n|--delete-namespace)
@@ -155,10 +150,7 @@ deploy_naavre(){
     if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
       rm -rf NaaVRE-helm
     fi
-    mkdir "NaaVRE-helm"
-    if [ "$CLONE_NAAAVRE_DIR" == "true" ]; then
-      git clone https://github.com/NaaVRE/NaaVRE-helm.git
-    fi
+    git clone https://github.com/NaaVRE/NaaVRE-helm.git
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
   fi
