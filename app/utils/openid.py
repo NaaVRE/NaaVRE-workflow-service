@@ -31,6 +31,11 @@ class OpenIDValidator:
     @cachetools.func.ttl_cache(ttl=60 * 60 * 12)
     def _get_openid_conf(verify_ssl: bool) -> Union[dict, None]:
         url = os.environ['OIDC_CONFIGURATION_URL']
+        if not url:
+            (logger.error
+             ("OIDC_CONFIGURATION_URL environment variable is not set"))
+            raise (ValueError
+                   ("OIDC_CONFIGURATION_URL environment variable is not set"))
         r = requests.get(url, verify=verify_ssl)
         r.raise_for_status()
         return r.json()
