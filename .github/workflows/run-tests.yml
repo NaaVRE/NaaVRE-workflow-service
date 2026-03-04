@@ -48,9 +48,9 @@ jobs:
       - name: Run setup-tests.sh
         shell: bash -l {0}
         run: |
-          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/scripts/setup-tests.sh
-          chmod +x setup-tests.sh
-          ./setup-tests.sh -f values-deploy-naavre-workflow-service-minikube-github.yaml  -d -c -n -u -p -v
+#          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/scripts/setup-tests.sh
+          chmod +x setup-tests-local.sh
+          ./setup-tests-local.sh -f values-deploy-naavre-workflow-service-minikube-github.yaml  -d -c -n -u -p -v
 
       - name: Install pytest
         run: | 
