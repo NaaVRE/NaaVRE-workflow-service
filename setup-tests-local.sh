@@ -218,7 +218,7 @@ get_auth_token(){
   fi
 
   export AUTH_TOKEN
-  python3 -c "import jwt; import os; token = os.getenv('AUTH_TOKEN'); decoded = jwt.decode(token, options={'verify_signature': False}); print(decoded)"
+  python -c "import jwt; import os; token = os.getenv('AUTH_TOKEN'); decoded = jwt.decode(token, options={'verify_signature': False}); print(decoded)"
   if [ $? -ne 0 ]; then
       echo "Failed to decode AUTH_TOKEN with python jwt library"
       exit 1
