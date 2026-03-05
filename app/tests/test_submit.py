@@ -100,7 +100,21 @@ def test_submit():
             headers={'Authorization': 'Bearer ' + user_auth_token},
             json=workflow_dict,
         )
-        assert submit_response.status_code == 200
+        responses_dict = {'submit': {'code': 200, 'message': 'OK'}}
+        responses_path = os.path.join(workflow_test_folder, 'responses.json')
+        if responses_path:
+            with open(responses_path) as f:
+                responses_dict = json.load(f)
+
+        if submit_response.status_code != \
+                responses_dict['submit']['code']:
+            print(submit_response.text)
+
+        assert submit_response.status_code == \
+               responses_dict['submit']['code']
+        if submit_response.status_code != 200 and \
+                responses_dict['submit']['code'] != 200:
+            continue
         # Check run_url that the workflow was submitted successfully
         run_url = submit_response.json()['run_url']
         assert run_url is not None

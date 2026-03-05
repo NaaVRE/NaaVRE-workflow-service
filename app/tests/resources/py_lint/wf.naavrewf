@@ -1,0 +1,223 @@
+{
+  "chart": {
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": {
+      "8fa6f489-eaec-412e-965d-074dd9f314e9": {
+        "id": "8fa6f489-eaec-412e-965d-074dd9f314e9",
+        "position": {
+          "x": 870.6666870117188,
+          "y": 197
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "var": {
+            "id": "var",
+            "type": "left",
+            "properties": {
+              "color": "#6653ac",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/2d48ffc6-c05b-4b66-8a37-5fd4b5ba394a/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.11",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.11"
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "var",
+                "type": "int"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "use-input-user",
+            "description": "use-input-user",
+            "created": "2026-03-05T14:40:27.516577Z",
+            "modified": "2026-03-05T14:40:27.530228Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/use-input-user:cdcacf6",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/fe0ebfc8fee4b0ccc683b6ebb8579895e4dda539/use-input-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "dc65c253-57cd-4036-be68-8454da92191d": {
+        "id": "dc65c253-57cd-4036-be68-8454da92191d",
+        "position": {
+          "x": 421.66668701171875,
+          "y": 191
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "var": {
+            "id": "var",
+            "type": "right",
+            "properties": {
+              "color": "#6653ac",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/574c425a-4a9d-4f7c-8884-1260a094cac9/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.11",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.11"
+            },
+            "dependencies": [],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "var",
+                "type": "int"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "input-user",
+            "description": "input-user",
+            "created": "2026-03-05T14:39:51.366766Z",
+            "modified": "2026-03-05T14:39:51.406296Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/input-user:84b8f22",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/f5b9a11cc874c79b2728d7c81c1a5dd400225eb1/input-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "5bda84dc-61df-4d4a-9e50-4f55d96ddf15": {
+        "id": "5bda84dc-61df-4d4a-9e50-4f55d96ddf15",
+        "position": {
+          "x": 619.6666870117188,
+          "y": 412
+        },
+        "orientation": 0,
+        "type": "splitter",
+        "ports": {
+          "splitter_source": {
+            "id": "splitter_source",
+            "type": "left",
+            "properties": {
+              "color": "#86642d",
+              "parentNodeType": "splitter"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          },
+          "splitter_target": {
+            "id": "splitter_target",
+            "type": "right",
+            "properties": {
+              "color": "#5940bf",
+              "parentNodeType": "splitter"
+            },
+            "position": {
+              "x": 202,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "splitter",
+            "title": "Splitter",
+            "description": "Split the input list and distribute its items to multiple containers that run in parallel.",
+            "type": "splitter",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "version": 1,
+            "next_version": null,
+            "container_image": "",
+            "base_container_image": {
+              "build": "",
+              "runtime": ""
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "splitter_source",
+                "type": "list"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "splitter_target",
+                "type": "list"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": []
+          }
+        },
+        "size": {
+          "width": 202,
+          "height": 61
+        }
+      }
+    },
+    "links": {
+      "de2aa7fc-b91b-4672-8a86-c874a18fc925": {
+        "id": "de2aa7fc-b91b-4672-8a86-c874a18fc925",
+        "from": {
+          "nodeId": "dc65c253-57cd-4036-be68-8454da92191d",
+          "portId": "var"
+        },
+        "to": {
+          "nodeId": "8fa6f489-eaec-412e-965d-074dd9f314e9",
+          "portId": "var"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {
+      "type": "node",
+      "id": "5bda84dc-61df-4d4a-9e50-4f55d96ddf15"
+    }
+  }
+}
