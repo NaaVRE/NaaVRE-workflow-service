@@ -28,16 +28,10 @@ templates:
   dag:
     tasks:
     {% for node in nodes.values() %}
-    {% set is_special_node = node.type == 'splitter' or node.type == 'merger' or node.type == 'visualizer' %}
+    {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
-    {% set is_visualizer = node.type == 'visualizer' %}
     {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
     {% set params =  [] if is_special_node else node.properties.cell.params %}
-    {# {% if 'visualize-' in title %}
-    - name: {{ title }}-server
-      dependencies: [{{ title }}]
-      template: {{ title }}-server-tmp
-    {% endif %} #}
     - name: {{ title }}
       {% if deps_dag[node.id]|length > 0 %}
       dependencies: [{% for d in deps_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
@@ -66,22 +60,12 @@ templates:
       {% endif %}
     {% endfor %}
 {% for node in nodes.values() %}
-{% set is_special_node = node.type == 'splitter' or node.type == 'merger' or node.type == 'visualizer' %}
+{% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
-{% set is_visualizer = node.type == 'visualizer' %}
 {% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title + "-" + node.id[:7] %}
 {% set params = [] if is_special_node else node.properties.cell.params %}
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
-{# {% if 'visualize-' in title %}
-- name: {{ title }}-server-tmp
-  container:
-    image: busybox
-    imagePullPolicy: IfNotPresent
-    command: ["/bin/bash", "-c"]
-    args:
-      - echo "Starting server"
-{% endif %} #}
 - name: {{ title }}-tmp
   {% if deps_dag[node.id]|length > 0 %}
   inputs:
@@ -102,7 +86,7 @@ templates:
           path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
     {% endif %}
     {% endfor %}
-  {% if is_special_node and not is_visualizer %}
+  {% if is_special_node %}
   {% set special_dep = deps_dag[node.id][0] %}
   script:
     image: python:alpine3.9
@@ -162,12 +146,6 @@ templates:
     args:
     {% if node.properties.cell.kernel == 'ipython' %}
       - source /venv/bin/activate;
-    {% for port in ports.values() %}
-    {% if port.type == 'right' %}
-        touch /tmp/{{ port.id }}_{{ node.id[:7] }}.json;
-    {% endif %}
-    {% endfor %}
-
         python /app/task.py
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
@@ -180,8 +158,7 @@ templates:
         {% endfor %}
         --id={{ node.id[:7] }};
     {% elif node.properties.cell.kernel == 'IRkernel' %}
-      -
-        source /venv/bin/activate; Rscript /app/task.R
+      - source /venv/bin/activate; Rscript /app/task.R
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
         {% set stdinname = d.og_port_id if is_from_special else d.port_id %}
