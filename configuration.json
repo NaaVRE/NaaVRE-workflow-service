@@ -20,7 +20,9 @@
             "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
             "subPath": "{unescaped_username}"
           }
-        ]
+        ],
+        "secrets_creator_api_endpoint": "https://example.naavre.net/k8s-secret-creator/1.0.0/",
+        "secrets_creator_api_token": "..."
       }
     },
     {

@@ -1,0 +1,621 @@
+{
+  "chart": {
+    "offset": {
+      "x": -1,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": {
+      "7bf07989-b056-4584-91f7-52662c37d761": {
+        "id": "7bf07989-b056-4584-91f7-52662c37d761",
+        "position": {
+          "x": 500.66668701171875,
+          "y": 238
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "float_type": {
+            "id": "float_type",
+            "type": "right",
+            "properties": {
+              "color": "#2d64d2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 13
+            }
+          },
+          "float_val": {
+            "id": "float_val",
+            "type": "right",
+            "properties": {
+              "color": "#c96ce0",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 39
+            }
+          },
+          "int_type": {
+            "id": "int_type",
+            "type": "right",
+            "properties": {
+              "color": "#5c2d86",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 65
+            }
+          },
+          "int_val": {
+            "id": "int_val",
+            "type": "right",
+            "properties": {
+              "color": "#302d86",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 91
+            }
+          },
+          "list_double_type": {
+            "id": "list_double_type",
+            "type": "right",
+            "properties": {
+              "color": "#78663a",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 117
+            }
+          },
+          "list_double_val": {
+            "id": "list_double_val",
+            "type": "right",
+            "properties": {
+              "color": "#1f937e",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 143
+            }
+          },
+          "list_int_type": {
+            "id": "list_int_type",
+            "type": "right",
+            "properties": {
+              "color": "#79b8d2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 169
+            }
+          },
+          "list_int_val": {
+            "id": "list_int_val",
+            "type": "right",
+            "properties": {
+              "color": "#e0d86c",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 195
+            }
+          },
+          "list_str_type": {
+            "id": "list_str_type",
+            "type": "right",
+            "properties": {
+              "color": "#c5879d",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 221
+            }
+          },
+          "list_str_val": {
+            "id": "list_str_val",
+            "type": "right",
+            "properties": {
+              "color": "#797cd2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 247
+            }
+          },
+          "string_type": {
+            "id": "string_type",
+            "type": "right",
+            "properties": {
+              "color": "#a4e06c",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 273
+            }
+          },
+          "string_val": {
+            "id": "string_val",
+            "type": "right",
+            "properties": {
+              "color": "#7f79d2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 299
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/39abc6ca-93aa-4099-9b2a-55bc2da1ec90/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.11",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.11"
+            },
+            "dependencies": [],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "float_type",
+                "type": "str"
+              },
+              {
+                "name": "float_val",
+                "type": "float"
+              },
+              {
+                "name": "int_type",
+                "type": "str"
+              },
+              {
+                "name": "int_val",
+                "type": "int"
+              },
+              {
+                "name": "list_double_type",
+                "type": "str"
+              },
+              {
+                "name": "list_double_val",
+                "type": "list"
+              },
+              {
+                "name": "list_int_type",
+                "type": "str"
+              },
+              {
+                "name": "list_int_val",
+                "type": "list"
+              },
+              {
+                "name": "list_str_type",
+                "type": "str"
+              },
+              {
+                "name": "list_str_val",
+                "type": "list"
+              },
+              {
+                "name": "string_type",
+                "type": "str"
+              },
+              {
+                "name": "string_val",
+                "type": "str"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "produce-types-user",
+            "description": "produce-types-user",
+            "created": "2026-03-04T12:16:32.539057Z",
+            "modified": "2026-03-04T12:16:32.597787Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/produce-types-user:72dd2e5",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/d960890163dcfe034b02ddeae40b52fc756aff6b/produce-types-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 313
+        }
+      },
+      "0a1b399d-0feb-413f-8834-7d772004c135": {
+        "id": "0a1b399d-0feb-413f-8834-7d772004c135",
+        "position": {
+          "x": 975.6666870117188,
+          "y": 249
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "float_type": {
+            "id": "float_type",
+            "type": "left",
+            "properties": {
+              "color": "#2d64d2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 13
+            }
+          },
+          "float_val": {
+            "id": "float_val",
+            "type": "left",
+            "properties": {
+              "color": "#c96ce0",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 39
+            }
+          },
+          "int_type": {
+            "id": "int_type",
+            "type": "left",
+            "properties": {
+              "color": "#5c2d86",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 65
+            }
+          },
+          "int_val": {
+            "id": "int_val",
+            "type": "left",
+            "properties": {
+              "color": "#302d86",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 91
+            }
+          },
+          "list_double_type": {
+            "id": "list_double_type",
+            "type": "left",
+            "properties": {
+              "color": "#78663a",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 117
+            }
+          },
+          "list_double_val": {
+            "id": "list_double_val",
+            "type": "left",
+            "properties": {
+              "color": "#1f937e",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 143
+            }
+          },
+          "list_int_type": {
+            "id": "list_int_type",
+            "type": "left",
+            "properties": {
+              "color": "#79b8d2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 169
+            }
+          },
+          "list_int_val": {
+            "id": "list_int_val",
+            "type": "left",
+            "properties": {
+              "color": "#e0d86c",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 195
+            }
+          },
+          "list_str_type": {
+            "id": "list_str_type",
+            "type": "left",
+            "properties": {
+              "color": "#c5879d",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 221
+            }
+          },
+          "list_str_val": {
+            "id": "list_str_val",
+            "type": "left",
+            "properties": {
+              "color": "#797cd2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 247
+            }
+          },
+          "string_type": {
+            "id": "string_type",
+            "type": "left",
+            "properties": {
+              "color": "#a4e06c",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 273
+            }
+          },
+          "string_val": {
+            "id": "string_val",
+            "type": "left",
+            "properties": {
+              "color": "#7f79d2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 299
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/c08877ef-a388-4c63-8836-702f7ff6f0f3/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.1.11",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.1.11"
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "float_type",
+                "type": "str"
+              },
+              {
+                "name": "float_val",
+                "type": "float"
+              },
+              {
+                "name": "int_type",
+                "type": "str"
+              },
+              {
+                "name": "int_val",
+                "type": "int"
+              },
+              {
+                "name": "list_double_type",
+                "type": "str"
+              },
+              {
+                "name": "list_double_val",
+                "type": "list"
+              },
+              {
+                "name": "list_int_type",
+                "type": "str"
+              },
+              {
+                "name": "list_int_val",
+                "type": "list"
+              },
+              {
+                "name": "list_str_type",
+                "type": "str"
+              },
+              {
+                "name": "list_str_val",
+                "type": "list"
+              },
+              {
+                "name": "string_type",
+                "type": "str"
+              },
+              {
+                "name": "string_val",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "assert-types-user",
+            "description": "assert-types-user",
+            "created": "2026-03-04T12:15:34.418084Z",
+            "modified": "2026-03-04T12:15:34.456205Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-types-user:67a68c9",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/15e9162c18732535317287e0a883b354f55dae8f/assert-types-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 313
+        }
+      }
+    },
+    "links": {
+      "47bd1ff7-32a9-4a6c-bdaa-3707547b3d75": {
+        "id": "47bd1ff7-32a9-4a6c-bdaa-3707547b3d75",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "float_type"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "float_type"
+        }
+      },
+      "41eab797-c175-49e7-b046-c98c30608d23": {
+        "id": "41eab797-c175-49e7-b046-c98c30608d23",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "float_val"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "float_val"
+        }
+      },
+      "edb41695-b0c4-400c-af98-00fab71dea30": {
+        "id": "edb41695-b0c4-400c-af98-00fab71dea30",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "int_type"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "int_type"
+        }
+      },
+      "bbc42315-764c-4aa5-862c-f9aafbc04302": {
+        "id": "bbc42315-764c-4aa5-862c-f9aafbc04302",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "int_val"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "int_val"
+        }
+      },
+      "3a5976db-471b-4938-881c-19fa8340ac38": {
+        "id": "3a5976db-471b-4938-881c-19fa8340ac38",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "list_double_type"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "list_double_type"
+        }
+      },
+      "6fcf4725-d9d0-41e5-85db-fa040f874fc2": {
+        "id": "6fcf4725-d9d0-41e5-85db-fa040f874fc2",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "list_double_val"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "list_double_val"
+        }
+      },
+      "1daebf6f-2c95-4859-bcc4-5e2b78958819": {
+        "id": "1daebf6f-2c95-4859-bcc4-5e2b78958819",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "list_int_type"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "list_int_type"
+        }
+      },
+      "1858cb16-fb49-4a76-a995-3d659d363b4f": {
+        "id": "1858cb16-fb49-4a76-a995-3d659d363b4f",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "list_int_val"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "list_int_val"
+        }
+      },
+      "2922fc8a-4c67-4efb-b5fa-4042a551fac0": {
+        "id": "2922fc8a-4c67-4efb-b5fa-4042a551fac0",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "list_str_type"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "list_str_type"
+        }
+      },
+      "ffd137ed-52aa-4dce-8b9b-5601bac389c4": {
+        "id": "ffd137ed-52aa-4dce-8b9b-5601bac389c4",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "list_str_val"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "list_str_val"
+        }
+      },
+      "17783958-4280-4e39-8c94-c18d86936eed": {
+        "id": "17783958-4280-4e39-8c94-c18d86936eed",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "string_type"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "string_type"
+        }
+      },
+      "cc550e0f-2f90-4f7d-aeac-29a783f57175": {
+        "id": "cc550e0f-2f90-4f7d-aeac-29a783f57175",
+        "from": {
+          "nodeId": "7bf07989-b056-4584-91f7-52662c37d761",
+          "portId": "string_val"
+        },
+        "to": {
+          "nodeId": "0a1b399d-0feb-413f-8834-7d772004c135",
+          "portId": "string_val"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {}
+  }
+}
