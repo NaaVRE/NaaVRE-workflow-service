@@ -1,0 +1,39 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}"
+  },
+      "params": {
+        "param_float_val": {
+          "value": "1.0",
+          "default_value": "1.0"
+        },
+        "param_int_val": {
+          "value": "1",
+          "default_value": "1"
+        },
+        "param_list_double_val": {
+          "value": "[1.0, 2.0, 3.0]",
+          "default_value": "[1.0, 2.0, 3.0]"
+        },
+        "param_list_int_val": {
+          "value": "[1, 2, 3]",
+          "default_value": "[1, 2, 3]"
+        },
+        "param_list_str_val": {
+          "value": "[\"1\", \"2\", \"3\"]",
+          "default_value": "[\"1\", \"2\", \"3\"]"
+        },
+        "param_string_val": {
+          "value": "-param",
+          "default_value": "-param"
+        }
+      },
+      "secrets": {
+        "secret_string_val": {
+          "value": "secret"
+        }
+      },
+  "cron_schedule": null
+}
