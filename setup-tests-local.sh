@@ -145,7 +145,6 @@ setup_minikube(){
 }
 
 deploy_naavre(){
-  echo "Deploying NaaVRE Helm chart"
   if [ "$CURRENT_DIR" != "NaaVRE-helm" ]; then
     if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
       rm -rf NaaVRE-helm
@@ -206,12 +205,6 @@ get_auth_token(){
       echo "Failed to get AUTH_TOKEN"
       exit 1
   fi
-  PAYLOAD=$(echo "$AUTH_TOKEN" | cut -d "." -f2 | base64 -d 2>/dev/null)
-  if [ $? -ne 0 ]; then
-      echo "Failed to decode AUTH_TOKEN payload"
-      exit 1
-  fi
-
   export AUTH_TOKEN
 }
 
@@ -330,7 +323,6 @@ setup_authentication() {
     -H "Authorization: Bearer $KEYCLOAK_ADMIN_TOKEN" \
     -H "Content-Type: application/json" \
     -d "$UPDATED_JSON"
-
   get_auth_token
 }
 
