@@ -102,7 +102,7 @@ def test_submit():
         )
         responses_dict = {'submit': {'code': 200, 'message': 'OK'}}
         responses_path = os.path.join(workflow_test_folder, 'responses.json')
-        if responses_path:
+        if os.path.exists(responses_path):
             with open(responses_path) as f:
                 responses_dict = json.load(f)
 
