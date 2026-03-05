@@ -48,6 +48,19 @@ class ArgoEngine(WFEngine, ABC):
         self.token = (vl_config.wf_engine_config.access_token.replace
                       ('"', '')).replace('Bearer ', '')
         self.extraVolumeMounts = vl_config.wf_engine_config.extraVolumeMounts
+        self.secrets_creator_api_endpoint = (vl_config.wf_engine_config.
+                                             secrets_creator_api_endpoint)
+        if not self.secrets_creator_api_endpoint:
+            raise Exception("secrets_creator_api_endpoint is not set in the "
+                            "configuration")
+        # Make sure that the secrets_creator_api_endpoint has a '/' at the end
+        if not self.secrets_creator_api_endpoint.endswith('/'):
+            self.secrets_creator_api_endpoint += '/'
+        self.secrets_creator_api_token = (vl_config.wf_engine_config.
+                                          secrets_creator_api_token)
+        if not self.secrets_creator_api_token:
+            raise Exception("secrets_creator_api_token is not set in the "
+                            "configuration")
 
     def submit(self):
         workflow_dict = self.naavrewf2_2_argo_workflow(create_secrets=True)
@@ -175,16 +188,6 @@ class ArgoEngine(WFEngine, ABC):
         return workflows_response.json().get('items', [])
 
     def add_secrets_to_k8s(self):
-        secrets_creator_api_endpoint = os.getenv(
-            'SECRETS_CREATOR_API_ENDPOINT')
-        if not secrets_creator_api_endpoint:
-            raise Exception("SECRETS_CREATOR_API_ENDPOINT environment "
-                            "variable is not set")
-        # Make sure that the secrets_creator_api_endpoint has a '/' at the end
-        if not secrets_creator_api_endpoint.endswith('/'):
-            secrets_creator_api_endpoint += '/'
-        secrets_creator_api_endpoint_access_token = os.getenv(
-            'SECRETS_CREATOR_API_TOKEN')
         body = {}
         # Assumes secures are a dictionary of
         # secret_name: {value: secret_value}
@@ -193,11 +196,11 @@ class ArgoEngine(WFEngine, ABC):
                 secret_value_k_v['value'].encode()).decode()
 
         resp = requests.post(
-            f"{secrets_creator_api_endpoint}",
+            f"{self.secrets_creator_api_endpoint}",
             verify=os.getenv('VERIFY_SSL', 'true').lower() == 'true',
             headers={
                 'accept': 'application/json',
-                'X-Auth': secrets_creator_api_endpoint_access_token,
+                'X-Auth': self.secrets_creator_api_token,
                 'Content-Type': 'application/json'
             },
             data=json.dumps(body),
