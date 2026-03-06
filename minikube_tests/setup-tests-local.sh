@@ -20,6 +20,7 @@ print_usage() {
   echo "  -u, --uninstall-naavre        Uninstall NaaVRE before installation"
   echo "  -p, --delete-pv-pvc        Delete PV and PVC before creating them again"
   echo "  -v, --deploy-naavre        Deploy NaaVRE "
+  echo "  -c , --chart-file       Path to the NaaVRE Helm Chart.yaml file "
   exit 1
 }
 
@@ -57,6 +58,11 @@ while [[ $# -gt 0 ]]; do
     -v |--deploy-naavre)
       DEPLOY_NAAAVRE="true"
       shift # past argument
+      ;;
+    -c |--chart-file)
+      CHART_FILE="$2"
+      shift # past argument
+      shift # past value
       ;;
     -*|--*)
       echo "Unknown option $1"
@@ -149,10 +155,20 @@ deploy_naavre(){
     if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
       rm -rf NaaVRE-helm
     fi
-#    git clone https://github.com/NaaVRE/NaaVRE-helm.git
+    git clone https://github.com/NaaVRE/NaaVRE-helm.git
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
   fi
+  if [ -n "$CHART_FILE" ]; then
+    if [ "$CURRENT_DIR" != "NaaVRE-helm" ]; then
+      echo "Changing directory to NaaVRE-helm to use custom chart file"
+      cd NaaVRE-helm
+    fi
+    echo "Using custom chart file: $CHART_FILE"
+    cp "$CHART_FILE" naavre/Chart.yaml
+    cd naavre && helm dependency update && cd ..
+  fi
+
   # Add the third-party Helm repos
   if [ "$DEPLOY_NAAAVRE" == "true" ]; then
     ./deploy.sh repo-add

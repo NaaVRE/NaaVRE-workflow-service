@@ -28,10 +28,14 @@ env:
   CELL_GITHUB_TOKEN: ${{ secrets.cell_github_token }}
 
 jobs:
-  test:
+  test-minikube-script:
     runs-on: ${{ inputs.runs-on }}
     strategy:
       fail-fast: true
+      matrix:
+        chart:
+          - minikube_tests/charts/argo-workflows-0.45.6-Chart.yaml
+          - minikube_tests/charts/argo-workflows-0.33.1-Chart.yaml
     steps:
       - uses: actions/checkout@v4
 
@@ -40,7 +44,6 @@ jobs:
         uses: medyagh/setup-minikube@v0.0.19
         with:
           addons: ingress,ingress-dns
-          minikube-version: '1.38.0'
 
       - name: Try the cluster
         run: kubectl get pods -A
@@ -48,15 +51,14 @@ jobs:
       - name: Run setup-tests.sh
         shell: bash -l {0}
         run: |
-          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/scripts/setup-tests.sh
-          chmod +x setup-tests.sh
-          ./setup-tests.sh -f minikube_tests/values-deploy-naavre-workflow-service-minikube-github.yaml -d -n -u -p -v 
+          chmod +x ./scripts/setup-tests.sh
+          ./minikube_tests/setup-tests-local.sh -f values/values-deploy-minikube.yaml -d -n -u -p -v -c "${{ matrix.chart }}"
 
       - name: Test auth token with python jwt library
         run: |
           pip install pyjwt
           python -c "import jwt; import os; token = os.getenv('AUTH_TOKEN'); decoded = jwt.decode(token, options={'verify_signature': False}); print(decoded)"
-
+          
       - name: Install pytest
         run: | 
           pip install -r requirements.txt
