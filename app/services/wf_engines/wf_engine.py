@@ -48,6 +48,7 @@ class WFEngine:
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
         self.nodes = naavrewf2_payload.naavrewf2.nodes
         self.cron_schedule = naavrewf2_payload.cron_schedule
+        self.lint(naavrewf2_payload)
 
     @abstractmethod
     def submit(self):
@@ -63,4 +64,8 @@ class WFEngine:
 
     @abstractmethod
     def get_wfs_for_recurring_wf(self, workflow_url: str):
+        pass
+
+    @abstractmethod
+    def lint(self, workflow_payload: Naavrewf2Payload):
         pass

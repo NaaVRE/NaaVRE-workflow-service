@@ -1,0 +1,13 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}"
+  },
+  "params": {
+  },
+  "secrets": {
+  },
+  "cron_schedule": null
+
+}

@@ -7,6 +7,7 @@ import requests
 import yaml
 from slugify import slugify
 
+from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
 import json
@@ -208,3 +209,30 @@ class ArgoEngine(WFEngine, ABC):
         resp.raise_for_status()
         secret_name = resp.json()['secretName']
         return secret_name
+
+    def lint(self, workflow_payload: Naavrewf2Payload):
+        # For now, we will just check that the workflow can be rendered
+        try:
+            self.naavrewf2_2_argo_workflow(create_secrets=False)
+        except jinja2.exceptions.TemplateError as e:
+            wf_nodes = workflow_payload.naavrewf2.nodes
+            wf_links = workflow_payload.naavrewf2.links
+            # Find the nodes that are not connected to any link
+            connected_nodes = []
+            for node_id in wf_nodes:
+                for link_id in wf_links:
+                    link = wf_links[link_id]
+                    from_node_id = link.from_.nodeId
+                    to_node_id = link.to.nodeId
+                    if node_id == from_node_id or node_id == to_node_id:
+                        connected_nodes.append(node_id)
+                        break
+
+            # Find the nodes that are not connected to any link
+            unconnected_nodes = [node_id for node_id in wf_nodes
+                                 if node_id not in connected_nodes]
+            # Get the names of the unconnected nodes
+            unconnected_node_names = [wf_nodes[node_id].properties.cell.title
+                                      for node_id in unconnected_nodes]
+            raise Exception(f"Error rendering workflow template: {str(e)}. "
+                            f""f"Unconnected nodes: {unconnected_node_names}")

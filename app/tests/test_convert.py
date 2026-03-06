@@ -43,7 +43,18 @@ def test_convert():
             json=workflow_dict,
         )
 
-        # Print the response for debugging
-        print(convert_response.json())
-        assert convert_response.status_code == 200
-        assert convert_response.json() is not None
+        responses_dict = {'convert': {'code': 200, 'message': 'OK'}}
+        responses_path = os.path.join(workflow_test_folder, 'responses.json')
+        if os.path.exists(responses_path):
+            with open(responses_path) as f:
+                responses_dict = json.load(f)
+
+        if convert_response.status_code != \
+                responses_dict['convert']['code']:
+            print(convert_response.text)
+
+        assert convert_response.status_code == \
+               responses_dict['convert']['code']
+        if convert_response.status_code != 200 and \
+                responses_dict['convert']['code'] != 200:
+            continue
