@@ -158,6 +158,9 @@ deploy_naavre(){
     git clone https://github.com/NaaVRE/NaaVRE-helm.git
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
+    cp "../$VALUES_FILE" secrets-minikube.yaml
+  else
+    cp "$VALUES_FILE" secrets-minikube.yaml
   fi
   if [ -n "$CHART_FILE" ]; then
     CURRENT_DIR=$(basename "$(pwd)")
@@ -165,10 +168,13 @@ deploy_naavre(){
       echo "Changing directory to NaaVRE-helm to use custom chart file"
       cd NaaVRE-helm
     else
-      cp "../$CHART_FILE" .
+      CHART_FILE_IN_PLACE="true"
+      cp "../$CHART_FILE" ./naavre/Chart.yaml
     fi
     echo "Using custom chart file: $CHART_FILE"
-    cp "$CHART_FILE" naavre/Chart.yaml
+    if [ -z "$CHART_FILE_IN_PLACE" ]; then
+      cp "$CHART_FILE" naavre/Chart.yaml
+     fi
     cd naavre && helm dependency update && cd ..
   fi
 
@@ -176,7 +182,6 @@ deploy_naavre(){
   if [ "$DEPLOY_NAAAVRE" == "true" ]; then
     ./deploy.sh repo-add
   fi
-  cp "$VALUES_FILE" secrets-minikube.yaml
   # Read CELL_GITHUB_TOKEN from dev.env if it exists
   if [ -f "../dev.env" ]; then
     source ../dev.env
