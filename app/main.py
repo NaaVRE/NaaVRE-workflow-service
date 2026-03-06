@@ -115,8 +115,13 @@ def convert(access_token: Annotated[dict, Depends(valid_access_token)],
             naavrewf2_payload: Naavrewf2Payload):
     naavrewf2_payload.set_user_name(access_token['preferred_username'])
     wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
-    wf_engine.set_payload(naavrewf2_payload)
-    return wf_engine.naavrewf2_2_argo_workflow()
+    try:
+        wf_engine.set_payload(naavrewf2_payload)
+        return wf_engine.naavrewf2_2_argo_workflow()
+    except Exception as ex:
+        logging.debug(msg="Error submitting workflow", exc_info=ex)
+        raise HTTPException(status_code=400, detail="Error submitting "
+                                                    "workflow: " + str(ex))
 
 
 @app.get('/status/{virtual_lab}')
