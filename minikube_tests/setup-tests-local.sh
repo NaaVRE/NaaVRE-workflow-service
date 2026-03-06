@@ -149,7 +149,7 @@ deploy_naavre(){
     if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
       rm -rf NaaVRE-helm
     fi
-    git clone https://github.com/NaaVRE/NaaVRE-helm.git
+#    git clone https://github.com/NaaVRE/NaaVRE-helm.git
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
   fi
