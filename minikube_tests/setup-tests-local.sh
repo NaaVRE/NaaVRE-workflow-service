@@ -20,6 +20,7 @@ print_usage() {
   echo "  -u, --uninstall-naavre        Uninstall NaaVRE before installation"
   echo "  -p, --delete-pv-pvc        Delete PV and PVC before creating them again"
   echo "  -v, --deploy-naavre        Deploy NaaVRE "
+  echo "  -c , --chart-file       Path to the NaaVRE Helm Chart.yaml file "
   exit 1
 }
 
@@ -57,6 +58,11 @@ while [[ $# -gt 0 ]]; do
     -v |--deploy-naavre)
       DEPLOY_NAAAVRE="true"
       shift # past argument
+      ;;
+    -c |--chart-file)
+      CHART_FILE="$2"
+      shift # past argument
+      shift # past value
       ;;
     -*|--*)
       echo "Unknown option $1"
@@ -104,7 +110,7 @@ export DISABLE_OAUTH=False
 export OIDC_CONFIGURATION_URL="https://$MINIKUBE_HOST/auth/realms/$REALM/.well-known/openid-configuration"
 export VERIFY_SSL="False"
 export DISABLE_AUTH="False"
-export CONFIG_FILE_URL="$CURRENT_DIR/minkube_configuration.json"
+export CONFIG_FILE_URL="$CURRENT_DIR/minikube_configuration.json"
 export SECRETS_CREATOR_API_ENDPOINT="https://$MINIKUBE_HOST/k8s-secret-creator/1.0.0"
 export "SECRETS_CREATOR_SECRET_NAME=$namespace-k8s-secret-creator"
 export ARGO_SERVICE_ACCOUNT_EXECUTOR="argo-executor"
@@ -152,12 +158,30 @@ deploy_naavre(){
     git clone https://github.com/NaaVRE/NaaVRE-helm.git
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
+    cp "../$VALUES_FILE" secrets-minikube.yaml
+  else
+    cp "$VALUES_FILE" secrets-minikube.yaml
   fi
+  if [ -n "$CHART_FILE" ]; then
+    CURRENT_DIR=$(basename "$(pwd)")
+    if [ "$CURRENT_DIR" != "NaaVRE-helm" ]; then
+      echo "Changing directory to NaaVRE-helm to use custom chart file"
+      cd NaaVRE-helm
+    else
+      CHART_FILE_IN_PLACE="true"
+      cp "../$CHART_FILE" ./naavre/Chart.yaml
+    fi
+    echo "Using custom chart file: $CHART_FILE"
+    if [ -z "$CHART_FILE_IN_PLACE" ]; then
+      cp "$CHART_FILE" naavre/Chart.yaml
+     fi
+    cd naavre && helm dependency update && cd ..
+  fi
+
   # Add the third-party Helm repos
   if [ "$DEPLOY_NAAAVRE" == "true" ]; then
     ./deploy.sh repo-add
   fi
-  cp "$VALUES_FILE" secrets-minikube.yaml
   # Read CELL_GITHUB_TOKEN from dev.env if it exists
   if [ -f "../dev.env" ]; then
     source ../dev.env
@@ -490,19 +514,14 @@ SECRETS_CREATOR_API_TOKEN="$(kubectl get secret ${SECRETS_CREATOR_SECRET_NAME} -
 export SECRETS_CREATOR_API_TOKEN="$SECRETS_CREATOR_API_TOKEN"
 
 export SECRETS_CREATOR_API_ENDPOINT="$SECRETS_CREATOR_API_ENDPOINT"
-# Check if CONFIG_FILE_URL exists
-if [ -f "$CONFIG_FILE_URL" ]; then
-    echo "Configuration file $CURRENT_DIR/minkube_configuration.json exists."
-else
-  export CONFIG_FILE_URL="minkube_configuration.json"
-fi
 
-# Build minkube_configuration.json environment values
+# Build minikube_configuration.json environment values
 if [ -f "$VALUES_FILE" ]; then
-    echo "Building minkube_configuration.json from $VALUES_FILE"
+    echo "Building minikube_configuration.json from $VALUES_FILE"
 else
     VALUES_FILE=../$VALUES_FILE
 fi
+
 export BASE_IMAGE_TAGS_URL=$(yq e '.jupyterhub.vlabs.openlab.configuration.base_image_tags_url' "$VALUES_FILE")
 if [ -z "$BASE_IMAGE_TAGS_URL" ]; then
     echo "BASE_IMAGE_TAGS_URL is empty. Please check the values file."
@@ -539,38 +558,41 @@ if [ -f "dev.env" ]; then
 fi
 
 # if configuration.json exists add the values, else skip
-if [ -f "configuration.json" ]; then
+if [ -f "../configuration.json" ]; then
+  cp "../configuration.json" .
   export VIRTUAL_LAB_NAME="${VIRTUAL_LAB_NAME:-openlab}"
-  jq --arg token "$ARGO_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  # Set namespace in minkube_configuration.json in the openlab
-  jq --arg namespace "$namespace" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.namespace = $namespace else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  # Set service_account in minkube_configuration.json in the openlab
-  jq --arg service_account "$ARGO_SERVICE_ACCOUNT_EXECUTOR" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.service_account = $service_account else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  # Set the cell_github_token in minkube_configuration.json in the virtual_lab_
-  jq --arg cell_github_token "$CELL_GITHUB_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .cell_github_token = $cell_github_token else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  jq --arg cell_github_url "$CELL_GITHUB_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .cell_github_url = $cell_github_url else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  jq --arg base_image_tags_url "$BASE_IMAGE_TAGS_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .base_image_tags_url = $base_image_tags_url else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  jq --arg module_mapping_url "$MODULE_MAPPING_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .module_mapping_url = $module_mapping_url else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  jq --arg registry_url "$REGISTRY_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .registry_url = $registry_url else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  # Create a PV and PVC volume mount from the extraVolumeMounts in minkube_configuration.json
+  jq --arg token "$ARGO_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  # Set namespace in minikube_configuration.json in the openlab
+  jq --arg namespace "$namespace" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.namespace = $namespace else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  # Set service_account in minikube_configuration.json in the openlab
+  jq --arg service_account "$ARGO_SERVICE_ACCOUNT_EXECUTOR" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.service_account = $service_account else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  # Set the cell_github_token in minikube_configuration.json in the virtual_lab_
+  jq --arg cell_github_token "$CELL_GITHUB_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .cell_github_token = $cell_github_token else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  jq --arg cell_github_url "$CELL_GITHUB_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .cell_github_url = $cell_github_url else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  jq --arg base_image_tags_url "$BASE_IMAGE_TAGS_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .base_image_tags_url = $base_image_tags_url else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  jq --arg module_mapping_url "$MODULE_MAPPING_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .module_mapping_url = $module_mapping_url else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  jq --arg registry_url "$REGISTRY_URL" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .registry_url = $registry_url else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  # Create a PV and PVC volume mount from the extraVolumeMounts in minikube_configuration.json
   # Save the name of the extraVolumeMounts in a bash array
-  jq . minkube_configuration.json | jq -r --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations[] | select(.name == $vl) | .wf_engine_config.extraVolumeMounts[] .name' > volume_names
+  jq . minikube_configuration.json | jq -r --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations[] | select(.name == $vl) | .wf_engine_config.extraVolumeMounts[] .name' > volume_names
   # Loop through the volume names and create a PV and PVC for each
   create_pv_pvc volume_names
-  # Set the SECRETS_CREATOR_API_TOKEN in minkube_configuration.json in wf_engine_config
-  jq --arg secrets_creator_api_token "$SECRETS_CREATOR_API_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.secrets_creator_api_token = $secrets_creator_api_token else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
-  # Set the SECRETS_CREATOR_API_ENDPOINT in minkube_configuration.json in wf_engine_config
-  jq --arg secrets_creator_api_endpoint "$SECRETS_CREATOR_API_ENDPOINT" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.secrets_creator_api_endpoint = $secrets_creator_api_endpoint else . end)' minkube_configuration.json > tmp.json && mv tmp.json minkube_configuration.json
+  # Set the SECRETS_CREATOR_API_TOKEN in minikube_configuration.json in wf_engine_config
+  jq --arg secrets_creator_api_token "$SECRETS_CREATOR_API_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.secrets_creator_api_token = $secrets_creator_api_token else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
+  # Set the SECRETS_CREATOR_API_ENDPOINT in minikube_configuration.json in wf_engine_config
+  jq --arg secrets_creator_api_endpoint "$SECRETS_CREATOR_API_ENDPOINT" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.secrets_creator_api_endpoint = $secrets_creator_api_endpoint else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
 
+  export CONFIG_FILE_URL="minikube_configuration.json"
+  cp minikube_configuration.json ../minikube_configuration.json
 else
     echo "configuration.json does not exist, skipping update"
 fi
 
 # Check if CONFIG_FILE_URL exists
 if [ -f "$CONFIG_FILE_URL" ]; then
-    echo "Configuration file $CURRENT_DIR/minkube_configuration.json exists."
+    echo "Configuration file $CURRENT_DIR/minikube_configuration.json exists."
 else
-  export CONFIG_FILE_URL="minkube_configuration.json"
+  export CONFIG_FILE_URL="minikube_configuration.json"
 fi
 }
 

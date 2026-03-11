@@ -1,0 +1,28 @@
+import json
+{{ special_dep.port_id }} = {{ '{{inputs.parameters.' }}{{ special_dep.port_id }}{{ '}}' }}
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+
+list_of_lists = {{ special_dep.port_id }}
+flat_list = []
+if isinstance(list_of_lists, str):
+    list_of_lists = json.loads(list_of_lists)
+for sublist in list_of_lists:
+    if isinstance(sublist, list):
+        flat_list.extend(sublist)
+    else:
+        if isinstance(sublist, str):
+            try:
+                parsed = json.loads(sublist)
+                if isinstance(parsed, list):
+                    flat_list.extend(parsed)
+                else:
+                    flat_list.append(parsed)
+            except json.JSONDecodeError:
+                flat_list.append(sublist)
+
+f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
+f_out.write(json.dumps(flat_list))
+f_out.close()
+{% endif %}
+{% endfor %}
