@@ -514,12 +514,6 @@ SECRETS_CREATOR_API_TOKEN="$(kubectl get secret ${SECRETS_CREATOR_SECRET_NAME} -
 export SECRETS_CREATOR_API_TOKEN="$SECRETS_CREATOR_API_TOKEN"
 
 export SECRETS_CREATOR_API_ENDPOINT="$SECRETS_CREATOR_API_ENDPOINT"
-# Check if CONFIG_FILE_URL exists
-if [ -f "$CONFIG_FILE_URL" ]; then
-    echo "Configuration file $CURRENT_DIR/minikube_configuration.json exists."
-else
-  export CONFIG_FILE_URL="minikube_configuration.json"
-fi
 
 # Build minikube_configuration.json environment values
 if [ -f "$VALUES_FILE" ]; then
@@ -527,6 +521,7 @@ if [ -f "$VALUES_FILE" ]; then
 else
     VALUES_FILE=../$VALUES_FILE
 fi
+
 export BASE_IMAGE_TAGS_URL=$(yq e '.jupyterhub.vlabs.openlab.configuration.base_image_tags_url' "$VALUES_FILE")
 if [ -z "$BASE_IMAGE_TAGS_URL" ]; then
     echo "BASE_IMAGE_TAGS_URL is empty. Please check the values file."
@@ -563,7 +558,7 @@ if [ -f "dev.env" ]; then
 fi
 
 # if configuration.json exists add the values, else skip
-if [ -f "configuration.json" ]; then
+if [ -f "../configuration.json" ]; then
   export VIRTUAL_LAB_NAME="${VIRTUAL_LAB_NAME:-openlab}"
   jq --arg token "$ARGO_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minikube_configuration.json
   # Set namespace in minikube_configuration.json in the openlab
@@ -586,6 +581,8 @@ if [ -f "configuration.json" ]; then
   # Set the SECRETS_CREATOR_API_ENDPOINT in minikube_configuration.json in wf_engine_config
   jq --arg secrets_creator_api_endpoint "$SECRETS_CREATOR_API_ENDPOINT" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.secrets_creator_api_endpoint = $secrets_creator_api_endpoint else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
 
+  export CONFIG_FILE_URL="minikube_configuration.json"
+  exit 1
 else
     echo "configuration.json does not exist, skipping update"
 fi
