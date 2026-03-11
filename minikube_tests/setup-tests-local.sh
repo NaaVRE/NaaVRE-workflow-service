@@ -559,6 +559,7 @@ fi
 
 # if configuration.json exists add the values, else skip
 if [ -f "../configuration.json" ]; then
+  cp "../configuration.json" .
   export VIRTUAL_LAB_NAME="${VIRTUAL_LAB_NAME:-openlab}"
   jq --arg token "$ARGO_TOKEN" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.access_token = $token else . end)' configuration.json > tmp.json && mv tmp.json minikube_configuration.json
   # Set namespace in minikube_configuration.json in the openlab
@@ -582,7 +583,7 @@ if [ -f "../configuration.json" ]; then
   jq --arg secrets_creator_api_endpoint "$SECRETS_CREATOR_API_ENDPOINT" --arg vl "$VIRTUAL_LAB_NAME" '.vl_configurations |= map(if .name == $vl then .wf_engine_config.secrets_creator_api_endpoint = $secrets_creator_api_endpoint else . end)' minikube_configuration.json > tmp.json && mv tmp.json minikube_configuration.json
 
   export CONFIG_FILE_URL="minikube_configuration.json"
-  exit 1
+  cp minikube_configuration.json ../minikube_configuration.json
 else
     echo "configuration.json does not exist, skipping update"
 fi
