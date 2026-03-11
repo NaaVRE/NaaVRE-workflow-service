@@ -51,8 +51,8 @@ jobs:
       - name: Run setup-tests.sh
         shell: bash -l {0}
         run: |
-          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/scripts/setup-tests.sh
-          chmod +x setup-tests.sh
+#          wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/minikube_tests/setup-tests.sh
+#          chmod +x setup-tests.sh
           ./minikube_tests/setup-tests-local.sh -f minikube_tests/values-deploy-naavre-workflow-service-minikube-github.yaml -d -n -u -p -v -c "${{ matrix.chart }}"
 
       - name: Test auth token with python jwt library
