@@ -1,9 +1,9 @@
 import json
-{{ special_dep.port_id }} = {{ '{{inputs.parameters.' }}{{ special_dep.port_id }}{{ '}}' }}
+{{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
 list_of_lists = []
-for elem in {{special_dep.port_id}}:
+for elem in {{special_dep.from_port}}:
     list = [elem]
     list_of_lists.append(list)
 f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
