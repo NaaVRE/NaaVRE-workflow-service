@@ -1,9 +1,9 @@
 import json
-{{ special_dep.port_id }} = {{ '{{inputs.parameters.' }}{{ special_dep.port_id }}{{ '}}' }}
+{{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
 
-list_of_lists = {{ special_dep.port_id }}
+list_of_lists = {{ special_dep.from_port }}
 flat_list = []
 if isinstance(list_of_lists, str):
     list_of_lists = json.loads(list_of_lists)

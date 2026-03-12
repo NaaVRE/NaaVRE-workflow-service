@@ -50,8 +50,8 @@ class WorkflowParser:
 
             self.dependencies[to_node.id].append({
                 'task_name': task_name,
-                'port_id': f'{link.from_.portId}_{from_node_id}',
-                'og_port_id': f'{link.to.portId}_{to_node_id}',
+                'from_port': f'{link.from_.portId}_{from_node_id}',
+                'to_port': f'{link.to.portId}_{to_node_id}',
                 'type': from_node.type
             })
 
