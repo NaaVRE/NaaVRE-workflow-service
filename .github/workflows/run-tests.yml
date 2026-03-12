@@ -36,6 +36,7 @@ jobs:
         chart:
           - minikube_tests/charts/argo-workflows-0.45.6-Chart.yaml
           - minikube_tests/charts/argo-workflows-0.33.1-Chart.yaml
+          - minikube_tests/charts/argo-workflows-1.0.0-Chart.yaml
     steps:
       - uses: actions/checkout@v4
 
