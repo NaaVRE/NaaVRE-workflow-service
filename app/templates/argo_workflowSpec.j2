@@ -132,9 +132,9 @@ templates:
         python /app/task.py
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% set stdinname = d.to_port if is_from_special else d.from_port %}
-        {% set stdinname_base = stdinname.split('_')[:-1]|join('_') %}
-        --{{ stdinname_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
+        {% set std_in_name = d.to_port %}
+        {% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
+        --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
         {% endfor %}
         {% for p in params %}
         --{{ p.name }}={{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
@@ -144,9 +144,13 @@ templates:
       - source /venv/bin/activate; Rscript /app/task.R
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% set stdinname = d.to_port if is_from_special else d.from_port %}
-        {% set stdinname_base = stdinname.split('_')[:-1]|join('_') %}
-        --{{ stdinname_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
+        {% if is_from_special %}
+        {% set std_in_name = d.to_port %}
+        {% else %}
+        {% set std_in_name = d.from_port %}
+        {% endif %}
+        {% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
+        --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
         {% endfor %}
         {% for p in params %}
         --{{ p.name }}={{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
