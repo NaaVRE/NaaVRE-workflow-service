@@ -2,10 +2,16 @@ import json
 {{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
+batch_size = {{ "{{ batch_size}}" }} if "{{'{{ batch_size}}'}}" != "" else 1
+max_batch_size = {{ "{{i max_batch_size}}" }} if "{{'{{ max_batch_size}}'}}" != "" else 100
 list_of_lists = []
-for elem in {{special_dep.from_port}}:
-    list = [elem]
-    list_of_lists.append(list)
+for i in range(0, len({{special_dep.from_port}}), batch_size):
+    if len(list_of_lists) >= max_batch_size:
+        # Dump the remaining to the last element
+        list_of_lists[-1].extend(items[i:])
+        break
+        chunk = items[i:i+batch_size]
+        list_of_lists.append(chunk)
 f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
 f_out.write(json.dumps(list_of_lists))
 f_out.close()

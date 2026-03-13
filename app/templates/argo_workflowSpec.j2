@@ -94,7 +94,7 @@ templates:
     command: [python]
     source: |
       {% if is_splitter %}
-      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node) | indent(6) }}
+      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node,batch_size=batch_size,max_batch_size=max_batch_size) | indent(6) }}
       {% else %}
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
