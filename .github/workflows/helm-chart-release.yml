@@ -40,7 +40,7 @@ jobs:
           helm package helm/naavre-workflow-service -d .charts-packages/
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
