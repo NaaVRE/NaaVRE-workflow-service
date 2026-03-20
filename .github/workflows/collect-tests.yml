@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: pytest
         shell: bash -l {0}
