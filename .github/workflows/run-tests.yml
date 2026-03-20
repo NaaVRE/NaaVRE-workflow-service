@@ -38,11 +38,11 @@ jobs:
           - minikube_tests/charts/argo-workflows-0.33.1-Chart.yaml
           - minikube_tests/charts/argo-workflows-0.47.5-Chart.yaml
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: start Minikube
         id: minikube
-        uses: medyagh/setup-minikube@v0.0.19
+        uses: medyagh/setup-minikube@v0.0.21
         with:
           addons: ingress,ingress-dns
 
