@@ -98,6 +98,7 @@ def _get_wf_engine(virtual_lab: str = None):
 def submit(access_token: Annotated[dict, Depends(valid_access_token)],
            naavrewf2_payload: Naavrewf2Payload):
     naavrewf2_payload.set_user_name(access_token['preferred_username'])
+    naavrewf2_payload.set_user_groups(access_token.get('groups', []))
 
     wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
     try:
@@ -114,6 +115,7 @@ def submit(access_token: Annotated[dict, Depends(valid_access_token)],
 def convert(access_token: Annotated[dict, Depends(valid_access_token)],
             naavrewf2_payload: Naavrewf2Payload):
     naavrewf2_payload.set_user_name(access_token['preferred_username'])
+    naavrewf2_payload.set_user_groups(access_token.get('groups', []))
     wf_engine = _get_wf_engine(virtual_lab=naavrewf2_payload.virtual_lab)
     try:
         wf_engine.set_payload(naavrewf2_payload)
