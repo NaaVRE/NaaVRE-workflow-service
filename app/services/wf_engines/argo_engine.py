@@ -70,8 +70,10 @@ class ArgoEngine(WFEngine, ABC):
         Filters extraVolumeMounts:
             - if the volumeMount has no allowedGroups, include it
             - else:
-                - if the user is not a member of any groups of allowedGroups, drop the volumeMount
-                - else, include the volumeMount, dropping the allowedGroup entry to return a k8s-compatible object.
+                - if the user is not a member of any groups of allowedGroups,
+                  drop the volumeMount
+                - else, include the volumeMount, dropping the allowedGroup
+                  entry to return a k8s-compatible object.
         """
         if self.extraVolumeMounts:
             return [
