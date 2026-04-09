@@ -8,7 +8,7 @@ pre-commit==3.8.0
 jsonschema==4.26.0
 PyYAML==6.0.3
 pydantic-settings==2.13.1
-cachetools==5.5.0
+cachetools==7.0.5
 python-slugify~=8.0.4
 httpx==0.28.1
 cryptography==46.0.7
