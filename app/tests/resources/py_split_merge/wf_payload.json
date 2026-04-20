@@ -4,7 +4,14 @@
     "nodes": "{wf.naavrewf.chart.nodes}",
     "links": "{wf.naavrewf.chart.links}"
   },
-  "params": [],
+  "params": [
+    {
+      "name": "param_max_branches",
+      "value": 3,
+      "type": "int",
+      "node_id": "a53d1686-a20a-4aaf-8996-e780594f12d6"
+    }
+  ],
   "secrets": [],
   "cron_schedule": null
 }

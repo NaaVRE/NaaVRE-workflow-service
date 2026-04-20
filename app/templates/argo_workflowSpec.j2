@@ -30,8 +30,8 @@ templates:
     {% for node in nodes.values() %}
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
-    {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
-    {% set params =  [] if is_special_node else node.properties.cell.params %}
+    {% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
+    {% set params = node.properties.cell.params %}
     - name: {{ title }}
       {% if deps_dag[node.id]|length > 0 %}
       dependencies: [{% for d in deps_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
@@ -63,7 +63,7 @@ templates:
 {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
 {% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title + "-" + node.id[:7] %}
-{% set params = [] if is_special_node else node.properties.cell.params %}
+{% set params = node.properties.cell.params %}
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
 - name: {{ title }}-tmp
@@ -94,7 +94,14 @@ templates:
     command: [python]
     source: |
       {% if is_splitter %}
-      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node,batch_size=batch_size,max_batch_size=max_batch_size) | indent(6) }}
+          {% set break = False %}
+          {% for p in params if not break %}
+          {% if p.name == 'param_max_branches' %}
+          {% set max_branches = p.param_max_branches if p.param_max_branches is defined else 100 %}
+          {% set break = True %}
+          {% endif %}
+          {% endfor %}
+      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node,batch_size=batch_size,max_branches=max_branches) | indent(6) }}
       {% else %}
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
