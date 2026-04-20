@@ -2,7 +2,7 @@ import json
 {{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
-batch_size = {{ "{{ batch_size}}" }} if "{{'{{ batch_size}}'}}" != "" else 1
+batch_size = {{ "{{ batch_size }}" }} if "{{'{{ batch_size }}'}}" != "" else 1
 max_batch_size = {{ "{{i max_batch_size}}" }} if "{{'{{ max_batch_size}}'}}" != "" else 100
 list_of_lists = []
 for i in range(0, len({{special_dep.from_port}}), batch_size):
