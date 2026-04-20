@@ -4,11 +4,13 @@
     "nodes": "{wf.naavrewf.chart.nodes}",
     "links": "{wf.naavrewf.chart.links}"
   },
-  "params": {
-    "param_neg_string": {
+  "params": [
+    {
+      "name": "param_neg_string",
       "value": "-starts with hyphen",
-      "default_value": "-starts with hyphen"
+      "default_value": "-starts with hyphen",
+      "type": "string"
     }
-  },
+  ],
   "cron_schedule": null
 }

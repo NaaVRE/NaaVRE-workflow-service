@@ -9,6 +9,7 @@ from croniter import croniter
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.models.naavrewf2_payload import Naavrewf2Payload
 
 if os.path.exists('resources'):
     base_path = 'resources'
@@ -94,6 +95,12 @@ def test_submit():
 
         workflow_dict['naavrewf2']['nodes'] = nodes
         workflow_dict['naavrewf2']['links'] = links
+
+        # Test model
+        try:
+            Naavrewf2Payload(**workflow_dict)
+        except TypeError as ex:
+            assert False, f"Error creating Naavrewf2Payload: {ex}"
 
         submit_response = client.post(
             '/submit/',

@@ -126,6 +126,7 @@ class ArgoEngine(WFEngine, ABC):
             k8s_secret_name = self.add_secrets_to_k8s()
         else:
             k8s_secret_name = None
+
         workflow_name = 'n-a-a-vre-' + slugify(self.user_name)
         service_account = self.vl_config.wf_engine_config.service_account
         workdir_storage_size = (self.vl_config.
