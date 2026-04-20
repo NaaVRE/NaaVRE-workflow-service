@@ -12,5 +12,6 @@
       "type": "string"
     }
   ],
+  "secrets": [],
   "cron_schedule": null
 }

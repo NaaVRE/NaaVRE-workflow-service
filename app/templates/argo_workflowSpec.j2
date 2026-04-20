@@ -19,8 +19,8 @@ volumeClaimTemplates:
         storage: {{ workdir_storage_size }}
 arguments:
   parameters:
-  {% for param_name, param in global_params.items() %}
-  - name: {{ param_name }}
+  {% for param in global_params %}
+  - name: {{ param.name }}
     value:  "{{ param.value | replace('"', "'") }}"
   {% endfor %}
 templates:

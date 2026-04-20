@@ -4,10 +4,8 @@
     "nodes": "{wf.naavrewf.chart.nodes}",
     "links": "{wf.naavrewf.chart.links}"
   },
-  "params": {
-  },
-  "secrets": {
-  },
+  "params": [],
+  "secrets": [],
   "cron_schedule": null
 
 }

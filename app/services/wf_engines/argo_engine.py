@@ -218,11 +218,13 @@ class ArgoEngine(WFEngine, ABC):
 
     def add_secrets_to_k8s(self):
         body = {}
-        # Assumes secures are a dictionary of
-        # secret_name: {value: secret_value}
-        for secret_name, secret_value_k_v in self.secrets.items():
+        # Assumes secures are a list of
+        # [{name:secret_name,value: secret_value}]
+        for secret in self.secrets:
+            secret_name = secret['name']
+            secret_value = secret['value']
             body[secret_name] = base64.b64encode(
-                secret_value_k_v['value'].encode()).decode()
+                secret_value.encode()).decode()
 
         resp = requests.post(
             f"{self.secrets_creator_api_endpoint}",
