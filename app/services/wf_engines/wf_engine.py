@@ -15,8 +15,8 @@ class WFEngine:
     vl_config: VLConfig
     naavrewf2_payload: Optional[Naavrewf2Payload]
     parser: Optional[WorkflowParser]
-    params: Optional[dict]
-    secrets: Optional[dict]
+    params: Optional[list]
+    secrets: Optional[list]
     user_name: Optional[str]
     user_groups: Optional[list[str]]
     virtual_lab_name: Optional[str]
