@@ -63,6 +63,33 @@ class ArgoEngine(WFEngine, ABC):
             raise Exception("secrets_creator_api_token is not set in the "
                             "configuration")
 
+    @property
+    def user_extraVolumeMounts(self):
+        """ Returns extraVolumeMounts for the current user
+
+        Filters extraVolumeMounts:
+            - if the volumeMount has no allowedGroups, include it
+            - else:
+                - if the user is not a member of any groups of allowedGroups,
+                  drop the volumeMount
+                - else, include the volumeMount, dropping the allowedGroup
+                  entry to return a k8s-compatible object.
+        """
+        if self.extraVolumeMounts:
+            return [
+                {k: v for k, v in volume_mount.items() if k != 'allowedGroups'}
+                for volume_mount in self.extraVolumeMounts
+                if (
+                        ('allowedGroups' not in volume_mount)
+                        or (
+                                set(self.user_groups)
+                                & set(volume_mount['allowedGroups'])
+                        )
+                )
+                ]
+        else:
+            return None
+
     def submit(self):
         workflow_dict = self.naavrewf2_2_argo_workflow(create_secrets=True)
         headers = {
@@ -114,7 +141,7 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts=self.extraVolumeMounts or []
+            extraVolumeMounts=self.user_extraVolumeMounts or []
         )
 
         workflow_dict = yaml.safe_load(

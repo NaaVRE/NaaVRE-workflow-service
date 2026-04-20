@@ -18,6 +18,7 @@ class WFEngine:
     params: Optional[dict]
     secrets: Optional[dict]
     user_name: Optional[str]
+    user_groups: Optional[list[str]]
     virtual_lab_name: Optional[str]
     nodes: Optional[Mapping[str, Node]]
     cron_schedule: Optional[str]
@@ -36,6 +37,7 @@ class WFEngine:
         self.params = None
         self.secrets = None
         self.user_name = None
+        self.user_groups = None
         self.virtual_lab_name = None
         self.nodes = None
 
@@ -45,6 +47,7 @@ class WFEngine:
         self.params = naavrewf2_payload.params
         self.secrets = naavrewf2_payload.secrets
         self.user_name = naavrewf2_payload.user_name
+        self.user_groups = naavrewf2_payload.user_groups
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
         self.nodes = naavrewf2_payload.naavrewf2.nodes
         self.cron_schedule = naavrewf2_payload.cron_schedule
