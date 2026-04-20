@@ -126,6 +126,7 @@ class ArgoEngine(WFEngine, ABC):
             k8s_secret_name = self.add_secrets_to_k8s()
         else:
             k8s_secret_name = None
+
         workflow_name = 'n-a-a-vre-' + slugify(self.user_name)
         service_account = self.vl_config.wf_engine_config.service_account
         workdir_storage_size = (self.vl_config.
@@ -217,11 +218,13 @@ class ArgoEngine(WFEngine, ABC):
 
     def add_secrets_to_k8s(self):
         body = {}
-        # Assumes secures are a dictionary of
-        # secret_name: {value: secret_value}
-        for secret_name, secret_value_k_v in self.secrets.items():
+        # Assumes secures are a list of
+        # [{name:secret_name,value: secret_value}]
+        for secret in self.secrets:
+            secret_name = secret['name']
+            secret_value = secret['value']
             body[secret_name] = base64.b64encode(
-                secret_value_k_v['value'].encode()).decode()
+                secret_value.encode()).decode()
 
         resp = requests.post(
             f"{self.secrets_creator_api_endpoint}",
