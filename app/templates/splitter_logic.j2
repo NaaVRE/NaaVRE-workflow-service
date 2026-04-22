@@ -3,19 +3,21 @@ import json
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
 
+max_workers = {{ max_workers | default(100) }}
+{{ param_max_branches }} = min(batch_size, len({{ special_dep.from_port }}), max_workers)
+items_per_worker = len({{ special_dep.from_port }}) // batch_size
+overflow = len({{ special_dep.from_port }}) % batch_size
 list_of_lists = []
 
-max_numbr_of_workers = min(len({{special_dep.from_port}}) // max_branches,100)
-items_per_worker = len({{special_dep.from_port}}) // max_numbr_of_workers
-overflow = len({{special_dep.from_port}}) % max_numbr_of_workers
-batch_size = items_per_worker + 1 if overflow > 0 else items_per_worker
-
-for i in range(max_numbr_of_workers):
-    start_index = i * batch_size
-    end_index = start_index + batch_size
-    if i == max_numbr_of_workers - 1:
-        end_index = len({{special_dep.from_port}})
-    list_of_lists.append({{special_dep.from_port}}[start_index:end_index])
+for i in range({{ param_max_branches }}):
+    chunk = items_per_worker
+    if i < overflow:
+        chunk = items_per_worker + 1
+        start = i * chunk
+    else:
+        start = (i * chunk) + overflow
+    end = start + chunk
+    list_of_lists.append({{ special_dep.from_port }}[start:end])
 
 
 f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
