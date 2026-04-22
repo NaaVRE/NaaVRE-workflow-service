@@ -29,7 +29,8 @@
           }
         ],
         "secrets_creator_api_endpoint": "https://example.naavre.net/k8s-secret-creator/1.0.0/",
-        "secrets_creator_api_token": "..."
+        "secrets_creator_api_token": "...",
+        "default_max_branches": 50
       }
     },
     {
@@ -40,7 +41,29 @@
         "access_token": "eyJhbGciOg...",
         "service_account": "executor",
         "namespace": "argo",
-        "workdir_storage_size": "1Gi"
+        "workdir_storage_size": "1Gi",
+        "default_max_branches": 30,
+        "extraVolumeMounts": [
+          {
+            "name": "naa-vre-public",
+            "readOnly": true,
+            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-public"
+          },
+          {
+            "name": "naa-vre-user-data",
+            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
+            "subPath": "{unescaped_username}"
+          },
+          {
+            "name": "naa-vre-restricted",
+            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-restricted/",
+            "allowedGroups": [
+              "naa-vre-restricted_users"
+            ]
+          }
+        ],
+        "secrets_creator_api_endpoint": "https://example.naavre.net/k8s-secret-creator/1.0.0/",
+        "secrets_creator_api_token": "..."
       }
     }
   ]

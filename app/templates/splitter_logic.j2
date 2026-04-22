@@ -4,12 +4,12 @@ import json
 {% if port.type == 'right' %}
 
 max_workers = {{ max_workers | default(100) }}
-{{ param_max_branches }} = min(batch_size, len({{ special_dep.from_port }}), max_workers)
+{{ max_branches }} = min(batch_size, len({{ special_dep.from_port }}), max_workers)
 items_per_worker = len({{ special_dep.from_port }}) // batch_size
 overflow = len({{ special_dep.from_port }}) % batch_size
 list_of_lists = []
 
-for i in range({{ param_max_branches }}):
+for i in range({{ max_branches }}):
     chunk = items_per_worker
     if i < overflow:
         chunk = items_per_worker + 1

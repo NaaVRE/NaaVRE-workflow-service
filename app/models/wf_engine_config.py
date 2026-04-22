@@ -17,3 +17,4 @@ class WfEngineConfig(BaseModel):
     extraVolumeMounts: Optional[list[dict]] | None = None
     secrets_creator_api_endpoint: Optional[str] | None = None
     secrets_creator_api_token: Optional[str] | None = None
+    default_max_branches: Optional[int] = None

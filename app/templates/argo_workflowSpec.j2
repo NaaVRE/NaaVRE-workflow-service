@@ -94,10 +94,11 @@ templates:
     command: [python]
     source: |
       {% if is_splitter %}
+          {% set max_branches = default_max_branches %}
           {% set break = False %}
           {% for p in params if not break %}
           {% if p.name == 'param_max_branches' %}
-          {% set max_branches = p.param_max_branches if p.param_max_branches is defined else 100 %}
+            {% set max_branches = p.param_max_branches %}
           {% set break = True %}
           {% endif %}
           {% endfor %}
