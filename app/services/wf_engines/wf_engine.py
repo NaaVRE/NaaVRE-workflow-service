@@ -48,8 +48,8 @@ class WFEngine:
         self.params = naavrewf2_payload.params
         for param in self.params:
             if 'value' not in param:
-                exceptions.append(f"Parameter {param['default_value']} is "
-                                  f"missing a default_value")
+                exceptions.append(f"Parameter {param['value']} is "
+                                  f"missing a value")
         if exceptions:
             raise ValueError("Invalid parameters: " + "; ".join(exceptions))
         self.secrets = naavrewf2_payload.secrets

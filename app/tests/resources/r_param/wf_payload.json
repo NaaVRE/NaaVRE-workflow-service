@@ -7,9 +7,7 @@
   "params": [
     {
       "name": "param_neg_string",
-      "value": "-starts with hyphen",
-      "default_value": "-starts with hyphen",
-      "type": "string"
+      "value": "-starts with hyphen"
     }
   ],
   "secrets": [],
