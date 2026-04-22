@@ -8,46 +8,39 @@
     {
       "name": "param_float_val",
       "value": "1.0",
-      "default_value": "1.0",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
     },
     {
       "name": "param_int_val",
       "value": "1",
-      "default_value": "1",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
     },
     {
       "name": "param_list_double_val",
       "value": "[1.0, 2.0, 3.0]",
-      "default_value": "[1.0, 2.0, 3.0]",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
-        },
+    },
     {
       "name": "param_list_int_val",
       "value": "[1, 2, 3]",
-      "default_value": "[1, 2, 3]",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
-        },
+    },
     {
       "name": "param_list_str_val",
       "value": "[\"1\", \"2\", \"3\"]",
-      "default_value": "[\"1\", \"2\", \"3\"]",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
     },
     {
       "name": "param_string_val",
-          "value": "-param",
-      "default_value": "-param",
+      "value": "-param",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
-        }
+    }
   ],
   "secrets": [
     {
       "name": "secret_string_val",
       "value": "secret",
-      "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d",
-      "type": "str"
+      "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
     }
   ],
   "cron_schedule": null
