@@ -1,0 +1,41 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}",
+    "selected": {},
+    "hovered": {}
+  },
+  "params": [
+    {
+      "name": "param_a",
+      "type": "str",
+      "default_value": "a",
+      "value": "a",
+      "node_id": "3b2251c5-0715-49e1-a2ea-635677ba7381"
+    },
+    {
+      "name": "param_a",
+      "type": "str",
+      "default_value": "a",
+      "value": "a",
+      "node_id": "5cd5a0ed-824b-478b-9225-8f9259f89c29"
+    },
+    {
+      "name": "param_b",
+      "type": "str",
+      "default_value": "b",
+      "value": "b",
+      "node_id": "caf9f5d1-3c3e-422b-aad7-d9d4ae8320ab"
+    },
+    {
+      "name": "param_b",
+      "type": "str",
+      "default_value": "b",
+      "value": "b",
+      "node_id": "d3f50e2b-24db-44b7-99d2-12062201f1e7"
+    }
+  ],
+  "secrets": [],
+  "cron_schedule": null
+}
