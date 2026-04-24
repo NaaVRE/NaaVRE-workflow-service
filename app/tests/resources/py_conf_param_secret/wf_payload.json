@@ -19,12 +19,12 @@
       "name": "param_list_double_val",
       "value": "[1.0, 2.0, 3.0]",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
-        },
+    },
     {
       "name": "param_list_int_val",
       "value": "[1, 2, 3]",
       "node_id": "82fc4db9-9e6c-4fce-b7f0-3688880fa91d"
-        },
+    },
     {
       "name": "param_list_str_val",
       "value": "[\"1\", \"2\", \"3\"]",
