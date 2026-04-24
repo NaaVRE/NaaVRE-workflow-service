@@ -19,9 +19,9 @@ volumeClaimTemplates:
         storage: {{ workdir_storage_size }}
 arguments:
   parameters:
-  {% for param in global_params %}
-  - name: {{ param.name }}
-    value:  "{{ param.value | replace('"', "'") }}"
+  {% for payload_param in naavrewf2_payload_params %}
+  - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+    value:  "{{ payload_param.value | replace('"', "'") }}"
   {% endfor %}
 templates:
 - name: {{ workflow_name }}
@@ -31,13 +31,12 @@ templates:
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
     {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
-    {% set params =  [] if is_special_node else node.properties.cell.params %}
     - name: {{ title }}
       {% if deps_dag[node.id]|length > 0 %}
       dependencies: [{% for d in deps_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
       {% endif %}
       template: {{ title }}-tmp
-      {% if deps_dag[node.id]|length > 0 or params|length > 0 %}
+      {% if deps_dag[node.id]|length > 0 %}
       arguments:
         parameters:
         {% for d in deps_dag[node.id] %}
@@ -48,9 +47,9 @@ templates:
           value: {{ '"{{tasks.' }}{{ d.task_name }}{{ '.outputs.parameters.' }}{{ d.from_port }}{{'}}"'}}
         {% endif %}
         {% endfor %}
-        {% for p in params %}
-        - name : {{ p.name }}
-          value: {{ '"{{workflow.parameters.' }}{{ p.name }}{{'}}"' }}
+        {% for payload_param in naavrewf2_payload_params %}
+        - name : {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+          value: {{ '"{{workflow.parameters.' }}{{ payload_param.name }}_{{ payload_param.node_id[:7] }}{{'}}"' }}
         {% endfor %}
       {% for d in deps_dag[node.id] %}
       {% if d.type == "splitter" %}
@@ -63,7 +62,6 @@ templates:
 {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
 {% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title + "-" + node.id[:7] %}
-{% set params = [] if is_special_node else node.properties.cell.params %}
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
 - name: {{ title }}-tmp
@@ -73,8 +71,8 @@ templates:
     {% for d in deps_dag[node.id] %}
     - name: {{ d.from_port }}
     {% endfor %}
-    {% for p in params %}
-    - name: {{ p.name }}
+    {% for payload_param in naavrewf2_payload_params %}
+    - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
     {% endfor %}
   {% endif %}
   outputs:
@@ -127,35 +125,21 @@ templates:
     {%  endfor %}
     command: ["/bin/bash", "-c"]
     args:
-    {% if node.properties.cell.kernel == 'ipython' %}
       - source /venv/bin/activate;
+    {% if node.properties.cell.kernel == 'ipython' %}
         python /app/task.py
-        {% for d in deps_dag[node.id] %}
-        {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% set std_in_name = d.to_port %}
-        {% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
-        --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
-        {% endfor %}
-        {% for p in params %}
-        --{{ p.name }}={{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
-        {% endfor %}
-        --id={{ node.id[:7] }};
     {% elif node.properties.cell.kernel == 'IRkernel' %}
-      - source /venv/bin/activate; Rscript /app/task.R
+        Rscript /app/task.R
+    {% endif %}
         {% for d in deps_dag[node.id] %}
         {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% if is_from_special %}
         {% set std_in_name = d.to_port %}
-        {% else %}
-        {% set std_in_name = d.from_port %}
-        {% endif %}
         {% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
         --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
         {% endfor %}
-        {% for p in params %}
-        --{{ p.name }}={{ '"{{workflow.parameters.' }}{{ p.name }}{{ '}}"' }}
+        {% for cell_params in node.properties.cell.params %}
+        --{{ cell_params.name }}={{ '"{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}"' }}
         {% endfor %}
         --id={{ node.id[:7] }};
-    {% endif %}
   {% endif %}
 {% endfor %}

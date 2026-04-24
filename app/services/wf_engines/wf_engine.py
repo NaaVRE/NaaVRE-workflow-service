@@ -15,7 +15,7 @@ class WFEngine:
     vl_config: VLConfig
     naavrewf2_payload: Optional[Naavrewf2Payload]
     parser: Optional[WorkflowParser]
-    params: Optional[list]
+    naavrewf2_payload_params: Optional[list]
     secrets: Optional[list]
     user_name: Optional[str]
     user_groups: Optional[list[str]]
@@ -34,7 +34,7 @@ class WFEngine:
         self.vl_config = vl_config
         self.naavrewf2_payload = None
         self.parser = None
-        self.params = None
+        self.naavrewf2_payload_params = None
         self.secrets = None
         self.user_name = None
         self.user_groups = None
@@ -45,8 +45,8 @@ class WFEngine:
         self.naavrewf2_payload = naavrewf2_payload
         self.parser = WorkflowParser(naavrewf2_payload.naavrewf2)
         exceptions = []
-        self.params = naavrewf2_payload.params
-        for param in self.params:
+        self.naavrewf2_payload_params = naavrewf2_payload.params
+        for param in self.naavrewf2_payload_params:
             if 'value' not in param:
                 exceptions.append(f"Parameter {param['value']} is "
                                   f"missing a value")
