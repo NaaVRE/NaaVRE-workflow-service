@@ -8,8 +8,7 @@
     {
       "name": "param_neg_string",
       "value": "-starts with hyphen",
-      "default_value": "-starts with hyphen",
-      "type": "string"
+      "node_id": "0b75bfd9-c6c2-4ed0-b2ce-932b60ab4334"
     }
   ],
   "secrets": [],

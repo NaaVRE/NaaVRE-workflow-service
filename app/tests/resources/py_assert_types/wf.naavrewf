@@ -224,7 +224,8 @@
               }
             ],
             "confs": [],
-            "params": [],
+            "params": [
+            ],
             "secrets": [],
             "title": "produce-types-user",
             "description": "produce-types-user",
