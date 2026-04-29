@@ -8,7 +8,6 @@
     {
       "name": "param_max_branches",
       "value": 3,
-      "type": "int",
       "node_id": "a53d1686-a20a-4aaf-8996-e780594f12d6"
     }
   ],
