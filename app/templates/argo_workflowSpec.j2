@@ -74,7 +74,9 @@ templates:
     - name: {{ dependency.from_port }}
     {% endfor %}
     {% for payload_param in naavrewf2_payload_params %}
+    {% if payload_param.node_id == node.id %}
     - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+    {% endif %}
     {% endfor %}
   {% endif %}
   outputs:
