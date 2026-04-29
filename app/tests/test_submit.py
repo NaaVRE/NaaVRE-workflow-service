@@ -82,8 +82,6 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
-        if 'py_split_merge' not in workflow_test_folder:
-            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
@@ -127,7 +125,6 @@ def test_submit():
         # Check run_url that the workflow was submitted successfully
         run_url = submit_response.json()['run_url']
         assert run_url is not None
-
         wf_status_response = client.get(
             '/status/' + workflow_dict['virtual_lab'],
             params={'workflow_url': run_url},

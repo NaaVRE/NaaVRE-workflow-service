@@ -131,7 +131,9 @@ class ArgoEngine(WFEngine, ABC):
         service_account = self.vl_config.wf_engine_config.service_account
         workdir_storage_size = (self.vl_config.
                                 wf_engine_config.workdir_storage_size)
-
+        default_max_branches = (
+                    self.vl_config.wf_engine_config.default_max_branches
+                    or 100)
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
             dependencies_dag=self.parser.get_dependencies_dag(),
@@ -143,10 +145,7 @@ class ArgoEngine(WFEngine, ABC):
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
             extraVolumeMounts=self.user_extraVolumeMounts or [],
-            default_max_branches=(
-                self.vl_config.wf_engine_config.default_max_branches
-                or 100
-            )
+            default_max_branches=default_max_branches
         )
 
         workflow_dict = yaml.safe_load(
