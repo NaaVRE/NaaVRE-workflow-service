@@ -25,20 +25,22 @@ spec:
            workflow_service_account=workflow_service_account,
            workdir_storage_size=workdir_storage_size,
            naavrewf2_payload_params=naavrewf2_payload_params,
-           deps_dag=deps_dag,
+           dependencies_dag=dependencies_dag,
            nodes=nodes,
            k8s_secret_name=k8s_secret_name,
            extraVolumeMounts=extraVolumeMounts,
-           cron_schedule=cron_schedule) | indent(6, true) }}
+           cron_schedule=cron_schedule,
+           default_max_branches=default_max_branches) | indent(6, true) }}
     {% else %}
 {{ include('argo_workflowSpec.j2',
            workflow_name=workflow_name,
            workflow_service_account=workflow_service_account,
            workdir_storage_size=workdir_storage_size,
            naavrewf2_payload_params=naavrewf2_payload_params,
-           deps_dag=deps_dag,
+           dependencies_dag=dependencies_dag,
            nodes=nodes,
            k8s_secret_name=k8s_secret_name,
            extraVolumeMounts=extraVolumeMounts,
-           cron_schedule=cron_schedule) | indent(4, true) }}
+           cron_schedule=cron_schedule,
+           default_max_branches=default_max_branches) | indent(4, true) }}
     {% endif %}

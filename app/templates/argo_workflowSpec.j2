@@ -32,28 +32,30 @@ templates:
     {% set is_splitter = node.type == 'splitter' %}
     {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
     - name: {{ title }}
-      {% if deps_dag[node.id]|length > 0 %}
-      dependencies: [{% for d in deps_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
+      {% if dependencies_dag[node.id]|length > 0 %}
+      dependencies: [{% for d in dependencies_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
       {% endif %}
       template: {{ title }}-tmp
-      {% if deps_dag[node.id]|length > 0 %}
+      {% if dependencies_dag[node.id]|length > 0 %}
       arguments:
         parameters:
-        {% for d in deps_dag[node.id] %}
-        - name: {{ d.from_port }}
-        {% if d.type == "splitter" %}
+        {% for dependency in dependencies_dag[node.id] %}
+        - name: {{ dependency.from_port }}
+        {% if dependency.type == "splitter" %}
           value: {{ '"{{item}}"' }}
         {% else %}
-          value: {{ '"{{tasks.' }}{{ d.task_name }}{{ '.outputs.parameters.' }}{{ d.from_port }}{{'}}"'}}
+          value: {{ '"{{tasks.' }}{{ dependency.task_name }}{{ '.outputs.parameters.' }}{{ dependency.from_port }}{{'}}"'}}
         {% endif %}
         {% endfor %}
         {% for payload_param in naavrewf2_payload_params %}
+        {% if payload_param.node_id == node.id %}
         - name : {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
           value: {{ '"{{workflow.parameters.' }}{{ payload_param.name }}_{{ payload_param.node_id[:7] }}{{'}}"' }}
+        {% endif %}
         {% endfor %}
-      {% for d in deps_dag[node.id] %}
-      {% if d.type == "splitter" %}
-      withParam: {{ '"{{tasks.' }}{{ d.task_name }}{{ '.outputs.parameters.' }}{{ d.from_port }}{{'}}"'}}
+      {% for dependency in dependencies_dag[node.id] %}
+      {% if dependency.type == "splitter" %}
+      withParam: {{ '"{{tasks.' }}{{ dependency.task_name }}{{ '.outputs.parameters.' }}{{ dependency.from_port }}{{'}}"'}}
       {% endif %}
       {% endfor %}
       {% endif %}
@@ -65,14 +67,16 @@ templates:
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
 - name: {{ title }}-tmp
-  {% if deps_dag[node.id]|length > 0 %}
+  {% if dependencies_dag[node.id]|length > 0 %}
   inputs:
     parameters:
-    {% for d in deps_dag[node.id] %}
-    - name: {{ d.from_port }}
+    {% for dependency in dependencies_dag[node.id] %}
+    - name: {{ dependency.from_port }}
     {% endfor %}
     {% for payload_param in naavrewf2_payload_params %}
+    {% if payload_param.node_id == node.id %}
     - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+    {% endif %}
     {% endfor %}
   {% endif %}
   outputs:
@@ -85,14 +89,14 @@ templates:
     {% endif %}
     {% endfor %}
   {% if is_special_node %}
-  {% set special_dep = deps_dag[node.id][0] %}
+  {% set special_dep = dependencies_dag[node.id][0] %}
   script:
     image: python:alpine3.9
     imagePullPolicy: IfNotPresent
     command: [python]
     source: |
       {% if is_splitter %}
-      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node) | indent(6) }}
+      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node, naavrewf2_payload_params=naavrewf2_payload_params, default_max_branches=default_max_branches) | indent(6) }}
       {% else %}
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
@@ -131,11 +135,11 @@ templates:
     {% elif node.properties.cell.kernel == 'IRkernel' %}
         Rscript /app/task.R
     {% endif %}
-        {% for d in deps_dag[node.id] %}
-        {% set is_from_special = d.type == 'splitter' or  d.type == 'merger' %}
-        {% set std_in_name = d.to_port %}
+        {% for dependency in dependencies_dag[node.id] %}
+        {% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
+        {% set std_in_name = dependency.to_port %}
         {% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
-        --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ d.from_port }}{{ '}}' }}'
+        --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}'
         {% endfor %}
         {% for cell_params in node.properties.cell.params %}
         --{{ cell_params.name }}={{ '"{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}"' }}

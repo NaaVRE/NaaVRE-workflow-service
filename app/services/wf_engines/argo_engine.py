@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 from abc import ABC
 
@@ -10,7 +11,6 @@ from slugify import slugify
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
-import json
 
 
 def is_cron(workflow_dict):
@@ -131,10 +131,12 @@ class ArgoEngine(WFEngine, ABC):
         service_account = self.vl_config.wf_engine_config.service_account
         workdir_storage_size = (self.vl_config.
                                 wf_engine_config.workdir_storage_size)
-
+        default_max_branches = (
+                    self.vl_config.wf_engine_config.default_max_branches
+                    or 100)
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
-            deps_dag=self.parser.get_dependencies_dag(),
+            dependencies_dag=self.parser.get_dependencies_dag(),
             nodes=self.nodes,
             naavrewf2_payload_params=self.naavrewf2_payload_params or [],
             k8s_secret_name=k8s_secret_name,
@@ -142,7 +144,8 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts=self.user_extraVolumeMounts or []
+            extraVolumeMounts=self.user_extraVolumeMounts or [],
+            default_max_branches=default_max_branches
         )
 
         workflow_dict = yaml.safe_load(

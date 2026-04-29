@@ -125,7 +125,6 @@ def test_submit():
         # Check run_url that the workflow was submitted successfully
         run_url = submit_response.json()['run_url']
         assert run_url is not None
-
         wf_status_response = client.get(
             '/status/' + workflow_dict['virtual_lab'],
             params={'workflow_url': run_url},
