@@ -60,6 +60,52 @@ def check_recurring_workflow(workflow_dict=None, run_url=None):
                         run_url=workflow_url)
 
 
+def get_num_of_max_parallel_tasks(workflow_dict):
+    splitters = []
+    for param in workflow_dict['params']:
+        if 'param_max_branches' in param['name']:
+            entry = {'node_id': param['node_id'], 'value': param['value']}
+            splitters.append(entry)
+
+    splitter_targets = []
+    for link_id in workflow_dict['naavrewf2']['links']:
+        link = workflow_dict['naavrewf2']['links'][link_id]
+        for splitter in splitters:
+            if ('from' in link and
+                    link['from']['nodeId'] == splitter['node_id']):
+                splitter['parallel_task_id'] = link['to']['nodeId']
+                splitter_targets.append(splitter)
+
+    parallel_tasks = {}
+    for branch in splitter_targets:
+        parallel_task_name = \
+            workflow_dict['naavrewf2']['nodes'][branch['parallel_task_id']][
+                'properties']['cell']['title']
+        parallel_tasks[parallel_task_name] = branch['value']
+    return parallel_tasks
+
+
+def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
+    wf_nodes = {}
+    for node_name in wf_status_response_json['status']['nodes']:
+        node = wf_status_response_json['status']['nodes'][node_name]
+        name = node['templateName']
+        node_type = node['type']
+        if node_type == 'TaskGroup':
+            wf_nodes[name] = int(
+                wf_status_response_json['status']['nodes'][node_name][
+                    'progress'].split('/')[1]) - 2
+    for task_name in parallel_tasks:
+        for wf_nodes_name in wf_nodes:
+            if task_name in wf_nodes_name:
+                expected_count = parallel_tasks[task_name]
+                count = wf_nodes[wf_nodes_name]
+                assert count == expected_count, f"Expected {expected_count} " \
+                    (f"parallel branches for task "
+                     f"{task_name}, but got "
+                     f"{count}")
+
+
 def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
                 run_url=None):
     print(wf_status_response_json['status']['phase'])
@@ -75,6 +121,9 @@ def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
         wf_status_response_json = wf_status_response.json()
     assert wf_status_response_json['status']['phase'] != 'Failed'
     assert wf_status_response_json['status']['phase'] != 'Error'
+    parallel_tasks = get_num_of_max_parallel_tasks(workflow_dict=workflow_dict)
+    check_max_branch_count(wf_status_response_json=wf_status_response_json,
+                           parallel_tasks=parallel_tasks)
 
 
 def test_submit():
@@ -123,7 +172,8 @@ def test_submit():
                 responses_dict['submit']['code'] != 200:
             continue
         # Check run_url that the workflow was submitted successfully
-        run_url = submit_response.json()['run_url']
+        submit_response_json = submit_response.json()
+        run_url = submit_response_json['run_url']
         assert run_url is not None
         wf_status_response = client.get(
             '/status/' + workflow_dict['virtual_lab'],

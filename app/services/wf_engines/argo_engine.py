@@ -160,7 +160,7 @@ class ArgoEngine(WFEngine, ABC):
         return workflow_dict
 
     def get_wf(self, workflow_url: str):
-        # Get the workflow status from the Argo API
+        # Get the workflow from the Argo API
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.token}"
@@ -171,7 +171,7 @@ class ArgoEngine(WFEngine, ABC):
                                 verify=os.getenv('VERIFY_SSL', 'true').
                                 lower() == 'true')
         if response.status_code != 200:
-            raise Exception('Error getting workflow status: ' + response.text)
+            raise Exception('Error getting workflow: ' + response.text)
         return response.json()
 
     def delete(self, workflow_url: str):
