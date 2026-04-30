@@ -87,6 +87,8 @@ def get_num_of_max_parallel_tasks(workflow_dict):
 
 def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
     wf_nodes = {}
+    if 'nodes' not in wf_status_response_json['status']:
+        return
     for node_name in wf_status_response_json['status']['nodes']:
         node = wf_status_response_json['status']['nodes'][node_name]
         name = node['templateName']
@@ -100,10 +102,10 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
             if task_name in wf_nodes_name:
                 expected_count = parallel_tasks[task_name]
                 count = wf_nodes[wf_nodes_name]
-                assert count == expected_count, f"Expected {expected_count} " \
-                    (f"parallel branches for task "
-                     f"{task_name}, but got "
-                     f"{count}")
+                assert count == expected_count, (f"Expected {expected_count} "
+                                                 f"branches for task "
+                                                 f"{task_name}, but got "
+                                                 f"{count}")
 
 
 def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
