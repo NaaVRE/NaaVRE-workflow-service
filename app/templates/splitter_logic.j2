@@ -3,7 +3,8 @@ import json
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
 
-param_max_branches = {{ default_max_branches }}
+default_max_branches = {{ default_max_branches }}
+param_max_branches = default_max_branches
 {% for param in naavrewf2_payload_params %}
 {% if param.node_id == node.id %}
 {% if param.name == "param_max_branches" %}
@@ -14,7 +15,7 @@ param_max_branches = int({{ param.value }})
 {% endif %}
 {% endfor %}
 
-max_branches = min(len({{ special_dep.from_port }}), param_max_branches)
+max_branches = min(len({{ special_dep.from_port }}), param_max_branches, default_max_branches)
 
 items_per_worker = len({{ special_dep.from_port }}) // param_max_branches
 overflow = len({{ special_dep.from_port }}) % param_max_branches
