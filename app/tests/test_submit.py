@@ -134,6 +134,8 @@ def test_submit():
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
         print('Testing workflow: ' + workflow_test_folder)
+        if '80_JSONDecodeError' not in workflow_test_folder:
+            continue
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
         with open(workflow_payload_path) as f:

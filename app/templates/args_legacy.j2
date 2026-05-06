@@ -1,0 +1,10 @@
+{% for dependency in dependencies_dag[node.id] %}
+{% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
+{% set std_in_name = dependency.to_port %}
+{% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
+--{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}'
+{% endfor %}
+{% for cell_params in node.properties.cell.params %}
+--{{ cell_params.name }}={{ '"{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}"' }}
+{% endfor %}
+--id={{ node.id[:7] }};

@@ -1,0 +1,15 @@
+
+
+{% set input_json_file = '/tmp/json_' + node.id[:7] + '.json' %}
+echo '[]' > {{ input_json_file }};
+{% for dependency in dependencies_dag[node.id] %}
+{% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
+{% set std_in_name = dependency.to_port %}
+{% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
+jq --arg {{ std_in_name_base }}_name '{{ std_in_name_base }}' --arg {{ std_in_name_base }}_value '{{inputs.parameters.}}{{ dependency.from_port }}' --arg {{ std_in_name_base }}_type 'str' '. += [{name:$'{{ std_in_name_base }}_name',type:$'{{ std_in_name_base }}_type',value:$'{{ std_in_name_base }}_value'}]' {{ input_json_file }} > tmp.json && mv tmp.json {{ input_json_file }};
+{% endfor %}
+{% for cell_params in node.properties.cell.params %}
+jq --arg {{ cell_params.name }}_name '{{ cell_params.name }}' --arg {{ cell_params.name }}_value '{{workflow.parameters.}}{{ cell_params.name }}_{{ node.id[:7] }}' --arg {{ cell_params.name }}_type 'str' '. += [{name:$'{{ cell_params.name }}_name',type:$'{{ cell_params.name }}_type',value:$'{{ cell_params.name }}_value'}]' {{ input_json_file }} > tmp.json && mv tmp.json {{ input_json_file }};
+{% endfor %}
+jq --arg id_name 'id' --arg id_value '{{ node.id[:7] }}' --arg id_type 'str' '. += [{name:$id_name,type:$id_type,value:$id_value}]' {{ input_json_file }} > tmp.json && mv tmp.json {{ input_json_file }};
+
