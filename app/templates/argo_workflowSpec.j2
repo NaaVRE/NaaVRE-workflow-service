@@ -30,10 +30,6 @@ templates:
     {% for node in nodes.values() %}
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
-    {% set containerizer_service_version = "v0.4.7" %}
-    {% if 'containerizer_service_version' in node.properties.cell %}
-    {% set containerizer_service_version = node.properties.cell.containerizer_service_version %}
-    {% endif %}
     {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
     - name: {{ title }}
       {% if dependencies_dag[node.id]|length > 0 %}
@@ -134,12 +130,16 @@ templates:
     command: ["/bin/bash", "-c"]
     args:
       - source /venv/bin/activate;
+        {% if node.properties.cell.json_args_supported %}
         {{ include('args_json.j2', dependencies_dag=dependencies_dag,node=node) | indent(6) }}
+        {% else %}
+        {{ include('args_legacy.j2', dependencies_dag=dependencies_dag,node=node) | indent(6) }}
+        {% endif %}
     {% if node.properties.cell.kernel == 'ipython' %}
         python /app/task.py
     {% elif node.properties.cell.kernel == 'IRkernel' %}
         Rscript /app/task.R
     {% endif %}
-        --args_json /tmp/json_{{ node.id[:7] }}.json
+        --args_json /tmp/json_{{ node.id[:7] }}.json;
   {% endif %}
 {% endfor %}

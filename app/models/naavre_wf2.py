@@ -63,6 +63,8 @@ class Cell(BaseModel):
     secrets: Sequence[Secret]
     kernel: Optional[str]
     source_url: Optional[str]
+    containerizer_service_version: Optional[str] = None
+    json_args_supported: Optional[bool] = False
 
 
 class SpecialCell(BaseModel):
@@ -74,6 +76,8 @@ class SpecialCell(BaseModel):
     confs: Sequence[Conf]
     params: Sequence[Param]
     secrets: Sequence[Secret]
+    containerizer_service_version: Optional[str] = None
+    json_args_supported: Optional[bool] = False
 
 
 class PortProperties(BaseModel):
