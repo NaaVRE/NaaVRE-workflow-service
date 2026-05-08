@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from typing import Optional
+from typing import Optional, Literal
 import logging
 
 from pydantic import BaseModel, Field
@@ -63,21 +63,27 @@ class Cell(BaseModel):
     secrets: Sequence[Secret]
     kernel: Optional[str]
     source_url: Optional[str]
-    containerizer_service_version: Optional[str] = None
-    json_args_supported: Optional[bool] = False
+    template_format: Optional[str] = None
+    extra_properties: Optional[Mapping[str, str]] = None
 
 
-class SpecialCell(BaseModel):
-    title: str
-    container_image: str
-    dependencies: Sequence[Dependency]
-    inputs: Sequence[Input]
-    outputs: Sequence[Output]
-    confs: Sequence[Conf]
-    params: Sequence[Param]
-    secrets: Sequence[Secret]
-    containerizer_service_version: Optional[str] = None
-    json_args_supported: Optional[bool] = False
+class SpecialCell(Cell):
+    """A SpecialCell is a lightweight/variant of Cell and therefore inherits
+    all Cell fields. Keep this class so typing that expects SpecialCell
+    continues to work, but inherit from Cell instead of BaseModel.
+    """
+    type: Literal['splitter', 'merger']
+
+
+class InternalWorkflowComponent(Cell):
+    """ An InternalWorkflowComponent is a Cell that represents an internal
+    workflow. It has the same fields as a Cell, but it also has an additional
+    field called 'json_args_supported' which indicates whether the internal
+    workflow supports JSON arguments. This field is set to True if the template
+    format version of the cell is greater than or equal to the version
+    specified in 'json_args_supported_version', and False otherwise.
+    """
+    json_args_supported: bool = False
 
 
 class PortProperties(BaseModel):

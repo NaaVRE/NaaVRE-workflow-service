@@ -11,6 +11,8 @@ metadata:
 spec:
     {% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 and not cron_schedule %}
     volumes:
+    - name: workspace
+      emptyDir: { }
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
       persistentVolumeClaim:

@@ -101,12 +101,23 @@ templates:
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
   {% else %}
+  initContainers:
+    - name: init-input-args-{{ title }}
+      image: python:alpine3.9
+      command: [python]
+      source: |
+        {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
+      volumeMounts:
+        - name: workspace
+          mountPath: /workspace
   container:
     image: "{{ node.properties.cell.container_image }}"
     imagePullPolicy: Always
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
+    - name: workspace
+      mountPath: /workspace
     {% if extraVolumeMounts is defined %}
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
@@ -129,17 +140,24 @@ templates:
     {%  endfor %}
     command: ["/bin/bash", "-c"]
     args:
-      - source /venv/bin/activate;
+      - {{ include('args_json.j2', dependencies_dag=dependencies_dag,node=node) | indent(6) }}
         {% if node.properties.cell.json_args_supported %}
-        {{ include('args_json.j2', dependencies_dag=dependencies_dag,node=node) | indent(6) }}
         {% else %}
         {{ include('args_legacy.j2', dependencies_dag=dependencies_dag,node=node) | indent(6) }}
+        {% set args ='/tmp/json_' + node.id[:7] + '.json' %}
         {% endif %}
+
+        {% if node.properties.cell.kernel == 'ipython' %}
+        {% set cmd = 'python' %}
+        {% elif node.properties.cell.kernel == 'IRkernel' %}
+        {% set cmd = 'Rscript' %}
+        {% endif %}
+
+        source /venv/bin/activate;
     {% if node.properties.cell.kernel == 'ipython' %}
         python /app/task.py
     {% elif node.properties.cell.kernel == 'IRkernel' %}
         Rscript /app/task.R
     {% endif %}
-        --args_json /tmp/json_{{ node.id[:7] }}.json;
   {% endif %}
 {% endfor %}
