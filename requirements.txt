@@ -1,6 +1,6 @@
 fastapi[standard]==0.136.1
 PyJWT[crypto]==2.12.1
-requests==2.33.1
+requests==2.34.0
 uvicorn==0.46.0
 pydantic==2.13.3
 Jinja2==3.1.6
