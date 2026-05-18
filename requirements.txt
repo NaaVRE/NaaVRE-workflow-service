@@ -1,13 +1,13 @@
 fastapi[standard]==0.136.1
 PyJWT[crypto]==2.12.1
-requests==2.33.1
+requests==2.34.0
 uvicorn==0.46.0
-pydantic==2.13.3
+pydantic==2.13.4
 Jinja2==3.1.6
 pre-commit==4.6.0
 jsonschema==4.26.0
 PyYAML==6.0.3
-pydantic-settings==2.14.0
+pydantic-settings==2.14.1
 cachetools==7.1.1
 python-slugify~=8.0.4
 httpx==0.28.1
