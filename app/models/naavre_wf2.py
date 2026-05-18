@@ -64,7 +64,6 @@ class Cell(BaseModel):
     kernel: Optional[str]
     source_url: Optional[str]
     template_format: Optional[str] = None
-    extra_properties: Optional[Mapping[str, str]] = None
 
 
 class SpecialCell(Cell):
@@ -84,6 +83,7 @@ class InternalWorkflowComponent(Cell):
     specified in 'json_args_supported_version', and False otherwise.
     """
     json_args_supported: bool = False
+    extra_properties: Optional[Mapping[str, str]] = None
 
 
 class PortProperties(BaseModel):

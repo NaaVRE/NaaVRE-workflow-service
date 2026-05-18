@@ -101,6 +101,7 @@ templates:
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
   {% else %}
+  {%  if  not node.properties.cell.json_args_supported %}
   initContainers:
     - name: init-input-args-{{ title }}
       image: python:alpine3.9
@@ -108,8 +109,9 @@ templates:
       source: |
         {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
       volumeMounts:
-        - name: workspace
-          mountPath: /workspace
+      - name: workspace
+        mountPath: /workspace
+  {% endif %}
   container:
     image: "{{ node.properties.cell.container_image }}"
     imagePullPolicy: Always
@@ -141,10 +143,17 @@ templates:
     command: ["/bin/bash", "-c"]
     args:
       - source /venv/bin/activate;
+        {{  include('args_json.j2', dependencies_dag=dependencies_dag, node=node) | indent(8) }}
         {% if node.properties.cell.kernel == 'ipython' %}
         {% set cmd = 'python /app/task.py' %}
         {% elif node.properties.cell.kernel == 'IRkernel' %}
         {% set cmd = 'Rscript /app/task.R' %}
         {% endif %}
+        {%  if  node.properties.cell.json_args_supported %}
+        {% set input_json_file = '/tmp/json_' + node.id[:7] + '.json' %}
+        {{  cmd }} --args_json {{ input_json_file }}
+        {%  else %}
+        cat /workspace/{{ node.id[:7] }}/flat_args.txt | {{ cmd }};
+        {%  endif %}
   {% endif %}
 {% endfor %}
