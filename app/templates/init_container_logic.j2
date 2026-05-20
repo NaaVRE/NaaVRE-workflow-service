@@ -7,10 +7,13 @@ args = []
 {% set input_name = dependency.to_port %}
 {% set input_name_base = input_name.split('_')[:-1]|join('_') %}
 {% for cell_input in node.properties.cell.inputs if cell_input.name == input_name_base %}
+value = {{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}
+if not isinstance(value, str):
+    val = str(value)
 arg = {
    "name": "{{ input_name_base }}",
    "type": "{{ cell_input.type }}",
-   "value": "{{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}"
+   "value": str(value)
 }
 args.append(arg)
 {% endfor %}
