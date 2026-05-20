@@ -1,5 +1,6 @@
 import json
 import os
+import shlex
 args = []
 {% for dependency in dependencies_dag[node.id] %}
 {% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
@@ -15,7 +16,6 @@ args.append(arg)
 {% endfor %}
 {% endfor %}
 {% for cell_params in node.properties.cell.params %}
-{# we need this indentation to align echo with jq  #}
 arg = {
     "name": "{{ cell_params.name }}",
     "type": "{{ cell_params.type }}",
@@ -31,28 +31,21 @@ arg = {
 args.append(arg)
 # Crate a folder with the node id if it doesn't exist in /workspace
 workspace_dir = '/workspace/{{ node.id[:7] }}'
-
 if not os.path.exists(workspace_dir):
     os.makedirs(workspace_dir)
-input_json_file = '/tmp/json_{{ node.id[:7] }}.json'
-with open(input_json_file, 'w') as f:
+with open(workspace_dir + '/' + 'inputs.json', 'w') as f:
     json.dump(args, f)
 
-# Write the arguments to a file to be used by the legacy cells
-# Read args.json
-with open(input_json_file, 'r') as f:
-    args = json.load(f)
-
 # Convert to flat arguments with proper shell escaping
-flat_args = []
+inputs = ''
 for arg in args:
-    name = arg.get('name')
-    value = arg.get('value')
-    if name and value:
-        flat_args.append(f"--{name}")
-        # Use shlex.quote for proper shell escaping
-        flat_args.append(shlex.quote(value))
+  name = arg.get('name')
+  value = arg.get('value')
+  print(f"Processing argument: name={name}, value={value}")
+  line = f"--{name}={shlex.quote(str(value))}"
+  print(f"Converted to flat argument: {line}")
+  inputs += line + ' '
 
 # Write the flat arguments to a file
-with open(workspace_dir+'/flat_args.txt', 'w') as f:
-    f.write(' '.join(flat_args))
+with open(workspace_dir+'/inputs.txt', 'w') as f:
+    f.write(inputs)

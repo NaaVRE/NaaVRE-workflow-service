@@ -105,8 +105,9 @@ templates:
   initContainers:
     - name: init-input-args-{{ title }}
       image: python:alpine3.9
-      command: [python]
-      source: |
+      command: ["python", "-c"]
+      args:
+      - |
         {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
       volumeMounts:
       - name: workspace
@@ -143,17 +144,15 @@ templates:
     command: ["/bin/bash", "-c"]
     args:
       - source /venv/bin/activate;
-        {{  include('args_json.j2', dependencies_dag=dependencies_dag, node=node) | indent(8) }}
         {% if node.properties.cell.kernel == 'ipython' %}
         {% set cmd = 'python /app/task.py' %}
         {% elif node.properties.cell.kernel == 'IRkernel' %}
         {% set cmd = 'Rscript /app/task.R' %}
         {% endif %}
         {%  if  node.properties.cell.json_args_supported %}
-        {% set input_json_file = '/tmp/json_' + node.id[:7] + '.json' %}
-        {{  cmd }} --args_json {{ input_json_file }}
+        {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json
         {%  else %}
-        cat /workspace/{{ node.id[:7] }}/flat_args.txt | {{ cmd }};
+        {{ cmd }} $(cat /workspace/{{ node.id[:7] }}/inputs.txt)
         {%  endif %}
   {% endif %}
 {% endfor %}
