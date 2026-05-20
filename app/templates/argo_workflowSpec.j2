@@ -101,7 +101,6 @@ templates:
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
   {% else %}
-  {%  if  not node.properties.cell.json_args_supported %}
   initContainers:
     - name: init-input-args-{{ title }}
       image: python:alpine3.9
@@ -112,7 +111,6 @@ templates:
       volumeMounts:
       - name: workspace
         mountPath: /workspace
-  {% endif %}
   container:
     image: "{{ node.properties.cell.container_image }}"
     imagePullPolicy: Always
