@@ -24,9 +24,6 @@ try:
     {% for cell_params in node.properties.cell.params %}
     workflow_parameter_name = "{{ cell_params.name }}"
     workflow_parameter_value = {{ '{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}' }}
-    print(f"Workflow parameter: name={workflow_parameter_name}")
-    if workflow_parameter_name == "param_string_val":
-        workflow_parameter_value = "pass"
     arg = {
         "name": workflow_parameter_name,
         "type": "{{ cell_params.type }}",
