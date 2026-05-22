@@ -133,9 +133,8 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     # Submit all in one loop and monitor them in a separate loop
-    wf_submit_responses = []
+    wf_submit_responses = {}
     for workflow_test_folder in workflow_test_files:
-        print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
         with open(workflow_payload_path) as f:
@@ -177,10 +176,12 @@ def test_submit():
             continue
         # Check run_url that the workflow was submitted successfully
         submit_response_json = submit_response.json()
-        wf_submit_responses.append(submit_response_json)
+        wf_submit_responses[workflow_test_folder] = submit_response_json
 
     # Monitor wf execution
-    for submit_response_json in wf_submit_responses:
+    for workflow_test_folder in wf_submit_responses:
+        submit_response_json = wf_submit_responses[workflow_test_folder]
+        print('Testing workflow: ' + workflow_test_folder)
         run_url = submit_response_json['run_url']
         assert run_url is not None
         wf_status_response = client.get(
