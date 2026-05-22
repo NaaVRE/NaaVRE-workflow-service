@@ -148,9 +148,10 @@ templates:
         {% set cmd = 'Rscript /app/task.R' %}
         {% endif %}
         {%  if  node.properties.cell.json_args_supported %}
-        {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json
+        cat /workspace/{{ node.id[:7] }}/inputs.json;
+        {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
         {%  else %}
-        {{ cmd }} $(cat /workspace/{{ node.id[:7] }}/inputs.txt)
+        xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
         {%  endif %}
   {% endif %}
 {% endfor %}

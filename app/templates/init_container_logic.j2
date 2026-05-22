@@ -23,7 +23,7 @@ try:
     {% endfor %}
     {% for cell_params in node.properties.cell.params %}
     workflow_parameter_name = "{{ cell_params.name }}"
-    workflow_parameter_value = {{ '{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}' }}
+    workflow_parameter_value = "{{ '{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}' }}"
     arg = {
         "name": workflow_parameter_name,
         "type": "{{ cell_params.type }}",
@@ -44,19 +44,35 @@ try:
     with open(workspace_dir + '/' + 'inputs.json', 'w') as f:
         json.dump(args, f)
 
-    # Convert to flat arguments with proper shell escaping
+    # Convert to flat arguments
     inputs = ''
     for arg in args:
       name = arg.get('name')
       value = arg.get('value')
+      type = arg.get('type')
       print(f"Processing argument: name={name}, value={value}")
-      line = f"--{name}={shlex.quote(str(value))}"
+      if type == 'list':
+        value = value.strip()
+      if type == 'str':
+         value = f"'{value}'"
+      line = f"--{name}={shlex.quote(value)}"
       print(f"Converted to flat argument: {line}")
       inputs += line + ' '
 
-    # Write the flat arguments to a file
-    with open(workspace_dir+'/inputs.txt', 'w') as f:
-        f.write(inputs)
+    with open(workspace_dir+'/inputs.txt', "wb") as f:
+        for arg in args:
+            name = arg.get('name')
+            value = arg.get('value')
+            var_type = arg.get('type')
+            if name and value:
+                if var_type == 'list':
+                    value = value.replace(' ','')
+                if var_type == 'str':
+                    # Escape exiting "
+                    value = value.replace('"', '\\"')
+                    value = '"'+value+'"'
+                line = f'--{name}={value}'
+                f.write(line.encode() + b"\0")
 except Exception as e:
     print("Error in init container logic:")
     traceback.print_exc()
