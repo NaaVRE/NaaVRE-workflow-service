@@ -8,7 +8,7 @@ logger.setLevel(logging.DEBUG)
 
 
 def is_special_node(node: Node) -> bool:
-    return node.type in ['splitter', 'merger', 'visualizer']
+    return node.type in ['splitter', 'merger']
 
 
 class WorkflowParser:

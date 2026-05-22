@@ -9,8 +9,7 @@ try:
     {% set input_name = dependency.to_port %}
     {% set input_name_base = input_name.split('_')[:-1]|join('_') %}
     {% for cell_input in node.properties.cell.inputs if cell_input.name == input_name_base %}
-
-    input_parameter_name = "{{ cell_params.name }}"
+    input_parameter_name = "{{ cell_input.name }}"
     input_parameter_value = {{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}
     print(f"Adding input parameter: name={input_parameter_name}, value={input_parameter_value}")
     arg = {
