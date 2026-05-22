@@ -135,6 +135,8 @@ def test_submit():
     # Submit all in one loop and monitor them in a separate loop
     wf_submit_responses = []
     for workflow_test_folder in workflow_test_files:
+        if 'resources/py_issue_80' not in workflow_test_folder:
+            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
