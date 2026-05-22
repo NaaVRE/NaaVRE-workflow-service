@@ -66,6 +66,11 @@ try:
             if name and value:
                 if var_type == 'list':
                     value = value.replace(' ','')
+                    try:
+                        json.loads(value)
+                    except json.decoder.JSONDecodeError as err:
+                        # It is a list[str]. We must save it as ["elm1","elem2",..]
+                        value = json.dumps(json.loads(value.replace("'",'"')))
                 if var_type == 'str' and ' ' in value:
                     # Escape exiting "
                     value = value.replace('"', '\\"')
