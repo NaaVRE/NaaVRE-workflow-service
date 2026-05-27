@@ -3,11 +3,14 @@ from collections.abc import Mapping
 from typing import Optional
 
 from jinja2 import PackageLoader, Environment, StrictUndefined
+from packaging.version import Version
 
-from app.models.naavre_wf2 import Node
+from app.models.naavre_wf2 import Node, InternalWorkflowComponent
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
 from app.services.wf_parser import WorkflowParser
+
+json_args_supported_version = Version('v2')
 
 
 class WFEngine:
@@ -56,7 +59,8 @@ class WFEngine:
         self.user_name = naavrewf2_payload.user_name
         self.user_groups = naavrewf2_payload.user_groups
         self.virtual_lab_name = naavrewf2_payload.virtual_lab
-        self.nodes = naavrewf2_payload.naavrewf2.nodes
+        self.nodes = self.set_json_args_supported(
+            naavrewf2_payload.naavrewf2.nodes)
         self.cron_schedule = naavrewf2_payload.cron_schedule
         self.lint(naavrewf2_payload)
 
@@ -79,3 +83,16 @@ class WFEngine:
     @abstractmethod
     def lint(self, workflow_payload: Naavrewf2Payload):
         pass
+
+    def set_json_args_supported(self, nodes):
+        for node_id in nodes:
+            node = nodes[node_id]
+            cell = InternalWorkflowComponent(
+                **node.properties.cell.model_dump())
+            if (cell.template_format and Version(
+                    cell.template_format) >= json_args_supported_version):
+                cell.json_args_supported = True
+            else:
+                cell.json_args_supported = False
+            node.properties.cell = cell
+        return nodes

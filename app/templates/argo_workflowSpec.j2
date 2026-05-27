@@ -6,6 +6,9 @@ volumes:
 - name: {{ vol.name }}
   persistentVolumeClaim:
     claimName: {{ vol.name }}
+- name: workspace
+  emptyDir:
+    medium: Memory
 {% endfor %}
 {% endif %}
 volumeClaimTemplates:
@@ -101,12 +104,24 @@ templates:
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
   {% else %}
+  initContainers:
+    - name: init-input-args-{{ title }}
+      image: python:alpine3.9
+      command: ["python", "-c"]
+      args:
+      - |
+        {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
+      volumeMounts:
+      - name: workspace
+        mountPath: /workspace
   container:
     image: "{{ node.properties.cell.container_image }}"
     imagePullPolicy: Always
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
+    - name: workspace
+      mountPath: /workspace
     {% if extraVolumeMounts is defined %}
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
@@ -130,20 +145,16 @@ templates:
     command: ["/bin/bash", "-c"]
     args:
       - source /venv/bin/activate;
-    {% if node.properties.cell.kernel == 'ipython' %}
-        python /app/task.py
-    {% elif node.properties.cell.kernel == 'IRkernel' %}
-        Rscript /app/task.R
-    {% endif %}
-        {% for dependency in dependencies_dag[node.id] %}
-        {% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
-        {% set std_in_name = dependency.to_port %}
-        {% set std_in_name_base = std_in_name.split('_')[:-1]|join('_') %}
-        --{{ std_in_name_base }}='{{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}'
-        {% endfor %}
-        {% for cell_params in node.properties.cell.params %}
-        --{{ cell_params.name }}={{ '"{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}"' }}
-        {% endfor %}
-        --id={{ node.id[:7] }};
+        {% if node.properties.cell.kernel == 'ipython' %}
+        {% set cmd = 'python /app/task.py' %}
+        {% elif node.properties.cell.kernel == 'IRkernel' %}
+        {% set cmd = 'Rscript /app/task.R' %}
+        {% endif %}
+        {%  if  node.properties.cell.json_args_supported %}
+        cat /workspace/{{ node.id[:7] }}/inputs.json;
+        {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
+        {%  else %}
+        xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
+        {%  endif %}
   {% endif %}
 {% endfor %}

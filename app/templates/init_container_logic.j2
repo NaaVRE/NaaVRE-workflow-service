@@ -1,0 +1,82 @@
+import json
+import os
+import shlex
+import traceback
+try:
+    args = []
+    {% for dependency in dependencies_dag[node.id] %}
+    {% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
+    {% set input_name = dependency.to_port %}
+    {% set input_name_base = input_name.split('_')[:-1]|join('_') %}
+    {% for cell_input in node.properties.cell.inputs if cell_input.name == input_name_base %}
+    input_parameter_name = "{{ cell_input.name }}"
+    input_parameter_value = {{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}
+    print(f"Adding input parameter: name={input_parameter_name}, value={input_parameter_value}")
+    arg = {
+       "name": input_parameter_name,
+       "type": "{{ cell_input.type }}",
+       "value": str(input_parameter_value)
+    }
+    args.append(arg)
+    {% endfor %}
+    {% endfor %}
+    {% for cell_params in node.properties.cell.params %}
+    workflow_parameter_name = "{{ cell_params.name }}"
+    workflow_parameter_value = "{{ '{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}' }}"
+    arg = {
+        "name": workflow_parameter_name,
+        "type": "{{ cell_params.type }}",
+        "value": str(workflow_parameter_value)
+    }
+    args.append(arg)
+    {% endfor %}
+    arg = {
+        "name": "id",
+        "type": "str",
+        "value": "{{ node.id[:7] }}"
+    }
+    args.append(arg)
+    # Crate a folder with the node id if it doesn't exist in /workspace
+    workspace_dir = '/workspace/{{ node.id[:7] }}'
+    if not os.path.exists(workspace_dir):
+        os.makedirs(workspace_dir)
+    with open(workspace_dir + '/' + 'inputs.json', 'w') as f:
+        json.dump(args, f)
+
+    # Convert to flat arguments
+    inputs = ''
+    for arg in args:
+      name = arg.get('name')
+      value = arg.get('value')
+      type = arg.get('type')
+      print(f"Processing argument: name={name}, value={value}")
+      if type == 'list':
+        value = value.strip()
+      if type == 'str':
+         value = f"'{value}'"
+      line = f"--{name}={shlex.quote(value)}"
+      print(f"Converted to flat argument: {line}")
+      inputs += line + ' '
+
+    with open(workspace_dir+'/inputs.txt', "wb") as f:
+        for arg in args:
+            name = arg.get('name')
+            value = arg.get('value')
+            var_type = arg.get('type')
+            if name and value:
+                if var_type == 'list':
+                    value = value.replace(' ','')
+                    try:
+                        json.loads(value)
+                    except json.decoder.JSONDecodeError as err:
+                        # It is a list[str]. We must save it as ["elm1","elem2",..]
+                        value = json.dumps(json.loads(value.replace("'",'"')))
+                if var_type == 'str' and ' ' in value:
+                    # Escape exiting "
+                    value = value.replace('"', '\\"')
+                    value = '"'+value+'"'
+                line = f'--{name}={value}'
+                f.write(line.encode() + b"\0")
+except Exception as e:
+    print("Error in init container logic:")
+    traceback.print_exc()
