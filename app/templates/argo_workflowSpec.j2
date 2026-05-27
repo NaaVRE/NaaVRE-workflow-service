@@ -6,6 +6,9 @@ volumes:
 - name: {{ vol.name }}
   persistentVolumeClaim:
     claimName: {{ vol.name }}
+- name: workspace
+  emptyDir:
+    medium: Memory
 {% endfor %}
 {% endif %}
 volumeClaimTemplates:
