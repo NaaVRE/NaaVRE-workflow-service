@@ -1,6 +1,6 @@
-from collections.abc import Mapping, Sequence
-from typing import Optional
 import logging
+from collections.abc import Mapping, Sequence
+from typing import Optional, Literal
 
 from pydantic import BaseModel, Field
 
@@ -49,10 +49,10 @@ class Cell(BaseModel):
     url: str
     title: str
     description: Optional[str]
-    created: Optional[str]
-    modified: Optional[str]
-    owner: Optional[str]
-    virtual_lab: Optional[str]
+    created: Optional[str] = None
+    modified: Optional[str] = None
+    owner: Optional[str] = None
+    virtual_lab: Optional[str] = None
     container_image: str
     base_container_image: Optional[BaseImage]
     dependencies: Sequence[Dependency]
@@ -61,11 +61,13 @@ class Cell(BaseModel):
     confs: Sequence[Conf]
     params: Sequence[Param]
     secrets: Sequence[Secret]
-    kernel: Optional[str]
-    source_url: Optional[str]
+    kernel: Optional[str] = None
+    source_url: Optional[str] = None
+    template_format: Optional[str] = None
 
 
 class SpecialCell(BaseModel):
+    type: Literal['splitter', 'merger']
     title: str
     container_image: str
     dependencies: Sequence[Dependency]
@@ -74,6 +76,18 @@ class SpecialCell(BaseModel):
     confs: Sequence[Conf]
     params: Sequence[Param]
     secrets: Sequence[Secret]
+
+
+class InternalWorkflowComponent(Cell):
+    """ An InternalWorkflowComponent is a Cell that represents an internal
+    workflow. It has the same fields as a Cell, but it also has an additional
+    field called 'json_args_supported' which indicates whether the internal
+    workflow supports JSON arguments. This field is set to True if the template
+    format version of the cell is greater than or equal to the version
+    specified in 'json_args_supported_version', and False otherwise.
+    """
+    json_args_supported: bool = False
+    extra_properties: Optional[Mapping[str, str]] = None
 
 
 class PortProperties(BaseModel):

@@ -1,0 +1,161 @@
+{
+  "chart": {
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": {
+      "70438440-4f1e-4494-ab6b-4985a4c69dc3": {
+        "id": "70438440-4f1e-4494-ab6b-4985a4c69dc3",
+        "position": {
+          "x": 1037.7833251953125,
+          "y": 399
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "json_str": {
+            "id": "json_str",
+            "type": "left",
+            "properties": {
+              "color": "#931f80",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/ce6f512b-c8b5-4214-ab61-1c3031c5478b/",
+            "owner": "koen.greuell@lifewatch.eu",
+            "virtual_lab": "laserfarm",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.2",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.2"
+            },
+            "dependencies": [
+              {
+                "name": "json",
+                "module": "",
+                "asname": null
+              }
+            ],
+            "inputs": [
+              {
+                "name": "json_str",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "use-the-json-user",
+            "description": "use-the-json-user",
+            "created": "2026-04-09T09:29:03.836198Z",
+            "modified": "2026-04-09T09:29:04.032487Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/use-the-json-user:ce2ba86",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/a2a4d8c4bdc99cdcc7bbab5b39c5dbcdfcb6c6dc/use-the-json-user",
+            "is_draft": false,
+            "next_version": null,
+            "template_format": "v2"
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "d417d9bd-f705-4186-9c70-db8963d372c0": {
+        "id": "d417d9bd-f705-4186-9c70-db8963d372c0",
+        "position": {
+          "x": 649.7833251953125,
+          "y": 274
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "json_str": {
+            "id": "json_str",
+            "type": "right",
+            "properties": {
+              "color": "#931f80",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/135a6113-d4ac-45da-acc0-ba99e0cbc17c/",
+            "owner": "koen.greuell@lifewatch.eu",
+            "virtual_lab": "laserfarm",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.2",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.2"
+            },
+            "dependencies": [
+              {
+                "name": "json",
+                "module": "",
+                "asname": null
+              }
+            ],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "json_str",
+                "type": "str"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "create-a-json-user",
+            "description": "create-a-json-user",
+            "created": "2026-04-09T09:29:19.425777Z",
+            "modified": "2026-04-09T09:29:19.572192Z",
+            "version": 1,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/create-a-json-user:3c88410",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/8667aa0cdcae1a1747e59ac7cb65baa7a6705d45/create-a-json-user",
+            "is_draft": false,
+            "next_version": null
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      }
+    },
+    "links": {
+      "2861b1b8-274e-43c4-a8ca-5c9d5e9e8fb8": {
+        "id": "2861b1b8-274e-43c4-a8ca-5c9d5e9e8fb8",
+        "from": {
+          "nodeId": "d417d9bd-f705-4186-9c70-db8963d372c0",
+          "portId": "json_str"
+        },
+        "to": {
+          "nodeId": "70438440-4f1e-4494-ab6b-4985a4c69dc3",
+          "portId": "json_str"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {}
+  }
+}
