@@ -38,10 +38,7 @@ def load_configuration(source):
         raise Exception('Invalid configuration source')
 
 
-config_file = os.getenv('CONFIG_FILE_URL', 'https://raw.githubusercontent.com/'
-                                           'naavrehub/'
-                                           'naavre-workflow-service/'
-                                           'main/conf.json')
+config_file = os.getenv('CONFIG_FILE_URL', 'configuration.json')
 
 conf = None
 if os.path.exists(config_file):
