@@ -2,6 +2,11 @@
   "vl_configurations": [
     {
       "name": "openlab",
+      "base_image_tags_url": "https://github.com/QCDIS/NaaVRE-flavors/releases/latest/download/base_image_tags.json",
+      "module_mapping_url": "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json",
+      "cell_github_url": "https://github.com/NaaVRE/cells-vl-tests.git",
+      "cell_github_token": "TOKEN",
+      "registry_url": "ghcr.io/naavre/naavre-cells-vl-tests",
       "wf_engine_config": {
         "name": "argo",
         "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
@@ -19,30 +24,26 @@
             "name": "naa-vre-user-data",
             "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
             "subPath": "{unescaped_username}"
-          },
-          {
-            "name": "naa-vre-restricted",
-            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-restricted/",
-            "allowedGroups": [
-              "naa-vre-restricted_users"
-            ]
           }
         ],
         "secrets_creator_api_endpoint": "https://example.naavre.net/k8s-secret-creator/1.0.0/",
-        "secrets_creator_api_token": "...",
-        "default_max_branches": 50
+        "secrets_creator_api_token": "..."
       }
     },
     {
       "name": "virtual_lab_2",
+      "base_image_tags_url": "https://github.com/QCDIS/NaaVRE-flavors/releases/latest/download/base_image_tags.json",
+      "module_mapping_url": "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json",
+      "cell_github_url": "https://github.com/NaaVRE/cells-vl-tests.git",
+      "cell_github_token": "TOKEN",
+      "registry_url": "ghcr.io/naavre/naavre-cells-vl-tests",
       "wf_engine_config": {
         "name": "argo",
-        "api_endpoint": "https://my-argo.example.com/argowf/",
+        "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
         "access_token": "eyJhbGciOg...",
         "service_account": "executor",
-        "namespace": "argo",
+        "namespace": "default",
         "workdir_storage_size": "1Gi",
-        "default_max_branches": 30,
         "extraVolumeMounts": [
           {
             "name": "naa-vre-public",
@@ -53,13 +54,6 @@
             "name": "naa-vre-user-data",
             "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
             "subPath": "{unescaped_username}"
-          },
-          {
-            "name": "naa-vre-restricted",
-            "mountPath": "/home/jovyan/Cloud Storage/naa-vre-restricted/",
-            "allowedGroups": [
-              "naa-vre-restricted_users"
-            ]
           }
         ],
         "secrets_creator_api_endpoint": "https://example.naavre.net/k8s-secret-creator/1.0.0/",
