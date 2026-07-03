@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+{% if cron_schedule %}
+kind: CronWorkflow
+{% else %}
+kind: Workflow
+{% endif %}
+metadata:
+  generateName: {{ workflow_name }}-
+  labels:
+    vlab_slug: {{ vlab_slug }}
+spec:
+    {% if extraVolumeMounts is defined and extraVolumeMounts|length > 0 and not cron_schedule %}
+    volumes:
+    - name: workspace
+      emptyDir:
+        medium: Memory
+    {% for vol in extraVolumeMounts %}
+    - name: {{ vol.name }}
+      persistentVolumeClaim:
+        claimName: {{ vol.name }}
+    {% endfor %}
+    {% endif %}
+    {% if cron_schedule %}
+    schedule: "{{ cron_schedule }}"
+    workflowSpec:
+{{ include('argo_workflowSpec.j2',
+           workflow_name=workflow_name,
+           workflow_service_account=workflow_service_account,
+           workdir_storage_size=workdir_storage_size,
+           naavrewf2_payload_params=naavrewf2_payload_params,
+           dependencies_dag=dependencies_dag,
+           nodes=nodes,
+           k8s_secret_name=k8s_secret_name,
+           extraVolumeMounts=extraVolumeMounts,
+           cron_schedule=cron_schedule,
+           default_max_branches=default_max_branches) | indent(6, true) }}
+    {% else %}
+{{ include('argo_workflowSpec.j2',
+           workflow_name=workflow_name,
+           workflow_service_account=workflow_service_account,
+           workdir_storage_size=workdir_storage_size,
+           naavrewf2_payload_params=naavrewf2_payload_params,
+           dependencies_dag=dependencies_dag,
+           nodes=nodes,
+           k8s_secret_name=k8s_secret_name,
+           extraVolumeMounts=extraVolumeMounts,
+           cron_schedule=cron_schedule,
+           default_max_branches=default_max_branches) | indent(4, true) }}
+    {% endif %}

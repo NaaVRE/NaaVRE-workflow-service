@@ -1,0 +1,162 @@
+entrypoint: {{ workflow_name }}
+serviceAccountName: {{ workflow_service_account }}
+{% if cron_schedule %}
+volumes:
+{% for vol in extraVolumeMounts %}
+- name: {{ vol.name }}
+  persistentVolumeClaim:
+    claimName: {{ vol.name }}
+- name: workspace
+  emptyDir:
+    medium: Memory
+{% endfor %}
+{% endif %}
+volumeClaimTemplates:
+- metadata:
+    name: workdir
+  spec:
+    accessModes: [ "ReadWriteMany" ]
+    persistentVolumeReclaimPolicy: Delete
+    resources:
+      requests:
+        storage: {{ workdir_storage_size }}
+arguments:
+  parameters:
+  {% for payload_param in naavrewf2_payload_params %}
+  - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+    value:  "{{ payload_param.value | replace('"', "'") }}"
+  {% endfor %}
+templates:
+- name: {{ workflow_name }}
+  dag:
+    tasks:
+    {% for node in nodes.values() %}
+    {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
+    {% set is_splitter = node.type == 'splitter' %}
+    {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
+    - name: {{ title }}
+      {% if dependencies_dag[node.id]|length > 0 %}
+      dependencies: [{% for d in dependencies_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
+      {% endif %}
+      template: {{ title }}-tmp
+      {% if dependencies_dag[node.id]|length > 0 %}
+      arguments:
+        parameters:
+        {% for dependency in dependencies_dag[node.id] %}
+        - name: {{ dependency.from_port }}
+        {% if dependency.type == "splitter" %}
+          value: {{ '"{{item}}"' }}
+        {% else %}
+          value: {{ '"{{tasks.' }}{{ dependency.task_name }}{{ '.outputs.parameters.' }}{{ dependency.from_port }}{{'}}"'}}
+        {% endif %}
+        {% endfor %}
+        {% for payload_param in naavrewf2_payload_params %}
+        {% if payload_param.node_id == node.id %}
+        - name : {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+          value: {{ '"{{workflow.parameters.' }}{{ payload_param.name }}_{{ payload_param.node_id[:7] }}{{'}}"' }}
+        {% endif %}
+        {% endfor %}
+      {% for dependency in dependencies_dag[node.id] %}
+      {% if dependency.type == "splitter" %}
+      withParam: {{ '"{{tasks.' }}{{ dependency.task_name }}{{ '.outputs.parameters.' }}{{ dependency.from_port }}{{'}}"'}}
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+    {% endfor %}
+{% for node in nodes.values() %}
+{% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
+{% set is_splitter = node.type == 'splitter' %}
+{% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title + "-" + node.id[:7] %}
+{% set secrets = [] if is_special_node else node.properties.cell.secrets %}
+{% set ports = node.ports %}
+- name: {{ title }}-tmp
+  {% if dependencies_dag[node.id]|length > 0 %}
+  inputs:
+    parameters:
+    {% for dependency in dependencies_dag[node.id] %}
+    - name: {{ dependency.from_port }}
+    {% endfor %}
+    {% for payload_param in naavrewf2_payload_params %}
+    {% if payload_param.node_id == node.id %}
+    - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+    {% endif %}
+    {% endfor %}
+  {% endif %}
+  outputs:
+    parameters:
+    {% for port in ports.values() %}
+    {% if port.type == 'right' %}
+      - name: {{ port.id }}_{{ node.id[:7] }}
+        valueFrom:
+          path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
+    {% endif %}
+    {% endfor %}
+  {% if is_special_node %}
+  {% set special_dep = dependencies_dag[node.id][0] %}
+  script:
+    image: python:alpine3.9
+    imagePullPolicy: IfNotPresent
+    command: [python]
+    source: |
+      {% if is_splitter %}
+      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node, naavrewf2_payload_params=naavrewf2_payload_params, default_max_branches=default_max_branches) | indent(6) }}
+      {% else %}
+      {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
+      {% endif %}
+  {% else %}
+  containerSet:
+    volumeMounts:
+    - name: workspace
+      mountPath: /workspace
+    - name: workdir
+      mountPath: /tmp/data
+    - name: workspace
+      mountPath: /workspace
+    {% if extraVolumeMounts is defined %}
+    {% for vol in extraVolumeMounts %}
+    - name: {{ vol.name }}
+      mountPath: {{ vol.mountPath }}
+      {% if vol.subPath is defined %}
+      subPath: {{ vol.subPath }}
+      {% endif %}
+      {% if vol.readOnly is defined %}
+      readOnly: {{ vol.readOnly }}
+      {% endif %}
+    {% endfor %}
+    {% endif %}
+    containers:
+      - name: main
+        image: "{{ node.properties.cell.container_image }}"
+        imagePullPolicy: Always
+        dependencies:
+            - name: init-input-args-{{ title }}
+        env:
+        {%  for s in secrets %}
+        - name: {{ s.name }}
+            valueFrom:
+            secretKeyRef:
+                name: {{ k8s_secret_name }}
+                key: {{ s.name }}
+        {%  endfor %}
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate;
+            {% if node.properties.cell.kernel == 'ipython' %}
+            {% set cmd = 'python /app/task.py' %}
+            {% elif node.properties.cell.kernel == 'IRkernel' %}
+            {% set cmd = 'Rscript /app/task.R' %}
+            {% endif %}
+            {%  if  node.properties.cell.json_args_supported %}
+            cat /workspace/{{ node.id[:7] }}/inputs.json;
+            {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
+            {%  else %}
+            xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
+            {%  endif %}
+      - name: init-input-args-{{ title }}
+        image: python:alpine3.9
+        command: ["python", "-c"]
+        args:
+        - |
+          {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
+  {% endif %}
+{% endfor %}
