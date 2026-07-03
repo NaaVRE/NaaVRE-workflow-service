@@ -23,7 +23,7 @@ spec:
     {% if cron_schedule %}
     schedule: "{{ cron_schedule }}"
     workflowSpec:
-{{ include('argo_workflowSpec.j2',
+{{ include('argo_workflow_artifacts_spec.j2',
            workflow_name=workflow_name,
            workflow_service_account=workflow_service_account,
            workdir_storage_size=workdir_storage_size,
@@ -35,7 +35,7 @@ spec:
            cron_schedule=cron_schedule,
            default_max_branches=default_max_branches) | indent(6, true) }}
     {% else %}
-{{ include('argo_workflowSpec.j2',
+{{ include('argo_workflow_artifacts_spec.j2',
            workflow_name=workflow_name,
            workflow_service_account=workflow_service_account,
            workdir_storage_size=workdir_storage_size,

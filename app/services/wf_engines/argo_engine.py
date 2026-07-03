@@ -35,8 +35,10 @@ class ArgoEngine(WFEngine, ABC):
     def __init__(self, vl_config: VLConfig):
         super().__init__(vl_config)
         self.template_env.globals['include'] = include_file(self.template_env)
+        # self.workflow_template = self.template_env.get_template(
+        #     'argo_workflow_top.j2')
         self.workflow_template = self.template_env.get_template(
-            'argo_workflow_top.j2')
+            'argo_workflow_artifacts_top.j2')
         # Add '/' at the end of the endpoint if not present
         if vl_config.wf_engine_config.api_endpoint[-1] != '/':
             vl_config.wf_engine_config.api_endpoint += '/'
