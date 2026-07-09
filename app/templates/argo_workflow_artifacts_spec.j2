@@ -39,42 +39,40 @@ templates:
       dependencies: [{% for d in dependencies_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
       {% endif %}
       template: {{ title }}-tmp
-      arguments:
       {% if dependencies_dag[node.id]|length > 0 %}
-          {% set artifacts = [] %}
-          {% set parameters = [] %}
-          {% for dependency in dependencies_dag[node.id] %}
-              {% if dependency.type != "splitter" %}
-                  {% set artifact = {
-                  'name': dependency.from_port ,
-                  'from': '"{{ tasks.' + dependency.task_name + '.outputs.artifacts.' +  dependency.from_port + ' }}"'
-                  } %}
-                  {% set artifacts = artifacts + [artifact] %}
-        artifacts:
-        - name: {{ artifact.name }}
-          from: {{ artifact.from }}
-              {% elif dependency.type == "splitter" %}
-                  {% set parameter = {
-                  'name': dependency.from_port ,
-                  'value': '"{{item}}"',
-                  'withParam': '"{{tasks.'+dependency.task_name+'.outputs.parameters.'+dependency.from_port+'}}"'
-                  } %}
-                  {% set parameters = parameters + [parameter] %}
-        parameters:
-        - name: {{ parameter.name }}
-          value: {{ parameter.value }}
-      withParam: {{ parameter.withParam }}
-              {% endif %}
-          {% endfor %}
-        {% for payload_param in naavrewf2_payload_params %}
-        {% if payload_param.node_id == node.id %}
-              {% set parameter = {
-              'name':  payload_param.name+'_'+payload_param.node_id[:7],
-              'value': '"{{workflow.parameters.'+payload_param.name+'_'+payload_param.node_id[:7] +'}}"'
-              } %}
-              {% set parameters = parameters + [parameter] %}
+        {% set parameters = [] %}
+        {% set artifacts = [] %}
+        {% for dependency in dependencies_dag[node.id] %}
+        {% if dependency.type == "splitter" %}
+          {% set parameter = {'name': dependency.from_port,
+                              'value': '"{{item}}"',
+                              'withParam': '"{{tasks.' + dependency.task_name + '.outputs.parameters.' + dependency.from_port +'}}"'} %}
+          {% set _ = parameters.append(parameter) %}
+        {% else %}
+          {% set parameter = {'name': dependency.from_port, 'value':  '"{{tasks.'+ dependency.task_name +'.outputs.parameters.'+dependency.from_port +'}}"' } %}
+          {% set _ = parameters.append(parameter) %}
         {% endif %}
         {% endfor %}
+        {% for payload_param in naavrewf2_payload_params %}
+        {% if payload_param.node_id == node.id %}
+          {% set parameter = {'name': payload_param.name+'_'+payload_param.node_id[:7],
+                              'value': '"{{workflow.parameters.' + payload_param.name + payload_param.node_id[:7] +'}}"'} %}
+          {% set _ = parameters.append(parameter) %}
+        {% endif %}
+        {% endfor %}
+      {% for dependency in dependencies_dag[node.id] %}
+      {% endfor %}
+      {% if parameters | length > 0 %}
+      arguments:
+        parameters:
+        {% for parameter in parameters %}
+        - name: {{ parameter.name }}
+          value: {{ parameter.value }}
+      {% if parameter.withParam is defined %}
+      withParam: {{ parameter.withParam }}
+      {% endif %}
+        {% endfor %}
+      {% endif %}
       {% endif %}
     {% endfor %}
 {% for node in nodes.values() %}
