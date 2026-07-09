@@ -39,28 +39,42 @@ templates:
       dependencies: [{% for d in dependencies_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
       {% endif %}
       template: {{ title }}-tmp
-      {% if dependencies_dag[node.id]|length > 0 %}
       arguments:
+      {% if dependencies_dag[node.id]|length > 0 %}
+          {% set artifacts = [] %}
+          {% set parameters = [] %}
+          {% for dependency in dependencies_dag[node.id] %}
+              {% if dependency.type != "splitter" %}
+                  {% set artifact = {
+                  'name': dependency.from_port ,
+                  'from': '"{{ tasks.' + dependency.task_name + '.outputs.artifacts.' +  dependency.from_port + ' }}"'
+                  } %}
+                  {% set artifacts = artifacts + [artifact] %}
+        artifacts:
+        - name: {{ artifact.name }}
+          from: {{ artifact.from }}
+              {% elif dependency.type == "splitter" %}
+                  {% set parameter = {
+                  'name': dependency.from_port ,
+                  'value': '"{{item}}"',
+                  'withParam': '"{{tasks.'+dependency.task_name+'.outputs.parameters.'+dependency.from_port+'}}"'
+                  } %}
+                  {% set parameters = parameters + [parameter] %}
         parameters:
-        {% for dependency in dependencies_dag[node.id] %}
-        - name: {{ dependency.from_port }}
-        {% if dependency.type == "splitter" %}
-          value: {{ '"{{item}}"' }}
-        {% else %}
-          value: {{ '"{{tasks.' }}{{ dependency.task_name }}{{ '.outputs.parameters.' }}{{ dependency.from_port }}{{'}}"'}}
-        {% endif %}
-        {% endfor %}
+        - name: {{ parameter.name }}
+          value: {{ parameter.value }}
+      withParam: {{ parameter.withParam }}
+              {% endif %}
+          {% endfor %}
         {% for payload_param in naavrewf2_payload_params %}
         {% if payload_param.node_id == node.id %}
-        - name : {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
-          value: {{ '"{{workflow.parameters.' }}{{ payload_param.name }}_{{ payload_param.node_id[:7] }}{{'}}"' }}
+              {% set parameter = {
+              'name':  payload_param.name+'_'+payload_param.node_id[:7],
+              'value': '"{{workflow.parameters.'+payload_param.name+'_'+payload_param.node_id[:7] +'}}"'
+              } %}
+              {% set parameters = parameters + [parameter] %}
         {% endif %}
         {% endfor %}
-      {% for dependency in dependencies_dag[node.id] %}
-      {% if dependency.type == "splitter" %}
-      withParam: {{ '"{{tasks.' }}{{ dependency.task_name }}{{ '.outputs.parameters.' }}{{ dependency.from_port }}{{'}}"'}}
-      {% endif %}
-      {% endfor %}
       {% endif %}
     {% endfor %}
 {% for node in nodes.values() %}
