@@ -49,8 +49,9 @@ templates:
                               'withParam': '"{{tasks.' + dependency.task_name + '.outputs.parameters.' + dependency.from_port +'}}"'} %}
           {% set _ = parameters.append(parameter) %}
         {% else %}
-          {% set parameter = {'name': dependency.from_port, 'value':  '"{{tasks.'+ dependency.task_name +'.outputs.parameters.'+dependency.from_port +'}}"' } %}
-          {% set _ = parameters.append(parameter) %}
+          {% set artifact = {'name': dependency.from_port,
+                             'from':  '"{{tasks.'+ dependency.task_name +'.outputs.artifacts.'+dependency.from_port +'}}"' } %}
+          {% set _ = artifacts.append(artifact) %}
         {% endif %}
         {% endfor %}
         {% for payload_param in naavrewf2_payload_params %}
@@ -71,6 +72,14 @@ templates:
       {% if parameter.withParam is defined %}
       withParam: {{ parameter.withParam }}
       {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if artifacts | length > 0 %}
+      arguments:
+        artifacts:
+        {% for artifact in artifacts %}
+        - name: {{ artifact.name }}
+          from: {{ artifact.from }}
         {% endfor %}
       {% endif %}
       {% endif %}
