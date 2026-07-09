@@ -56,7 +56,7 @@ templates:
         {% for payload_param in naavrewf2_payload_params %}
         {% if payload_param.node_id == node.id %}
           {% set parameter = {'name': payload_param.name+'_'+payload_param.node_id[:7],
-                              'value': '"{{workflow.parameters.' + payload_param.name + payload_param.node_id[:7] +'}}"'} %}
+                              'value': '"{{workflow.parameters.' + payload_param.name +'_'+ payload_param.node_id[:7] +'}}"'} %}
           {% set _ = parameters.append(parameter) %}
         {% endif %}
         {% endfor %}
