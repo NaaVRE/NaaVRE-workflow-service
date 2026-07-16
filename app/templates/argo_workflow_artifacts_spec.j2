@@ -30,7 +30,9 @@ templates:
 - name: {{ workflow_name }}
   dag:
     tasks:
+    {% set parameters = [] %}
     {% for node in nodes.values() %}
+    {% set artifacts = [] %}
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
     {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
@@ -40,42 +42,49 @@ templates:
       {% endif %}
       template: {{ title }}-tmp
       {% if dependencies_dag[node.id]|length > 0 %}
-        {% set parameters = [] %}
-        {% set artifacts = [] %}
         {% for dependency in dependencies_dag[node.id] %}
         {% if dependency.type == "splitter" %}
           {% set parameter = {'name': dependency.from_port,
                               'value': '"{{item}}"',
-                              'withParam': '"{{tasks.' + dependency.task_name + '.outputs.parameters.' + dependency.from_port +'}}"'} %}
+                              'withParam': '"{{tasks.' + dependency.task_name + '.outputs.parameters.' + dependency.from_port +'}}"',
+                              'to': title} %}
           {% set _ = parameters.append(parameter) %}
         {% else %}
           {% set artifact = {'name': dependency.from_port,
-                             'from':  '"{{tasks.'+ dependency.task_name +'.outputs.artifacts.'+dependency.from_port +'}}"' } %}
+                             'from':  '"{{tasks.'+ dependency.task_name +'.outputs.artifacts.'+dependency.from_port +'}}"',
+                             'to': title,
+                             'from': dependency.task_name} %}
           {% set _ = artifacts.append(artifact) %}
         {% endif %}
         {% endfor %}
         {% for payload_param in naavrewf2_payload_params %}
         {% if payload_param.node_id == node.id %}
           {% set parameter = {'name': payload_param.name+'_'+payload_param.node_id[:7],
-                              'value': '"{{workflow.parameters.' + payload_param.name +'_'+ payload_param.node_id[:7] +'}}"'} %}
+                              'value': '"{{workflow.parameters.' + payload_param.name +'_'+ payload_param.node_id[:7] +'}}"',
+                              'to': title,
+                              'from': payload_param.name +'_'+ payload_param.node_id[:7] } %}
           {% set _ = parameters.append(parameter) %}
         {% endif %}
         {% endfor %}
-      {% for dependency in dependencies_dag[node.id] %}
-      {% endfor %}
-      {% if parameters | length > 0 %}
+      {% if artifacts or parameters %}
       arguments:
+      {% endif %}
+      {% if parameters %}
         parameters:
         {% for parameter in parameters %}
+        {% if  title == parameter.to %}
         - name: {{ parameter.name }}
           value: {{ parameter.value }}
-      {% if parameter.withParam is defined %}
-      withParam: {{ parameter.withParam }}
+          {% if parameter.withParam is defined %}
+            {%  set withParam = parameter.withParam %}
+          {% endif %}
+        {% endif %}
+      {% if withParam is defined %}
+      withParam: {{ withParam }}
       {% endif %}
-        {% endfor %}
+       {% endfor %}
       {% endif %}
       {% if artifacts | length > 0 %}
-      arguments:
         artifacts:
         {% for artifact in artifacts %}
         - name: {{ artifact.name }}
@@ -84,6 +93,7 @@ templates:
       {% endif %}
       {% endif %}
     {% endfor %}
+
 {% for node in nodes.values() %}
 {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
@@ -93,18 +103,27 @@ templates:
 - name: {{ title }}-tmp
   {% if dependencies_dag[node.id]|length > 0 %}
   inputs:
+    {% if parameters %}
     parameters:
-    {% for dependency in dependencies_dag[node.id] %}
-    - name: {{ dependency.from_port }}
-    {% endfor %}
-    {% for payload_param in naavrewf2_payload_params %}
-    {% if payload_param.node_id == node.id %}
-    - name: {{ payload_param.name }}_{{ payload_param.node_id[:7] }}
+    {% for parameter in parameters %}
+    {% if  title == parameter.to %}
+    - name: {{ parameter.name }}
     {% endif %}
     {% endfor %}
+    {% endif %}
   {% endif %}
   outputs:
+    {% if parameters %}
     parameters:
+    {% for parameter in parameters %}
+
+      - name: {{ parameter.name }}_param
+        valueFrom:
+            path: /tmp/{{ parameter.name }}.json
+
+    {% endfor %}
+
+
     {% for port in ports.values() %}
     {% if port.type == 'right' %}
       - name: {{ port.id }}_{{ node.id[:7] }}
@@ -112,6 +131,7 @@ templates:
           path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
     {% endif %}
     {% endfor %}
+    {% endif %}
   {% if is_special_node %}
   {% set special_dep = dependencies_dag[node.id][0] %}
   script:
