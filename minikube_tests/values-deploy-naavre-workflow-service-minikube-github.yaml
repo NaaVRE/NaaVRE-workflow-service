@@ -1,6 +1,7 @@
 global:
   namespace: naavre
-
+  s3:
+    useExternal: true
   common:
     userPods:
       extraVolumeMounts:
@@ -26,10 +27,11 @@ jupyterhub:
         module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
 
 naavre-containerizer-service:
-  enabled: false
+  enabled: true
 
 naavre-workflow-service:
-  enabled: false
+  enabled: true
 
 #k8sSecretCreator:
 #  enabled: false
+
