@@ -1,8 +1,12 @@
 import json
+{% if has_artifact %}
+with open("/tmp/{{ special_dep.from_port }}.json") as f:
+    {{ special_dep.from_port }} = json.load(f)
+{% else %}
 {{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
+{% endif %}
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
-
 default_max_branches = {{ default_max_branches }}
 param_max_branches = default_max_branches
 {% for param in naavrewf2_payload_params %}
@@ -14,13 +18,10 @@ param_max_branches = int({{ param.value }})
 {% endif %}
 {% endif %}
 {% endfor %}
-
 max_branches = min(len({{ special_dep.from_port }}), param_max_branches, default_max_branches)
-
 items_per_worker = len({{ special_dep.from_port }}) // param_max_branches
 overflow = len({{ special_dep.from_port }}) % param_max_branches
 list_of_lists = []
-
 for i in range( max_branches ):
     chunk = items_per_worker
     if i < overflow:
@@ -30,7 +31,6 @@ for i in range( max_branches ):
         start = (i * chunk) + overflow
     end = start + chunk
     list_of_lists.append({{ special_dep.from_port }}[start:end])
-
 
 f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
 f_out.write(json.dumps(list_of_lists))

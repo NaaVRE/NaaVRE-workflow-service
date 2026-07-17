@@ -1,5 +1,10 @@
 import json
+{% if has_artifact %}
+with open("/tmp/{{ special_dep.from_port }}.json") as f:
+    {{ special_dep.from_port }} = json.load(f)
+{% else %}
 {{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
+{% endif %}
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
 
