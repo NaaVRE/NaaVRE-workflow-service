@@ -30,9 +30,6 @@ templates:
 - name: {{ workflow_name }}
   dag:
     tasks:
-    {% set parameters = [] %}
-    {% set artifacts = [] %}
-    {% set updated_dependencies_dag = [] %}
     {% for node in nodes.values() %}
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
@@ -42,63 +39,25 @@ templates:
       dependencies: [{% for d in dependencies_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
       {% endif %}
       template: {{ title }}-tmp
-      {% if dependencies_dag[node.id]|length > 0 %}
-        {% for dependency in dependencies_dag[node.id] %}
-        {% set new_dependency = dependency %}
-        {% if dependency.type == "splitter" %}
-          {% set parameter = {'name': dependency.from_port,
-                              'value': '"{{item}}"',
-                              'withParam': '"{{tasks.' + dependency.task_name + '.outputs.parameters.' + dependency.from_port +'}}"',
-                              'to_task': title,
-                              'from_task': dependency.task_name} %}
-          {% set _ = parameters.append(parameter) %}
-          {% set new_dependency.is_artifact = False %}
-        {% else %}
-          {% set artifact = {'name': dependency.from_port,
-                             'from':  '"{{tasks.'+ dependency.task_name +'.outputs.artifacts.'+dependency.from_port +'}}"',
-                             'to_task': title,
-                             'from_task': dependency.task_name} %}
-          {% set _ = artifacts.append(artifact) %}
-        {% endif %}
-        {% set _ = updated_dependencies_dag.append(new_dependency) %}
-        {% endfor %}
-        {% for payload_param in naavrewf2_payload_params %}
-        {% if payload_param.node_id == node.id %}
-          {% set parameter = {'name': payload_param.name+'_'+payload_param.node_id[:7],
-                              'value': '"{{workflow.parameters.' + payload_param.name +'_'+ payload_param.node_id[:7] +'}}"',
-                              'to_task': title,
-                              'from_task': payload_param.name+'_'+payload_param.node_id[:7]} %}
-          {% set _ = parameters.append(parameter) %}
-        {% endif %}
-        {% endfor %}
-      {% if artifacts or parameters %}
       arguments:
-      {% endif %}
-      {% if parameters %}
+      {% if node.properties.parameters %}
         parameters:
-        {% for parameter in parameters %}
-        {% if  title == parameter.to_task %}
+        {% for parameter in node.properties.parameters %}
         - name: {{ parameter.name }}
           value: {{ parameter.value }}
-          {% if parameter.withParam is defined %}
-            {%  set withParam = parameter.withParam %}
-          {% endif %}
-        {% endif %}
-      {% if withParam is defined %}
-      withParam: {{ withParam }}
+      {% if parameter.withParam is defined %}
+      withParam: {{ parameter.withParam }}
       {% endif %}
-       {% endfor %}
+        {% endfor %}
       {% endif %}
-      {% if artifacts | length > 0 %}
+      {% if node.properties.artifacts %}
         artifacts:
-        {% for artifact in artifacts %}
+        {% for artifact in node.properties.artifacts %}
         - name: {{ artifact.name }}
           from: {{ artifact.from }}
         {% endfor %}
       {% endif %}
-      {% endif %}
     {% endfor %}
-
 {% for node in nodes.values() %}
 {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
@@ -106,47 +65,32 @@ templates:
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
 - name: {{ title }}-tmp
-  {% if dependencies_dag[node.id]|length > 0 %}
   inputs:
-    {% if parameters %}
+    {% if node.properties.parameters %}
     parameters:
-    {% for parameter in parameters %}
-    {% if  title == parameter.to_task %}
+    {% for parameter in node.properties.parameters %}
+    {% if title == parameter.to_task %}
     - name: {{ parameter.name }}
-    {% endif %}
     {% endfor %}
     {% endif %}
-    {% if artifacts %}
+    {% if node.properties.artifacts %}
     artifacts:
-    {% for artifact in artifacts %}
-    {% if  title == artifact.to_task %}
+    {% for artifact in node.properties.artifacts %}
+    {% if title == parameter.to_task %}
     - name: {{ artifact.name }}
       path: /tmp/{{ artifact.name }}.json
     {% endif %}
     {% endfor %}
     {% endif %}
-  {% endif %}
   outputs:
-    {% if parameters %}
     parameters:
-    {% for parameter in parameters %}
-    {% if  title == parameter.from_task %}
-      - name: {{ parameter.name }}
+    {% for port in ports.values() %}
+    {% if port.type == 'right' %}
+      - name: {{ port.id }}_{{ node.id[:7] }}
         valueFrom:
-            path: /tmp/{{ parameter.name }}.json
+          path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
     {% endif %}
     {% endfor %}
-    {% endif %}
-    {% if artifacts %}
-    artifacts:
-    {% for artifact in artifacts %}
-    {% if  title == artifact.from_task %}
-      - name: {{ artifact.name }}
-        path: /tmp/{{ artifact.name }}.json
-    {% endif %}
-    {% endfor %}
-    {% endif %}
-
   {% if is_special_node %}
   {% set special_dep = dependencies_dag[node.id][0] %}
   script:
@@ -155,17 +99,29 @@ templates:
     command: [python]
     source: |
       {% if is_splitter %}
-      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node, naavrewf2_payload_params=naavrewf2_payload_params, default_max_branches=default_max_branches,has_artifact=True) | indent(6) }}
+      {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node, naavrewf2_payload_params=naavrewf2_payload_params, default_max_branches=default_max_branches, has_artifact=False) | indent(6) }}
       {% else %}
-      {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node,has_artifact=True) | indent(6) }}
+      {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node, has_artifact=False) | indent(6) }}
       {% endif %}
   {% else %}
-  containerSet:
+  initContainers:
+    - name: init-input-args-{{ title }}
+      image: python:alpine3.9
+      command: ["python", "-c"]
+      args:
+      - |
+        {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
+      volumeMounts:
+      - name: workspace
+        mountPath: /workspace
+  container:
+    image: "{{ node.properties.cell.container_image }}"
+    imagePullPolicy: Always
     volumeMounts:
-    - name: workspace
-      mountPath: /workspace
     - name: workdir
       mountPath: /tmp/data
+    - name: workspace
+      mountPath: /workspace
     {% if extraVolumeMounts is defined %}
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
@@ -178,39 +134,27 @@ templates:
       {% endif %}
     {% endfor %}
     {% endif %}
-    containers:
-      - name: main
-        image: "{{ node.properties.cell.container_image }}"
-        imagePullPolicy: Always
-        dependencies:
-            - init-input-args-{{ title }}
-        env:
-        {%  for s in secrets %}
-        - name: {{ s.name }}
-            valueFrom:
-            secretKeyRef:
-                name: {{ k8s_secret_name }}
-                key: {{ s.name }}
-        {%  endfor %}
-        command: ["/bin/bash", "-c"]
-        args:
-          - source /venv/bin/activate;
-            {% if node.properties.cell.kernel == 'ipython' %}
-            {% set cmd = 'python /app/task.py' %}
-            {% elif node.properties.cell.kernel == 'IRkernel' %}
-            {% set cmd = 'Rscript /app/task.R' %}
-            {% endif %}
-            {%  if  node.properties.cell.json_args_supported %}
-            cat /workspace/{{ node.id[:7] }}/inputs.json;
-            {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
-            {%  else %}
-            xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
-            {%  endif %}
-      - name: init-input-args-{{ title }}
-        image: python:alpine3.9
-        command: ["python", "-c"]
-        args:
-        - |
-          {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node,has_artifact=True) | indent(10) }}
+    env:
+    {%  for s in secrets %}
+      - name: {{ s.name }}
+        valueFrom:
+          secretKeyRef:
+            name: {{ k8s_secret_name }}
+            key: {{ s.name }}
+    {%  endfor %}
+    command: ["/bin/bash", "-c"]
+    args:
+      - source /venv/bin/activate;
+        {% if node.properties.cell.kernel == 'ipython' %}
+        {% set cmd = 'python /app/task.py' %}
+        {% elif node.properties.cell.kernel == 'IRkernel' %}
+        {% set cmd = 'Rscript /app/task.R' %}
+        {% endif %}
+        {%  if  node.properties.cell.json_args_supported %}
+        cat /workspace/{{ node.id[:7] }}/inputs.json;
+        {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
+        {%  else %}
+        xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
+        {%  endif %}
   {% endif %}
 {% endfor %}

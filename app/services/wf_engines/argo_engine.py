@@ -136,10 +136,13 @@ class ArgoEngine(WFEngine, ABC):
         default_max_branches = (
                     self.vl_config.wf_engine_config.default_max_branches
                     or 100)
+        nodes = self.set_io_artifacts(self.parser.get_dependencies_dag(),
+                                      self.nodes,
+                                      self.naavrewf2_payload_params)
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
             dependencies_dag=self.parser.get_dependencies_dag(),
-            nodes=self.nodes,
+            nodes=nodes,
             naavrewf2_payload_params=self.naavrewf2_payload_params or [],
             k8s_secret_name=k8s_secret_name,
             workflow_name=workflow_name,
@@ -271,3 +274,49 @@ class ArgoEngine(WFEngine, ABC):
                                       for node_id in unconnected_nodes]
             raise Exception(f"Error rendering workflow template: {str(e)}. "
                             f""f"Unconnected nodes: {unconnected_node_names}")
+
+    def set_io_artifacts(self, dependencies_dag: dict, nodes: dict,
+                         payload_params: list) -> dict:
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node.type == 'splitter' or node.type == 'merger':
+                title = node.type + '-' + node_id[:7]
+            else:
+                title = node.properties.cell.title + '-' + node_id[:7]
+            node_parameters = []
+            node_artifacts = []
+            for dependency in dependencies_dag[node_id]:
+                name = dependency['from_port']
+                from_port = dependency['from_port']
+                if dependency['type'] == 'splitter':
+                    with_param = ('"{{tasks.' + name + '.outputs.parameters.' +
+                                  from_port + '}}"')
+                    parameter = {'name': name,
+                                 'value': '"{{item}}"',
+                                 'withParam': with_param,
+                                 'to_task': title,
+                                 'from_task': dependency['task_name']}
+                    node_parameters.append(parameter)
+                else:
+                    take_from = ('"{{tasks.' + name + '.outputs.artifacts.' +
+                                 from_port + '}}"')
+                    artifact = {'name': name,
+                                'from': take_from,
+                                'to_task': title,
+                                'from_task': dependency['task_name']}
+                    node_artifacts.append(artifact)
+            for payload_param in payload_params:
+                if payload_param['node_id'] == node_id:
+                    name = payload_param['name']
+                    short_id = payload_param['node_id'][:7]
+                    value = ('"{{workflow.parameters.' + name + '_' +
+                             short_id + '}}"')
+                    parameter = {'name': name + '_' + short_id,
+                                 'value': value,
+                                 'to_task': title,
+                                 'from_task': name + '_' + short_id}
+                    node_parameters.append(parameter)
+            node.properties.parameters = node_parameters
+            node.properties.artifacts = node_artifacts
+            nodes[node_id] = node
+        return nodes

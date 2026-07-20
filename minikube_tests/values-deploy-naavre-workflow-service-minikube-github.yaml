@@ -1,7 +1,5 @@
 global:
   namespace: naavre
-  s3:
-    useExternal: true
   common:
     userPods:
       extraVolumeMounts:
@@ -34,4 +32,7 @@ naavre-workflow-service:
 
 #k8sSecretCreator:
 #  enabled: false
+
+seaweedfs:
+  enabled: false
 
