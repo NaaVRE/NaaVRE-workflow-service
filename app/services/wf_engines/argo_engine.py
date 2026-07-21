@@ -277,26 +277,27 @@ class ArgoEngine(WFEngine, ABC):
 
     def set_io_artifacts(self, dependencies_dag: dict, nodes: dict,
                          payload_params: list) -> dict:
+        all_parameters = []
+        all_artifacts = []
         for node_id in nodes:
             node = nodes[node_id]
             if node.type == 'splitter' or node.type == 'merger':
                 title = node.type + '-' + node_id[:7]
             else:
                 title = node.properties.cell.title + '-' + node_id[:7]
-            node_parameters = []
-            node_artifacts = []
             for dependency in dependencies_dag[node_id]:
                 name = dependency['from_port']
                 from_port = dependency['from_port']
+                task_name = dependency['task_name']
                 if dependency['type'] == 'splitter':
-                    with_param = ('"{{tasks.' + name + '.outputs.parameters.' +
-                                  from_port + '}}"')
+                    with_param = ('"{{tasks.' + task_name +
+                                  '.outputs.parameters.' + from_port + '}}"')
                     parameter = {'name': name,
                                  'value': '"{{item}}"',
                                  'withParam': with_param,
                                  'to_task': title,
                                  'from_task': dependency['task_name']}
-                    node_parameters.append(parameter)
+                    all_parameters.append(parameter)
                 else:
                     take_from = ('"{{tasks.' + name + '.outputs.artifacts.' +
                                  from_port + '}}"')
@@ -304,7 +305,7 @@ class ArgoEngine(WFEngine, ABC):
                                 'from': take_from,
                                 'to_task': title,
                                 'from_task': dependency['task_name']}
-                    node_artifacts.append(artifact)
+                    all_artifacts.append(artifact)
             for payload_param in payload_params:
                 if payload_param['node_id'] == node_id:
                     name = payload_param['name']
@@ -315,7 +316,27 @@ class ArgoEngine(WFEngine, ABC):
                                  'value': value,
                                  'to_task': title,
                                  'from_task': name + '_' + short_id}
+                    # node_parameters.append(parameter)
+                    all_parameters.append(parameter)
+            # nodes[node_id] = node
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node.type == 'splitter' or node.type == 'merger':
+                title = node.type + '-' + node_id[:7]
+            else:
+                title = node.properties.cell.title + '-' + node_id[:7]
+            if 'input-list-user-2a56b83' in title:
+                print(f"Debug: Processing node {title} with ID {node_id}")
+            node_parameters = []
+            node_artifacts = []
+            for parameter in all_parameters:
+                if (parameter['to_task'] == title or
+                        parameter['from_task'] == title):
                     node_parameters.append(parameter)
+            for artifact in all_artifacts:
+                if (artifact['to_task'] == title or
+                        artifact['from_task'] == title):
+                    node_artifacts.append(artifact)
             node.properties.parameters = node_parameters
             node.properties.artifacts = node_artifacts
             nodes[node_id] = node

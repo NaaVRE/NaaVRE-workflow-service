@@ -20,7 +20,7 @@ print_usage() {
   echo "  -u, --uninstall-naavre        Uninstall NaaVRE before installation"
   echo "  -p, --delete-pv-pvc        Delete PV and PVC before creating them again"
   echo "  -v, --deploy-naavre        Deploy NaaVRE "
-  echo "  -a, --update-naavre        Update NaaVRE "
+  echo "  -a, --upgrade-naavre        Upgrade NaaVRE "
   echo "  -c , --chart-file       Path to the NaaVRE Helm Chart.yaml file "
   exit 1
 }
@@ -61,7 +61,7 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       ;;
     -a|--update-naavre)
-      UPDATE_NAAAVRE="true"
+      UPGRADE_NAAAVRE="true"
       shift # past argument
       ;;
     -c |--chart-file)
@@ -216,8 +216,8 @@ deploy_naavre(){
   if [ "$DEPLOY_NAAAVRE" == "true" ]; then
     ./deploy.sh --kube-context "$context" -n "$namespace" -f values/values-deploy-minikube.yaml -f "secrets-minikube.yaml" install
   fi
-  if [ "$UPDATE_NAAAVRE" == "true" ]; then
-    ./deploy.sh --kube-context "$context" -n "$namespace" -f values/values-deploy-minikube.yaml -f "secrets-minikube.yaml" install
+  if [ "$UPGRADE_NAAAVRE" == "true" ]; then
+    ./deploy.sh --kube-context "$context" -n "$namespace" -f values/values-deploy-minikube.yaml -f "secrets-minikube.yaml" upgrade
   fi
   rm secrets-minikube.yaml
   # Exit if the installation fails

@@ -40,21 +40,25 @@ templates:
       {% endif %}
       template: {{ title }}-tmp
       arguments:
-      {% if node.properties.parameters %}
-        parameters:
-        {% for parameter in node.properties.parameters %}
-        - name: {{ parameter.name }}
-          value: {{ parameter.value }}
-      {% if parameter.withParam is defined %}
-      withParam: {{ parameter.withParam }}
-      {% endif %}
-        {% endfor %}
-      {% endif %}
       {% if node.properties.artifacts %}
         artifacts:
         {% for artifact in node.properties.artifacts %}
+        {% if title == artifact.to_task %}
         - name: {{ artifact.name }}
           from: {{ artifact.from }}
+        {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if node.properties.parameters %}
+        parameters:
+        {% for parameter in node.properties.parameters %}
+        {% if title == parameter.to_task %}
+        - name: {{ parameter.name }}
+          value: {{ parameter.value }}
+        {% endif %}
+      {% if parameter.withParam is defined and title == parameter.to_task %}
+      withParam: {{ parameter.withParam }}
+      {% endif %}
         {% endfor %}
       {% endif %}
     {% endfor %}
@@ -71,26 +75,39 @@ templates:
     {% for parameter in node.properties.parameters %}
     {% if title == parameter.to_task %}
     - name: {{ parameter.name }}
+    {% endif %}
     {% endfor %}
     {% endif %}
     {% if node.properties.artifacts %}
     artifacts:
     {% for artifact in node.properties.artifacts %}
-    {% if title == parameter.to_task %}
+    {% if title == artifact.to_task %}
     - name: {{ artifact.name }}
       path: /tmp/{{ artifact.name }}.json
     {% endif %}
     {% endfor %}
     {% endif %}
   outputs:
+    {% if node.properties.parameters %}
     parameters:
-    {% for port in ports.values() %}
-    {% if port.type == 'right' %}
-      - name: {{ port.id }}_{{ node.id[:7] }}
-        valueFrom:
-          path: /tmp/{{ port.id }}_{{ node.id[:7] }}.json
+    {% for parameter in node.properties.parameters %}
+    {% if title == parameter.from_task %}
+    - name: {{ parameter.name }}
+      valueFrom:
+        path: /tmp/{{ parameter.name }}.json
     {% endif %}
     {% endfor %}
+    {% endif %}
+
+    {% if node.properties.artifacts %}
+    artifacts:
+    {% for artifact in node.properties.artifacts %}
+    {% if title == artifact.from_task %}
+    - name: {{ artifact.name }}
+      path: /tmp/{{ artifact.name }}.json
+    {% endif %}
+    {% endfor %}
+    {% endif %}
   {% if is_special_node %}
   {% set special_dep = dependencies_dag[node.id][0] %}
   script:
