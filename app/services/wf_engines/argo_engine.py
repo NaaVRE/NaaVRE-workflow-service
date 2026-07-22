@@ -285,10 +285,24 @@ class ArgoEngine(WFEngine, ABC):
                 title = node.type + '-' + node_id[:7]
             else:
                 title = node.properties.cell.title + '-' + node_id[:7]
+            if 'splitter' in title:
+                print(f"Debug: Processing node {title} with ID {node_id}")
             for dependency in dependencies_dag[node_id]:
                 name = dependency['from_port']
                 from_port = dependency['from_port']
                 task_name = dependency['task_name']
+                input_name = dependency['to_port']
+                input_name_base = '_'.join(input_name.split('_')[:-1])
+                cell_port = None
+                for c_input in node.properties.cell.inputs:
+                    if c_input.name == input_name_base:
+                        cell_port = c_input
+                        break
+                for c_output in node.properties.cell.outputs:
+                    if c_output.name == input_name_base:
+                        cell_port = c_output
+                        break
+                parameter_type = cell_port.type if cell_port else None
                 if dependency['type'] == 'splitter':
                     with_param = ('"{{tasks.' + task_name +
                                   '.outputs.parameters.' + from_port + '}}"')
@@ -296,7 +310,9 @@ class ArgoEngine(WFEngine, ABC):
                                  'value': '"{{item}}"',
                                  'withParam': with_param,
                                  'to_task': title,
-                                 'from_task': dependency['task_name']}
+                                 'from_task': dependency['task_name'],
+                                 'input_parameter_name': input_name_base,
+                                 'type': parameter_type}
                     all_parameters.append(parameter)
                 else:
                     take_from = ('"{{tasks.' + name + '.outputs.artifacts.' +
@@ -304,7 +320,9 @@ class ArgoEngine(WFEngine, ABC):
                     artifact = {'name': name,
                                 'from': take_from,
                                 'to_task': title,
-                                'from_task': dependency['task_name']}
+                                'from_task': dependency['task_name'],
+                                'input_parameter_name': input_name_base,
+                                'type': parameter_type}
                     all_artifacts.append(artifact)
             for payload_param in payload_params:
                 if payload_param['node_id'] == node_id:
@@ -312,13 +330,20 @@ class ArgoEngine(WFEngine, ABC):
                     short_id = payload_param['node_id'][:7]
                     value = ('"{{workflow.parameters.' + name + '_' +
                              short_id + '}}"')
+                    wf_param_name = name + '_' + short_id
+                    cell_port = None
+                    for c_param in node.properties.cell.params:
+                        if c_param.name == name:
+                            cell_port = c_param
+                            break
+                    parameter_type = cell_port.type if cell_port else None
                     parameter = {'name': name + '_' + short_id,
                                  'value': value,
                                  'to_task': title,
-                                 'from_task': name + '_' + short_id}
-                    # node_parameters.append(parameter)
+                                 'from_task': name + '_' + short_id,
+                                 'input_parameter_name': wf_param_name,
+                                 'type': parameter_type}
                     all_parameters.append(parameter)
-            # nodes[node_id] = node
         for node_id in nodes:
             node = nodes[node_id]
             if node.type == 'splitter' or node.type == 'merger':

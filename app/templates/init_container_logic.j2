@@ -4,32 +4,58 @@ import shlex
 import traceback
 try:
     args = []
-    {% for dependency in dependencies_dag[node.id] %}
-    {% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}
-    {% set input_name = dependency.to_port %}
-    {% set input_name_base = input_name.split('_')[:-1]|join('_') %}
-    {% for cell_input in node.properties.cell.inputs if cell_input.name == input_name_base %}
-    input_parameter_name = "{{ cell_input.name }}"
-    input_parameter_value = {{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}
-    print(f"Adding input parameter: name={input_parameter_name}, value={input_parameter_value}")
+    # node.properties.parameters
+    {% for parameter in node.properties.parameters %}
+    input_parameter_name = '{{ parameter.input_parameter_name }}'
+    input_parameter_value = {{ '{{inputs.parameters.' }}{{ parameter.name }}{{ '}}' }}
+    input_parameter_type = '{{ parameter.type }}'
     arg = {
        "name": input_parameter_name,
-       "type": "{{ cell_input.type }}",
+       "type": input_parameter_type,
        "value": str(input_parameter_value)
     }
     args.append(arg)
     {% endfor %}
-    {% endfor %}
-    {% for cell_params in node.properties.cell.params %}
-    workflow_parameter_name = "{{ cell_params.name }}"
-    workflow_parameter_value = "{{ '{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}' }}"
+    # node.properties.artifacts
+    {% for artifact in node.properties.artifacts %}
+    input_parameter_name = '{{ artifact.input_parameter_name }}'
+    with open("/tmp/" + input_parameter_name + ".json") as f:
+        input_parameter_value = json.load(f)
+    input_parameter_type = '{{ artifact.type }}'
     arg = {
-        "name": workflow_parameter_name,
-        "type": "{{ cell_params.type }}",
-        "value": str(workflow_parameter_value)
+       "name": input_parameter_name,
+       "type": input_parameter_type,
+       "value": str(input_parameter_value)
     }
     args.append(arg)
     {% endfor %}
+
+{#    {% for dependency in dependencies_dag[node.id] %}#}
+{#    {% set is_from_special = dependency.type == 'splitter' or  dependency.type == 'merger' %}#}
+{#    {% set input_name = dependency.to_port %}#}
+{#    {% set input_name_base = input_name.split('_')[:-1]|join('_') %}#}
+{#    {% for cell_input in node.properties.cell.inputs if cell_input.name == input_name_base %}#}
+{#    input_parameter_name = "{{ cell_input.name }}"#}
+{#    input_parameter_value = {{ '{{inputs.parameters.' }}{{ dependency.from_port }}{{ '}}' }}#}
+{#    print(f"Adding input parameter: name={input_parameter_name}, value={input_parameter_value}")#}
+{#    arg = {#}
+{#       "name": input_parameter_name,#}
+{#       "type": "{{ cell_input.type }}",#}
+{#       "value": str(input_parameter_value)#}
+{#    }#}
+{#    args.append(arg)#}
+{#    {% endfor %}#}
+{#    {% endfor %}#}
+{#    {% for cell_params in node.properties.cell.params %}#}
+{#    workflow_parameter_name = "{{ cell_params.name }}"#}
+{#    workflow_parameter_value = "{{ '{{workflow.parameters.' }}{{ cell_params.name }}_{{ node.id[:7] }}{{ '}}' }}"#}
+{#    arg = {#}
+{#        "name": workflow_parameter_name,#}
+{#        "type": "{{ cell_params.type }}",#}
+{#        "value": str(workflow_parameter_value)#}
+{#    }#}
+{#    args.append(arg)#}
+{#    {% endfor %}#}
     arg = {
         "name": "id",
         "type": "str",
