@@ -285,10 +285,9 @@ class ArgoEngine(WFEngine, ABC):
                 title = node.type + '-' + node_id[:7]
             else:
                 title = node.properties.cell.title + '-' + node_id[:7]
-            if 'splitter' in title:
-                print(f"Debug: Processing node {title} with ID {node_id}")
             for dependency in dependencies_dag[node_id]:
                 name = dependency['from_port']
+                from_task = dependency['task_name']
                 from_port = dependency['from_port']
                 task_name = dependency['task_name']
                 input_name = dependency['to_port']
@@ -310,17 +309,18 @@ class ArgoEngine(WFEngine, ABC):
                                  'value': '"{{item}}"',
                                  'withParam': with_param,
                                  'to_task': title,
-                                 'from_task': dependency['task_name'],
+                                 'from_task': from_task,
                                  'input_parameter_name': input_name_base,
                                  'type': parameter_type}
                     all_parameters.append(parameter)
                 else:
-                    take_from = ('"{{tasks.' + name + '.outputs.artifacts.' +
+                    take_from = ('"{{tasks.' + from_task +
+                                 '.outputs.artifacts.' +
                                  from_port + '}}"')
                     artifact = {'name': name,
                                 'from': take_from,
                                 'to_task': title,
-                                'from_task': dependency['task_name'],
+                                'from_task': from_task,
                                 'input_parameter_name': input_name_base,
                                 'type': parameter_type}
                     all_artifacts.append(artifact)
@@ -350,8 +350,6 @@ class ArgoEngine(WFEngine, ABC):
                 title = node.type + '-' + node_id[:7]
             else:
                 title = node.properties.cell.title + '-' + node_id[:7]
-            if 'input-list-user-2a56b83' in title:
-                print(f"Debug: Processing node {title} with ID {node_id}")
             node_parameters = []
             node_artifacts = []
             for parameter in all_parameters:

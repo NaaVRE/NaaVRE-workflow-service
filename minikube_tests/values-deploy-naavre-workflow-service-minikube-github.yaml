@@ -25,10 +25,10 @@ jupyterhub:
         module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
 
 naavre-containerizer-service:
-  enabled: true
+  enabled: false
 
 naavre-workflow-service:
-  enabled: true
+  enabled: false
 
 #k8sSecretCreator:
 #  enabled: false

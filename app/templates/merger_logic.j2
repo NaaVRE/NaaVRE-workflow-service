@@ -1,28 +1,77 @@
 import json
-{{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
+{% set title = node.type + '-' + node.id[:7] %}
+
+args = []
+
+# node.properties.parameters
+{% for parameter in node.properties.parameters %}
+{% if  parameter.to_task == title %}
+input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
+input_parameter_value = {{ parameter.value }}
+input_parameter_type = '{{ parameter.type }}'
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
-
-list_of_lists = {{ special_dep.from_port }}
-flat_list = []
-if isinstance(list_of_lists, str):
-    list_of_lists = json.loads(list_of_lists)
-for sublist in list_of_lists:
-    if isinstance(sublist, list):
-        flat_list.extend(sublist)
-    else:
-        if isinstance(sublist, str):
-            try:
-                parsed = json.loads(sublist)
-                if isinstance(parsed, list):
-                    flat_list.extend(parsed)
-                else:
-                    flat_list.append(parsed)
-            except json.JSONDecodeError:
-                flat_list.append(sublist)
-
-f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
-f_out.write(json.dumps(flat_list))
-f_out.close()
+path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
 {% endif %}
 {% endfor %}
+arg = {
+   "name": input_parameter_name,
+   "type": input_parameter_type,
+   "value": str(input_parameter_value),
+   "path": path
+}
+args.append(arg)
+{% endif %}
+{% endfor %}
+
+# node.properties.artifacts
+{% for artifact in node.properties.artifacts %}
+{% if artifact.to_task == title %}
+{% set path = "" %}
+input_parameter_name = '{{ artifact.name }}'
+with open("/tmp/" + input_parameter_name + ".json") as f:
+    input_parameter_value = json.load(f)
+input_parameter_type = '{{ artifact.type }}'
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
+{% endif %}
+{% endfor %}
+
+arg = {
+   "name": input_parameter_name,
+   "type": input_parameter_type,
+   "value": str(input_parameter_value),
+   "path": path
+}
+args.append(arg)
+{% endif %}
+{% endfor %}
+
+for arg in args:
+    var_name = arg['name']
+    var_value = arg['value']
+    var_type = arg['type']
+    if var_type == 'list':
+        var_value = json.loads(var_value.replace("'", '"'))
+    globals()[var_name] = var_value
+    list_of_lists = var_value
+    flat_list = []
+    if isinstance(list_of_lists, str):
+        list_of_lists = json.loads(list_of_lists)
+    for sublist in list_of_lists:
+        if isinstance(sublist, list):
+            flat_list.extend(sublist)
+        else:
+            if isinstance(sublist, str):
+                try:
+                    parsed = json.loads(sublist)
+                    if isinstance(parsed, list):
+                        flat_list.extend(parsed)
+                    else:
+                        flat_list.append(parsed)
+                except json.JSONDecodeError:
+                    flat_list.append(sublist)
+        f_out = open(arg['path'], "w")
+        f_out.write(json.dumps(list_of_lists))
+        f_out.close()

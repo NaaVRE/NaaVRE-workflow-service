@@ -121,24 +121,12 @@ templates:
       {{ include('merger_logic.j2', ports=ports, special_dep=special_dep,node=node) | indent(6) }}
       {% endif %}
   {% else %}
-  initContainers:
-    - name: init-input-args-{{ title }}
-      image: python:alpine3.9
-      command: ["python", "-c"]
-      args:
-      - |
-        {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(8) }}
-      volumeMounts:
-      - name: workspace
-        mountPath: /workspace
-  container:
-    image: "{{ node.properties.cell.container_image }}"
-    imagePullPolicy: Always
+  containerSet:
     volumeMounts:
-    - name: workdir
-      mountPath: /tmp/data
     - name: workspace
       mountPath: /workspace
+    - name: workdir
+      mountPath: /tmp/data
     {% if extraVolumeMounts is defined %}
     {% for vol in extraVolumeMounts %}
     - name: {{ vol.name }}
@@ -151,27 +139,39 @@ templates:
       {% endif %}
     {% endfor %}
     {% endif %}
-    env:
-    {%  for s in secrets %}
-      - name: {{ s.name }}
-        valueFrom:
-          secretKeyRef:
-            name: {{ k8s_secret_name }}
-            key: {{ s.name }}
-    {%  endfor %}
-    command: ["/bin/bash", "-c"]
-    args:
-      - source /venv/bin/activate;
-        {% if node.properties.cell.kernel == 'ipython' %}
-        {% set cmd = 'python /app/task.py' %}
-        {% elif node.properties.cell.kernel == 'IRkernel' %}
-        {% set cmd = 'Rscript /app/task.R' %}
-        {% endif %}
-        {%  if  node.properties.cell.json_args_supported %}
-        cat /workspace/{{ node.id[:7] }}/inputs.json;
-        {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
-        {%  else %}
-        xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
-        {%  endif %}
+    containers:
+      - name: main
+        image: "{{ node.properties.cell.container_image }}"
+        imagePullPolicy: Always
+        dependencies:
+            - init-input-args-{{ title }}
+        env:
+        {%  for s in secrets %}
+        - name: {{ s.name }}
+            valueFrom:
+            secretKeyRef:
+                name: {{ k8s_secret_name }}
+                key: {{ s.name }}
+        {%  endfor %}
+        command: ["/bin/bash", "-c"]
+        args:
+          - source /venv/bin/activate;
+            {% if node.properties.cell.kernel == 'ipython' %}
+            {% set cmd = 'python /app/task.py' %}
+            {% elif node.properties.cell.kernel == 'IRkernel' %}
+            {% set cmd = 'Rscript /app/task.R' %}
+            {% endif %}
+            {%  if  node.properties.cell.json_args_supported %}
+            cat /workspace/{{ node.id[:7] }}/inputs.json;
+            {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
+            {%  else %}
+            xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
+            {%  endif %}
+      - name: init-input-args-{{ title }}
+        image: python:alpine3.9
+        command: ["python", "-c"]
+        args:
+        - |
+          {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(10) }}
   {% endif %}
 {% endfor %}
