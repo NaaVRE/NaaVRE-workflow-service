@@ -350,6 +350,8 @@ class ArgoEngine(WFEngine, ABC):
                 title = node.type + '-' + node_id[:7]
             else:
                 title = node.properties.cell.title + '-' + node_id[:7]
+            if 'str-parallel-processing-user' in title:
+                print("Debug: Node title is", title)
             node_parameters = []
             node_artifacts = []
             for parameter in all_parameters:

@@ -172,6 +172,6 @@ templates:
         command: ["python", "-c"]
         args:
         - |
-          {{ include('init_container_logic.j2', dependencies_dag=dependencies_dag,node=node) | indent(10) }}
+          {{ include('init_container_logic.j2', ports=ports,node=node) | indent(10) }}
   {% endif %}
 {% endfor %}

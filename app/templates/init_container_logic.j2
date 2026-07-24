@@ -2,7 +2,9 @@ import json
 import os
 import shlex
 import traceback
-{% set title = node.type + '-' + node.id[:7] %}
+
+{% set title = node.properties.cell.title + "-" + node.id[:7] %}
+
 try:
     args = []
     # node.properties.parameters
