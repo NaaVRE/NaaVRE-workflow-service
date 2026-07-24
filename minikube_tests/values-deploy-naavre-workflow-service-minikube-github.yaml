@@ -33,6 +33,3 @@ naavre-workflow-service:
 #k8sSecretCreator:
 #  enabled: false
 
-seaweedfs:
-  enabled: false
-
