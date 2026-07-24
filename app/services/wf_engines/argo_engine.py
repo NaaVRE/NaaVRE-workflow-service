@@ -311,6 +311,8 @@ class ArgoEngine(WFEngine, ABC):
                                  'to_task': title,
                                  'from_task': from_task,
                                  'input_parameter_name': input_name_base,
+                                 'input_parameter_value':
+                                     '{{inputs.parameters.' + name + '}}',
                                  'type': parameter_type}
                     all_parameters.append(parameter)
                 else:

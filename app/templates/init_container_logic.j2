@@ -11,7 +11,7 @@ try:
     {% for parameter in node.properties.parameters %}
     {% if  parameter.to_task == title %}
     input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
-    input_parameter_value = {{ parameter.value }}
+    input_parameter_value = {{ parameter.input_parameter_value }}
     input_parameter_type = '{{ parameter.type }}'
     {% for port in ports.values() %}
     {% if port.type == 'right' %}
