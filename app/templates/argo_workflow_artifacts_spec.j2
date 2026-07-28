@@ -83,7 +83,7 @@ templates:
     {% for artifact in node.properties.artifacts %}
     {% if title == artifact.to_task %}
     - name: {{ artifact.name }}
-      path: /tmp/{{ artifact.name }}.json
+      path: /workspace/{{ artifact.name }}.json
     {% endif %}
     {% endfor %}
     {% endif %}
