@@ -1,5 +1,6 @@
 import json
 import ast
+import os
 {% set title = node.type + '-' + node.id[:7] %}
 
 args = []
@@ -30,7 +31,10 @@ args.append(arg)
 {% if artifact.to_task == title %}
 {% set path = "" %}
 input_parameter_name = '{{ artifact.name }}'
-with open("/tmp/" + input_parameter_name + ".json") as f:
+path = "/tmp/" + input_parameter_name + ".json"
+if not os.path.exists(path):
+    path = "/workspace/" + input_parameter_name + ".json"
+with open(path) as f:
     input_parameter_value = json.load(f)
 input_parameter_type = '{{ artifact.type }}'
 {% for port in ports.values() %}
