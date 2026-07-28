@@ -323,7 +323,9 @@ class ArgoEngine(WFEngine, ABC):
                                  'to_task': title,
                                  'from_task': from_task,
                                  'input_parameter_name': input_name_base,
-                                 'type': parameter_type}
+                                 'type': parameter_type,
+                                 'input_parameter_value':
+                                     '{{inputs.parameters.' + name + '}}'}
                     all_parameters.append(parameter)
                 else:
                     take_from = ('"{{tasks.' + from_task +

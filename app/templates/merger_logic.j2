@@ -1,4 +1,5 @@
 import json
+import ast
 {% set title = node.type + '-' + node.id[:7] %}
 
 args = []
@@ -7,7 +8,7 @@ args = []
 {% for parameter in node.properties.parameters %}
 {% if  parameter.to_task == title %}
 input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
-input_parameter_value = {{ parameter.value }}
+input_parameter_value = {{ parameter.input_parameter_value }}
 input_parameter_type = '{{ parameter.type }}'
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
@@ -53,8 +54,8 @@ for arg in args:
     var_value = arg['value']
     var_type = arg['type']
     if var_type == 'list':
-        var_value = json.loads(var_value.replace("'", '"'))
-    globals()[var_name] = var_value
+        lst = [json.loads(item) for item in ast.literal_eval(var_value)]
+        var_value = lst
     list_of_lists = var_value
     flat_list = []
     if isinstance(list_of_lists, str):
