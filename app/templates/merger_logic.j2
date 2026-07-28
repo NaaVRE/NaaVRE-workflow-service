@@ -78,5 +78,5 @@ for arg in args:
                 except json.JSONDecodeError:
                     flat_list.append(sublist)
         f_out = open(arg['path'], "w")
-        f_out.write(json.dumps(list_of_lists))
+        f_out.write(json.dumps(flat_list))
         f_out.close()
