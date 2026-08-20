@@ -24,12 +24,20 @@ jupyterhub:
         registry_url: ghcr.io/naavre/naavre-cells-vl-tests
         module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
 
-naavre-containerizer-service:
+naavreContainerizerService:
   enabled: false
 
-naavre-workflow-service:
+naavreWorkflowService:
   enabled: false
 
-#k8sSecretCreator:
-#  enabled: false
+k8sSecretCreator:
+  enabled: true
 
+seaweedfs:
+  enabled: true
+
+naavreCatalogueService:
+  enabled: true
+
+naavrePaasFrontend:
+  enabled: true
