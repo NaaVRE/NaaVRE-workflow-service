@@ -1,16 +1,5 @@
 global:
   namespace: naavre
-  common:
-    userPods:
-      extraVolumeMounts:
-        - name: naa-vre-public
-          mountPath: /home/jovyan/Cloud Storage/naa-vre-public
-          readOnly: true
-        - name: naa-vre-user-data
-          mountPath: /home/jovyan/Cloud Storage/naa-vre-user-data/
-          subPath: '{unescaped_username}'
-
-
 jupyterhub:
   enabled: false
   vlabs:
@@ -25,19 +14,11 @@ jupyterhub:
         module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
 
 naavreContainerizerService:
-  enabled: false
+  enabled: true
 
 naavreWorkflowService:
   enabled: false
 
 k8sSecretCreator:
-  enabled: true
+  enabled: false
 
-seaweedfs:
-  enabled: true
-
-naavreCatalogueService:
-  enabled: true
-
-naavrePaasFrontend:
-  enabled: true
