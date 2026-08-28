@@ -357,6 +357,10 @@ class ArgoEngine(WFEngine, ABC):
                                  'from_task': name + '_' + short_id,
                                  'input_parameter_name': wf_param_name,
                                  'type': parameter_type}
+                    if 'input_parameter_value' not in parameter:
+                        print(
+                            f"Warning: parameter {parameter['name']} has no "
+                            f"input_parameter_value")
                     all_parameters.append(parameter)
         for node_id in nodes:
             node = nodes[node_id]
