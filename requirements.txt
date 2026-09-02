@@ -10,5 +10,5 @@ pydantic-settings==2.14.2
 cachetools==7.1.7
 python-slugify~=8.0.4
 httpx==0.28.1
-cryptography==50.0.0
+cryptography==50.0.1
 croniter==6.2.4
