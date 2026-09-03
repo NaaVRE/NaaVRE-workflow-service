@@ -358,6 +358,7 @@ class ArgoEngine(WFEngine, ABC):
                                  'input_parameter_name': wf_param_name,
                                  'type': parameter_type}
                     if 'input_parameter_value' not in parameter:
+                        parameter['input_parameter_value'] = 'a'
                         print(
                             f"Warning: parameter {parameter['name']} has no "
                             f"input_parameter_value")

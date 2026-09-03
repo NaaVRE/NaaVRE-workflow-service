@@ -20,5 +20,5 @@ naavreWorkflowService:
   enabled: false
 
 k8sSecretCreator:
-  enabled: false
+  enabled: true
 
