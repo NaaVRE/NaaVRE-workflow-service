@@ -103,6 +103,8 @@ class Port(BaseModel):
 
 class NodeProperties(BaseModel):
     cell: Cell | SpecialCell = Field(union_mode='left_to_right')
+    parameters: Optional[list[dict]] = None
+    artifacts: Optional[list[dict]] = None
 
 
 class Node(BaseModel):

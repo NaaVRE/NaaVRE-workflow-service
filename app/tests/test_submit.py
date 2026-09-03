@@ -94,9 +94,7 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
         name = node['templateName']
         node_type = node['type']
         if node_type == 'TaskGroup':
-            wf_nodes[name] = int(
-                wf_status_response_json['status']['nodes'][node_name][
-                    'progress'].split('/')[1]) - 2
+            wf_nodes[name] = len(node['children'])
     for task_name in parallel_tasks:
         for wf_nodes_name in wf_nodes:
             if task_name in wf_nodes_name:
@@ -133,8 +131,6 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
-        if 'resources/py_cron' not in workflow_test_folder:
-            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')

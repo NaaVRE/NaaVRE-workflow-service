@@ -1,0 +1,21 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}"
+  },
+  "params": [
+    {
+      "name": "param_max_branches",
+      "value": 3,
+      "node_id": "34a7cee4-38ba-4a92-a94f-d79058f05787"
+    },
+    {
+      "name": "param_size",
+      "value": 1000,
+      "node_id": "0099893f-315c-448f-8f07-b9ece10dca14"
+    }
+  ],
+  "secrets": [],
+  "cron_schedule": null
+}
