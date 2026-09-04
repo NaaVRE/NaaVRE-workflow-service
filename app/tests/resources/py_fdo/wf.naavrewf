@@ -1,0 +1,186 @@
+{
+  "chart": {
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": {
+      "e525915f-2c1e-44e9-9081-faf012dbde1e": {
+        "id": "e525915f-2c1e-44e9-9081-faf012dbde1e",
+        "position": {
+          "x": 451.98333740234375,
+          "y": 275
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "test_value_1": {
+            "id": "test_value_1",
+            "type": "right",
+            "properties": {
+              "color": "#e06c98",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          },
+          "fdo_output": {
+            "id": "fdo_output",
+            "type": "right",
+            "properties": {
+              "color": "#e06c98",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/d1d41322-1101-489c-82a1-8038ea999416/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "versions": [
+              {
+                "version": 1,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/d1d41322-1101-489c-82a1-8038ea999416/"
+              },
+              {
+                "version": 2,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/b58c627a-1843-421c-a897-89461ddc581a/"
+              }
+            ],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.17",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.17"
+            },
+            "dependencies": [
+            ],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "test_value_1",
+                "type": "list"
+              },
+              {
+                "name": "fdo_output",
+                "type": "str"
+              }
+            ],
+            "confs": [
+            ],
+            "params": [
+            ],
+            "secrets": [
+              {
+                "name": "secret_test_1",
+                "type": "str"
+              }
+            ],
+            "title": "test-cell-1-user",
+            "description": "",
+            "created": "2025-01-19T21:37:23.503000Z",
+            "modified": "2025-01-19T21:37:23.503000Z",
+            "version": 3,
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/test-cell-1-user:d50730c",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/a8babadf22c29f7afe57c4269f6d821925d0c331/test-cell-1-user",
+            "is_draft": false
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "61c43e08-18bc-4ca7-9224-04610f07193c": {
+        "id": "61c43e08-18bc-4ca7-9224-04610f07193c",
+        "position": {
+          "x": 955.9833374023438,
+          "y": 262
+        },
+        "orientation": 0,
+        "type": "fdo-writer",
+        "ports": {
+          "fdo_input": {
+            "id": "fdo_input",
+            "type": "left",
+            "properties": {
+              "color": "#7d2dd2",
+              "parentNodeType": "fdo-writer"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "fdo-writer",
+            "title": "FDO Writer",
+            "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
+            "type": "fdo-writer",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "version": 1,
+            "versions": [],
+            "container_image": "",
+            "base_container_image": {
+              "build": "",
+              "runtime": ""
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "fdo_input",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [
+              {
+                "name": "run_id",
+                "type": "str"
+              }
+            ],
+            "secrets": []
+          },
+          "fdoConfig": {
+            "vizKind": "xy-plot",
+            "outputName": "output",
+            "dataFormat": "text/csv"
+          }
+        },
+        "size": {
+          "width": 202,
+          "height": 61
+        }
+      }
+    },
+    "links": {
+      "be7442ab-294e-4a21-8b11-55c7b9b26f71": {
+        "id": "be7442ab-294e-4a21-8b11-55c7b9b26f71",
+        "from": {
+          "nodeId": "e525915f-2c1e-44e9-9081-faf012dbde1e",
+          "portId": "fdo_output"
+        },
+        "to": {
+          "nodeId": "61c43e08-18bc-4ca7-9224-04610f07193c",
+          "portId": "fdo_input"
+        }
+      }
+    },
+    "selected": {},
+    "hovered": {
+    }
+  }
+}

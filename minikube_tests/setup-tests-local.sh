@@ -110,6 +110,7 @@ fi
 # Variables
 context="minikube"
 namespace="naavre"
+NaaVRE_HELM_REPO=https://github.com/NaaVRE/NaaVRE-helm.git
 
 export MINIKUBE_HOST="naavre-dev.minikube.test"
 export MINIKUBE_S3_HOST="s3.naavre-dev.minikube.test"
@@ -166,7 +167,7 @@ deploy_naavre(){
     if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
       rm -rf NaaVRE-helm
     fi
-    git clone https://github.com/NaaVRE/NaaVRE-helm.git
+    git clone $NaaVRE_HELM_REPO
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
     cp "../$VALUES_FILE" secrets-minikube.yaml

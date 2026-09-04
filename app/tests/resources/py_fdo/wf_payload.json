@@ -1,0 +1,55 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}",
+    "selected": {},
+    "hovered": {},
+    "metadata": {
+      "version": "1.1"
+    },
+    "properties": {
+      "params": []
+    }
+  },
+  "params": [
+    {
+      "node_id": "e525915f-2c1e-44e9-9081-faf012dbde1e",
+      "name": "param_test_1",
+      "value": "test value"
+    },
+    {
+      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c",
+      "name": "run_id",
+      "value": "0"
+    },
+    {
+      "name": "viz_kind",
+      "value": "xy-plot",
+      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c"
+    },
+    {
+      "name": "output_name",
+      "value": "output",
+      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c"
+    },
+    {
+      "name": "data_format",
+      "value": "text/csv",
+      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c"
+    }
+  ],
+  "secrets": [
+    {
+      "node_id": "e525915f-2c1e-44e9-9081-faf012dbde1e",
+      "name": "secret_test_1",
+      "value": "test value"
+    }
+  ],
+  "cron_schedule": null
+}
