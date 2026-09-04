@@ -147,10 +147,10 @@ templates:
         env:
         {%  for s in secrets %}
         - name: {{ s.name }}
-            valueFrom:
-            secretKeyRef:
-                name: {{ k8s_secret_name }}
-                key: {{ s.name }}
+          valueFrom:
+             secretKeyRef:
+               name: {{ k8s_secret_name }}
+               key: {{ s.name }}
         {%  endfor %}
         command: ["/bin/bash", "-c"]
         args:
