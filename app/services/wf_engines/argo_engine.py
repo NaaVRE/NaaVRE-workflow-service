@@ -356,7 +356,8 @@ class ArgoEngine(WFEngine, ABC):
                                  'to_task': title,
                                  'from_task': name + '_' + short_id,
                                  'input_parameter_name': wf_param_name,
-                                 'type': parameter_type}
+                                 'type': parameter_type,
+                                 'input_parameter_value': value}
                     if 'input_parameter_value' not in parameter:
                         print(
                             f"Warning: parameter {parameter['name']} has no "
