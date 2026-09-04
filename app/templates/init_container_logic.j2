@@ -7,6 +7,7 @@ import traceback
 
 try:
     args = []
+    path = None
     # node.properties.parameters
     {% for parameter in node.properties.parameters %}
     {% if  parameter.to_task == title %}
