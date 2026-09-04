@@ -23,9 +23,9 @@ def test_convert():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
-        print('Testing workflow: ' + workflow_test_folder)
-        if 'py_payload_param' not in workflow_test_folder:
+        if 'resources/py_lint' not in workflow_test_folder:
             continue
+        print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
         with open(workflow_payload_path) as f:
