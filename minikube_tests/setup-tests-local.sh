@@ -20,6 +20,7 @@ print_usage() {
   echo "  -u, --uninstall-naavre        Uninstall NaaVRE before installation"
   echo "  -p, --delete-pv-pvc        Delete PV and PVC before creating them again"
   echo "  -v, --deploy-naavre        Deploy NaaVRE "
+  echo "  -a, --upgrade-naavre        Upgrade NaaVRE "
   echo "  -c , --chart-file       Path to the NaaVRE Helm Chart.yaml file "
   exit 1
 }
@@ -57,6 +58,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -v |--deploy-naavre)
       DEPLOY_NAAAVRE="true"
+      shift # past argument
+      ;;
+    -a|--update-naavre)
+      UPGRADE_NAAAVRE="true"
       shift # past argument
       ;;
     -c |--chart-file)
@@ -210,6 +215,9 @@ deploy_naavre(){
     ./deploy.sh --kube-context "$context" -n "$namespace" install-keycloak-operator
   if [ "$DEPLOY_NAAAVRE" == "true" ]; then
     ./deploy.sh --kube-context "$context" -n "$namespace" -f values/values-deploy-minikube.yaml -f "secrets-minikube.yaml" install
+  fi
+  if [ "$UPGRADE_NAAAVRE" == "true" ]; then
+    ./deploy.sh --kube-context "$context" -n "$namespace" -f values/values-deploy-minikube.yaml -f "secrets-minikube.yaml" upgrade
   fi
   rm secrets-minikube.yaml
   # Exit if the installation fails
@@ -570,8 +578,6 @@ elif [ "$RUNS_FROM_NAAAVRE_HELM" == "false" ]; then
   CONFIG_JSON_PATH="configuration.json"
 fi
 
-cat $CONFIG_JSON_PATH
-
 # if configuration.json exists add the values, else skip
 if [ -f "$CONFIG_JSON_PATH" ]; then
   export VIRTUAL_LAB_NAME="${VIRTUAL_LAB_NAME:-openlab}"
@@ -611,7 +617,6 @@ fi
 # Set $CONFIG_FILE_URL absolute path
 CONFIG_FILE_URL=$(realpath "$CONFIG_FILE_URL")
 echo "Configuration file URL: $CONFIG_FILE_URL"
-cat $CONFIG_FILE_URL
 }
 
 test_github_token(){
