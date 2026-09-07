@@ -617,7 +617,6 @@ fi
 # Set $CONFIG_FILE_URL absolute path
 CONFIG_FILE_URL=$(realpath "$CONFIG_FILE_URL")
 echo "Configuration file URL: $CONFIG_FILE_URL"
-cat $CONFIG_FILE_URL
 }
 
 test_github_token(){
