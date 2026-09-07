@@ -578,8 +578,6 @@ elif [ "$RUNS_FROM_NAAAVRE_HELM" == "false" ]; then
   CONFIG_JSON_PATH="configuration.json"
 fi
 
-cat $CONFIG_JSON_PATH
-
 # if configuration.json exists add the values, else skip
 if [ -f "$CONFIG_JSON_PATH" ]; then
   export VIRTUAL_LAB_NAME="${VIRTUAL_LAB_NAME:-openlab}"
@@ -619,7 +617,6 @@ fi
 # Set $CONFIG_FILE_URL absolute path
 CONFIG_FILE_URL=$(realpath "$CONFIG_FILE_URL")
 echo "Configuration file URL: $CONFIG_FILE_URL"
-cat $CONFIG_FILE_URL
 }
 
 test_github_token(){
