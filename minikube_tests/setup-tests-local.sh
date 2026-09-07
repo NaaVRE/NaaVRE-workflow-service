@@ -578,8 +578,6 @@ elif [ "$RUNS_FROM_NAAAVRE_HELM" == "false" ]; then
   CONFIG_JSON_PATH="configuration.json"
 fi
 
-cat $CONFIG_JSON_PATH
-
 # if configuration.json exists add the values, else skip
 if [ -f "$CONFIG_JSON_PATH" ]; then
   export VIRTUAL_LAB_NAME="${VIRTUAL_LAB_NAME:-openlab}"
