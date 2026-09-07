@@ -33,7 +33,6 @@ def load_configuration(source):
             data_dict = json.load(file)
         file.close()
         return data_dict
-
     else:
         raise Exception('Invalid configuration source')
 
