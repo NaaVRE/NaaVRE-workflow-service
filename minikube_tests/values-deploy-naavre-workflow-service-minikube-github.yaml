@@ -22,7 +22,7 @@ jupyterhub:
         cell_github_url: https://github.com/NaaVRE/cells-vl-tests
         cell_github_token: ghp_XXXXXXXXXXXXXXXX
         registry_url: ghcr.io/naavre/naavre-cells-vl-tests
-        module_mapping_url: https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json
+        module_mapping_url: https://raw.githubusercontent.com/NaaVRE/NaaVRE-conf/main/module_mapping.json
 
 #naavreContainerizerService:
 #  enabled: false
