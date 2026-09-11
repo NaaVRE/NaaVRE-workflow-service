@@ -35,8 +35,10 @@ class ArgoEngine(WFEngine, ABC):
     def __init__(self, vl_config: VLConfig):
         super().__init__(vl_config)
         self.template_env.globals['include'] = include_file(self.template_env)
+        # self.workflow_template = self.template_env.get_template(
+        #     'argo_workflow_top.j2')
         self.workflow_template = self.template_env.get_template(
-            'argo_workflow_top.j2')
+            'argo_workflow_artifacts_top.j2')
         # Add '/' at the end of the endpoint if not present
         if vl_config.wf_engine_config.api_endpoint[-1] != '/':
             vl_config.wf_engine_config.api_endpoint += '/'
@@ -134,10 +136,13 @@ class ArgoEngine(WFEngine, ABC):
         default_max_branches = (
                     self.vl_config.wf_engine_config.default_max_branches
                     or 100)
+        nodes = self.set_io_artifacts(self.parser.get_dependencies_dag(),
+                                      self.nodes,
+                                      self.naavrewf2_payload_params)
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
             dependencies_dag=self.parser.get_dependencies_dag(),
-            nodes=self.nodes,
+            nodes=nodes,
             naavrewf2_payload_params=self.naavrewf2_payload_params or [],
             k8s_secret_name=k8s_secret_name,
             workflow_name=workflow_name,
@@ -269,3 +274,112 @@ class ArgoEngine(WFEngine, ABC):
                                       for node_id in unconnected_nodes]
             raise Exception(f"Error rendering workflow template: {str(e)}. "
                             f""f"Unconnected nodes: {unconnected_node_names}")
+
+    def set_io_artifacts(self, dependencies_dag: dict, nodes: dict,
+                         payload_params: list) -> dict:
+        all_parameters = []
+        all_artifacts = []
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node.type == 'splitter' or node.type == 'merger':
+                title = node.type + '-' + node_id[:7]
+            else:
+                title = node.properties.cell.title + '-' + node_id[:7]
+            for dependency in dependencies_dag[node_id]:
+                name = dependency['from_port']
+                from_task = dependency['task_name']
+                from_port = dependency['from_port']
+                task_name = dependency['task_name']
+                input_name = dependency['to_port']
+                input_name_base = '_'.join(input_name.split('_')[:-1])
+                cell_port = None
+                for c_input in node.properties.cell.inputs:
+                    if c_input.name == input_name_base:
+                        cell_port = c_input
+                        break
+                for c_output in node.properties.cell.outputs:
+                    if c_output.name == input_name_base:
+                        cell_port = c_output
+                        break
+                parameter_type = cell_port.type if cell_port else None
+                if dependency['type'] == 'splitter':
+                    with_param = ('"{{tasks.' + task_name +
+                                  '.outputs.parameters.' + from_port + '}}"')
+                    parameter = {'name': name,
+                                 'value': '"{{item}}"',
+                                 'withParam': with_param,
+                                 'to_task': title,
+                                 'from_task': from_task,
+                                 'input_parameter_name': input_name_base,
+                                 'input_parameter_value':
+                                     '{{inputs.parameters.' + name + '}}',
+                                 'type': parameter_type}
+                    all_parameters.append(parameter)
+                elif node.type == 'merger':
+                    parameter = {'name': name,
+                                 'value': '"{{tasks.' +
+                                          from_task + '.outputs.parameters.' +
+                                          name + '}}"',
+                                 'to_task': title,
+                                 'from_task': from_task,
+                                 'input_parameter_name': input_name_base,
+                                 'type': parameter_type,
+                                 'input_parameter_value':
+                                     '{{inputs.parameters.' + name + '}}'}
+                    all_parameters.append(parameter)
+                else:
+                    take_from = ('"{{tasks.' + from_task +
+                                 '.outputs.artifacts.' +
+                                 from_port + '}}"')
+                    artifact = {'name': name,
+                                'from': take_from,
+                                'to_task': title,
+                                'from_task': from_task,
+                                'input_parameter_name': input_name_base,
+                                'type': parameter_type}
+                    all_artifacts.append(artifact)
+            for payload_param in payload_params:
+                if payload_param['node_id'] == node_id:
+                    name = payload_param['name']
+                    short_id = payload_param['node_id'][:7]
+                    value = ('"{{workflow.parameters.' + name + '_' +
+                             short_id + '}}"')
+                    wf_param_name = name + '_' + short_id
+                    cell_port = None
+                    for c_param in node.properties.cell.params:
+                        if c_param.name == name:
+                            cell_port = c_param
+                            break
+                    parameter_type = cell_port.type if cell_port else None
+                    parameter = {'name': name + '_' + short_id,
+                                 'value': value,
+                                 'to_task': title,
+                                 'from_task': name + '_' + short_id,
+                                 'input_parameter_name': wf_param_name,
+                                 'type': parameter_type}
+                    if 'input_parameter_value' not in parameter:
+                        parameter['input_parameter_value'] = 'a'
+                        print(
+                            f"Warning: parameter {parameter['name']} has no "
+                            f"input_parameter_value")
+                    all_parameters.append(parameter)
+        for node_id in nodes:
+            node = nodes[node_id]
+            if node.type == 'splitter' or node.type == 'merger':
+                title = node.type + '-' + node_id[:7]
+            else:
+                title = node.properties.cell.title + '-' + node_id[:7]
+            node_parameters = []
+            node_artifacts = []
+            for parameter in all_parameters:
+                if (parameter['to_task'] == title or
+                        parameter['from_task'] == title):
+                    node_parameters.append(parameter)
+            for artifact in all_artifacts:
+                if (artifact['to_task'] == title or
+                        artifact['from_task'] == title):
+                    node_artifacts.append(artifact)
+            node.properties.parameters = node_parameters
+            node.properties.artifacts = node_artifacts
+            nodes[node_id] = node
+        return nodes

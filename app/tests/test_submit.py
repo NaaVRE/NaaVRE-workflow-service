@@ -94,9 +94,7 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
         name = node['templateName']
         node_type = node['type']
         if node_type == 'TaskGroup':
-            wf_nodes[name] = int(
-                wf_status_response_json['status']['nodes'][node_name][
-                    'progress'].split('/')[1]) - 2
+            wf_nodes[name] = len(node['children'])
     for task_name in parallel_tasks:
         for wf_nodes_name in wf_nodes:
             if task_name in wf_nodes_name:

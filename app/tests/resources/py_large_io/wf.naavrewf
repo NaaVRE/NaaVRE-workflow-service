@@ -1,0 +1,278 @@
+{
+  "chart": {
+    "offset": {
+      "x": 1,
+      "y": 0
+    },
+    "scale": 1,
+    "nodes": {
+      "a1a8baa4-38fb-4a84-9a99-706041cb974c": {
+        "id": "a1a8baa4-38fb-4a84-9a99-706041cb974c",
+        "position": {
+          "x": 1048,
+          "y": 171
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "a_list": {
+            "id": "a_list",
+            "type": "left",
+            "properties": {
+              "color": "#e0b56c",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/8d2bf03b-bfcb-4931-8403-bee4cc6c5df9/",
+            "owner": "spiros.koulouzis@lifewatch.eu",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "versions": [
+              {
+                "version": 1,
+                "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/8d2bf03b-bfcb-4931-8403-bee4cc6c5df9/"
+              }
+            ],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.16",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.16"
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "a_list",
+                "type": "list"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "process-list-spiros-koulouzis-lifewatch-eu",
+            "description": "process-list-spiros-koulouzis-lifewatch-eu",
+            "created": "2026-08-28T09:33:57.931996Z",
+            "modified": "2026-08-28T09:33:58.095993Z",
+            "version": 1,
+            "template_format": "v1",
+            "container_image": "ghcr.io/naavre/cells-vl-openlab/process-list-spiros-koulouzis-lifewatch-eu:458c289",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-openlab/tree/668b6c8a8e5daa72983045363ada0e9b9bade870/process-list-spiros-koulouzis-lifewatch-eu",
+            "is_draft": false
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "34a7cee4-38ba-4a92-a94f-d79058f05787": {
+        "id": "34a7cee4-38ba-4a92-a94f-d79058f05787",
+        "position": {
+          "x": 742,
+          "y": 167
+        },
+        "orientation": 0,
+        "type": "splitter",
+        "ports": {
+          "splitter_source": {
+            "id": "splitter_source",
+            "type": "left",
+            "properties": {
+              "color": "#86642d",
+              "parentNodeType": "splitter"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          },
+          "splitter_target": {
+            "id": "splitter_target",
+            "type": "right",
+            "properties": {
+              "color": "#5940bf",
+              "parentNodeType": "splitter"
+            },
+            "position": {
+              "x": 202,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "splitter",
+            "title": "Splitter",
+            "description": "Split the input list and distribute its items to multiple containers that run in parallel.",
+            "type": "splitter",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "version": 1,
+            "versions": [],
+            "container_image": "",
+            "base_container_image": {
+              "build": "",
+              "runtime": ""
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "splitter_source",
+                "type": "list"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "splitter_target",
+                "type": "list"
+              }
+            ],
+            "confs": [],
+            "params": [
+              {
+                "name": "param_max_branches",
+                "type": "int",
+                "default_value": ""
+              }
+            ],
+            "secrets": []
+          }
+        },
+        "size": {
+          "width": 202,
+          "height": 61
+        }
+      },
+      "0099893f-315c-448f-8f07-b9ece10dca14": {
+        "id": "0099893f-315c-448f-8f07-b9ece10dca14",
+        "position": {
+          "x": 453,
+          "y": 215
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "a_list": {
+            "id": "a_list",
+            "type": "right",
+            "properties": {
+              "color": "#e0b56c",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/3426f774-cada-4759-8ac4-575147c303e9/",
+            "owner": "spiros.koulouzis@lifewatch.eu",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "versions": [
+              {
+                "version": 1,
+                "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/3d4169af-0734-4199-9bc0-74383ffe5682/"
+              },
+              {
+                "version": 2,
+                "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/b999abb8-ba4a-4019-92a2-14c5f773990e/"
+              },
+              {
+                "version": 3,
+                "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/d98f11ae-1384-4c43-96af-f8a5013bb4a8/"
+              },
+              {
+                "version": 4,
+                "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/d984bf4e-b8cd-4641-bcc2-de14b114c9d9/"
+              },
+              {
+                "version": 5,
+                "url": "https://beta.naavre.net/naavre-catalogue-service/workflow-cells/3426f774-cada-4759-8ac4-575147c303e9/"
+              }
+            ],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.16",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.16"
+            },
+            "dependencies": [
+              {
+                "name": "numpy",
+                "module": "",
+                "asname": "np"
+              }
+            ],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "a_list",
+                "type": "list"
+              }
+            ],
+            "confs": [],
+            "params": [
+              {
+                "name": "param_size",
+                "type": "int",
+                "default_value": "1000"
+              }
+            ],
+            "secrets": [],
+            "title": "generate-list-spiros-koulouzis-lifewatch-eu",
+            "description": "generate-list-spiros-koulouzis-lifewatch-eu",
+            "created": "2026-08-28T10:55:34.030841Z",
+            "modified": "2026-08-28T10:55:34.332925Z",
+            "version": 5,
+            "template_format": "v1",
+            "container_image": "ghcr.io/naavre/cells-vl-openlab/generate-list-spiros-koulouzis-lifewatch-eu:5bb7451",
+            "kernel": "ipython",
+            "source_url": "https://github.com/NaaVRE/cells-vl-openlab/tree/e6f9cddc591c73a02bd2bfbb84a0458a033ad205/generate-list-spiros-koulouzis-lifewatch-eu",
+            "is_draft": false
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      }
+    },
+    "links": {
+      "222298db-682d-49ae-94da-d391979c5f0b": {
+        "id": "222298db-682d-49ae-94da-d391979c5f0b",
+        "from": {
+          "nodeId": "34a7cee4-38ba-4a92-a94f-d79058f05787",
+          "portId": "splitter_target"
+        },
+        "to": {
+          "nodeId": "a1a8baa4-38fb-4a84-9a99-706041cb974c",
+          "portId": "a_list"
+        }
+      }
+    },
+    "properties": {
+      "params": [
+        {
+          "node_id": "34a7cee4-38ba-4a92-a94f-d79058f05787",
+          "name": "param_max_branches",
+          "value": "10"
+        }
+      ]
+    },
+    "selected": {},
+    "hovered": {
+      "type": "node",
+      "id": "0099893f-315c-448f-8f07-b9ece10dca14"
+    }
+  }
+}

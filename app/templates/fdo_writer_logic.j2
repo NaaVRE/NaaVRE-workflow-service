@@ -1,0 +1,86 @@
+import datetime
+import json
+import os
+import shutil
+import sys
+
+fdo_input   = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
+run_id      = "{{ '{{inputs.parameters.run_id_' }}{{ node.id[:7] }}{{ '}}' }}"
+viz_kind    = "{{ '{{inputs.parameters.viz_kind_' }}{{ node.id[:7] }}{{ '}}' }}"
+output_name = "{{ '{{inputs.parameters.output_name_' }}{{ node.id[:7] }}{{ '}}' }}"
+data_format = "{{ '{{inputs.parameters.data_format_' }}{{ node.id[:7] }}{{ '}}' }}"
+
+# The composer lets the author type this freely, and it is joined onto a path
+# under the user's mounted storage: keep it a bare file name so a value like
+# '../../.bashrc' cannot escape the run directory.
+output_name = os.path.basename(output_name.strip()) or 'output'
+
+# Upstream cells emit either an absolute path or one relative to the shared
+# workdir volume, which is mounted at /tmp/data for this template.
+src = fdo_input if fdo_input.startswith('/') else os.path.join('/tmp/data', fdo_input)
+if not os.path.exists(src):
+    print(f'ERROR: input file not found: {src}', file=sys.stderr)
+    sys.exit(1)
+
+# This layout is a contract with the JupyterLab extension, which reads the
+# crate back through the Jupyter contents API: keep it in sync with
+# src/components/vizPanel/storage.ts in NaaVRE-workflow-jupyterlab.
+storage_base = '/home/jovyan/Cloud Storage/naa-vre-user-data'
+run_dir      = os.path.join(storage_base, 'naavre-runs', run_id)
+outputs_dir  = os.path.join(run_dir, 'outputs')
+os.makedirs(outputs_dir, exist_ok=True)
+
+dest = os.path.join(outputs_dir, output_name)
+shutil.copy2(src, dest)
+print(f'Copied {src} -> {dest}')
+
+# Every fdo-writer of the same run appends to one crate, so the file may
+# already exist and must be extended rather than overwritten.
+crate_path = os.path.join(run_dir, 'ro-crate-metadata.json')
+if os.path.exists(crate_path):
+    with open(crate_path) as f:
+        crate = json.load(f)
+else:
+    crate = {
+        '@context': 'https://w3id.org/ro/crate/1.1/context',
+        '@graph': [
+            {
+                '@id': 'ro-crate-metadata.json',
+                '@type': 'CreativeWork',
+                'about': {'@id': './'},
+                'conformsTo': {'@id': 'https://w3id.org/ro/crate/1.1'},
+            },
+            {
+                '@id': './',
+                '@type': 'Dataset',
+                'naavre:runId': run_id,
+                'dateCreated': datetime.datetime.now(
+                    datetime.timezone.utc).isoformat(),
+                'hasPart': [],
+            },
+        ],
+    }
+
+entity_id = f'outputs/{output_name}'
+entity = {
+    '@id': entity_id,
+    '@type': 'File',
+    'name': output_name,
+    'encodingFormat': data_format,
+    'naavre:vizKind': viz_kind,
+}
+# Re-running the same writer (e.g. a retried step) must not duplicate entries.
+if any(e['@id'] == entity_id for e in crate['@graph']):
+    crate['@graph'] = [e if e['@id'] != entity_id else entity
+                       for e in crate['@graph']]
+else:
+    crate['@graph'].append(entity)
+
+root = next(e for e in crate['@graph'] if e['@id'] == './')
+ref = {'@id': entity_id}
+if ref not in root['hasPart']:
+    root['hasPart'].append(ref)
+
+with open(crate_path, 'w') as f:
+    json.dump(crate, f, indent=2, ensure_ascii=False)
+print(f'Wrote {crate_path}')

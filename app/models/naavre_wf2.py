@@ -38,7 +38,7 @@ class Conf(BaseModel):
 
 
 class Param(BaseVariable):
-    default_value: Optional[str]
+    default_value: Optional[str] = None
 
 
 class Secret(BaseVariable):
@@ -67,7 +67,7 @@ class Cell(BaseModel):
 
 
 class SpecialCell(BaseModel):
-    type: Literal['splitter', 'merger']
+    type: Literal['splitter', 'merger', 'fdo-writer']
     title: str
     container_image: str
     dependencies: Sequence[Dependency]
@@ -103,6 +103,8 @@ class Port(BaseModel):
 
 class NodeProperties(BaseModel):
     cell: Cell | SpecialCell = Field(union_mode='left_to_right')
+    parameters: Optional[list[dict]] = None
+    artifacts: Optional[list[dict]] = None
 
 
 class Node(BaseModel):
