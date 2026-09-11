@@ -1,48 +1,60 @@
 {
   "chart": {
     "offset": {
-      "x": 0,
-      "y": 0
+      "x": -38.28,
+      "y": 79.77
     },
-    "scale": 1,
+    "scale": 0.771,
     "nodes": {
-      "e525915f-2c1e-44e9-9081-faf012dbde1e": {
-        "id": "e525915f-2c1e-44e9-9081-faf012dbde1e",
+      "f7418da0-788c-4fc7-a18c-45c6766a09f0": {
+        "id": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
         "position": {
-          "x": 451.98333740234375,
-          "y": 275
+          "x": 488.7212895471464,
+          "y": 210
         },
         "orientation": 0,
         "type": "workflow-cell",
         "ports": {
-          "test_value_1": {
-            "id": "test_value_1",
+          "cities_geojson_path": {
+            "id": "cities_geojson_path",
             "type": "right",
             "properties": {
-              "color": "#e06c98",
+              "color": "#ac5397",
               "parentNodeType": "workflow-cell"
             },
             "position": {
               "x": 252,
-              "y": 30
+              "y": 13
             }
           },
-          "fdo_output": {
-            "id": "fdo_output",
+          "forecast_path": {
+            "id": "forecast_path",
             "type": "right",
             "properties": {
-              "color": "#e06c98",
+              "color": "#d28579",
               "parentNodeType": "workflow-cell"
             },
             "position": {
               "x": 252,
-              "y": 30
+              "y": 39
+            }
+          },
+          "summary_path": {
+            "id": "summary_path",
+            "type": "right",
+            "properties": {
+              "color": "#2daed2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 65
             }
           }
         },
         "properties": {
           "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/d1d41322-1101-489c-82a1-8038ea999416/",
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/4d3cfa86-d1e1-4434-813e-3d618b4d0d86/",
             "owner": "user",
             "virtual_lab": "openlab",
             "shared_with_scopes": [],
@@ -50,61 +62,155 @@
             "versions": [
               {
                 "version": 1,
-                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/d1d41322-1101-489c-82a1-8038ea999416/"
-              },
-              {
-                "version": 2,
-                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/b58c627a-1843-421c-a897-89461ddc581a/"
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/4d3cfa86-d1e1-4434-813e-3d618b4d0d86/"
               }
             ],
             "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.17",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.17"
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.13",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.13"
             },
             "dependencies": [
+              {
+                "name": "os",
+                "module": "",
+                "asname": null
+              },
+              {
+                "name": "json",
+                "module": "",
+                "asname": null
+              },
+              {
+                "name": "request",
+                "module": "urllib",
+                "asname": null
+              }
             ],
             "inputs": [],
             "outputs": [
               {
-                "name": "test_value_1",
-                "type": "list"
+                "name": "cities_geojson_path",
+                "type": "str"
               },
               {
-                "name": "fdo_output",
+                "name": "forecast_path",
+                "type": "str"
+              },
+              {
+                "name": "summary_path",
                 "type": "str"
               }
             ],
             "confs": [
-            ],
-            "params": [
-            ],
-            "secrets": [
               {
-                "name": "secret_test_1",
-                "type": "str"
+                "name": "conf_local_tmp",
+                "assignation": "conf_local_tmp = '/tmp/data'"
+              },
+              {
+                "name": "conf_cities",
+                "assignation": "conf_cities = {'Amsterdam': (52.37, 4.89), 'Paris': (48.85, 2.35), 'Berlin': (52.52, 13.41), 'Rome': (41.9, 12.5), 'Lisbon': (38.72, -9.14)}"
               }
             ],
-            "title": "test-cell-1-user",
-            "description": "",
-            "created": "2025-01-19T21:37:23.503000Z",
-            "modified": "2025-01-19T21:37:23.503000Z",
-            "version": 3,
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/test-cell-1-user:d50730c",
+            "params": [
+              {
+                "name": "param_city",
+                "type": "str",
+                "default_value": "Amsterdam"
+              },
+              {
+                "name": "param_forecast_hours",
+                "type": "str",
+                "default_value": "48"
+              }
+            ],
+            "secrets": [],
+            "title": "s1-fetch-weather-user",
+            "description": "s1-fetch-weather-user",
+            "created": "2026-07-24T13:52:07.974353Z",
+            "modified": "2026-07-24T13:52:08.915045Z",
+            "version": 1,
+            "template_format": "v1",
+            "container_image": "ghcr.io/thomas-brn/cells-vl-thomas-dev/s1-fetch-weather-user:348b7f8",
             "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/a8babadf22c29f7afe57c4269f6d821925d0c331/test-cell-1-user",
+            "source_url": "https://github.com/thomas-brn/cells-vl-thomas-dev/tree/800f66e8ed3f2efae46b20746167dd8e61cc79b8/s1-fetch-weather-user",
             "is_draft": false
           }
         },
         "size": {
           "width": 252,
+          "height": 79
+        }
+      },
+      "bbe35638-367d-4d89-b349-aed4d5ab290b": {
+        "id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
+        "position": {
+          "x": 952.3406482630272,
+          "y": 47.48138957816377
+        },
+        "orientation": 0,
+        "type": "fdo-writer",
+        "ports": {
+          "fdo_input": {
+            "id": "fdo_input",
+            "type": "left",
+            "properties": {
+              "color": "#7d2dd2",
+              "parentNodeType": "fdo-writer"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "fdo-writer",
+            "title": "FDO Writer",
+            "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
+            "type": "fdo-writer",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "version": 1,
+            "versions": [],
+            "container_image": "",
+            "base_container_image": {
+              "build": "",
+              "runtime": ""
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "fdo_input",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [
+              {
+                "name": "run_id",
+                "type": "str"
+              }
+            ],
+            "secrets": []
+          },
+          "fdoConfig": {
+            "vizKind": "map",
+            "outputName": "cities.geojson",
+            "dataFormat": "application/geo+json"
+          }
+        },
+        "size": {
+          "width": 202,
           "height": 61
         }
       },
-      "61c43e08-18bc-4ca7-9224-04610f07193c": {
-        "id": "61c43e08-18bc-4ca7-9224-04610f07193c",
+      "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41": {
+        "id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
         "position": {
-          "x": 955.9833374023438,
-          "y": 262
+          "x": 954.822037841191,
+          "y": 219.93796526054587
         },
         "orientation": 0,
         "type": "fdo-writer",
@@ -156,7 +262,7 @@
           },
           "fdoConfig": {
             "vizKind": "xy-plot",
-            "outputName": "output",
+            "outputName": "forecast.csv",
             "dataFormat": "text/csv"
           }
         },
@@ -164,23 +270,287 @@
           "width": 202,
           "height": 61
         }
+      },
+      "02998201-23b8-48e1-bae9-5d1c887a0411": {
+        "id": "02998201-23b8-48e1-bae9-5d1c887a0411",
+        "position": {
+          "x": 956.0627326302729,
+          "y": 383.7096774193549
+        },
+        "orientation": 0,
+        "type": "fdo-writer",
+        "ports": {
+          "fdo_input": {
+            "id": "fdo_input",
+            "type": "left",
+            "properties": {
+              "color": "#7d2dd2",
+              "parentNodeType": "fdo-writer"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "fdo-writer",
+            "title": "FDO Writer",
+            "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
+            "type": "fdo-writer",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "version": 1,
+            "versions": [],
+            "container_image": "",
+            "base_container_image": {
+              "build": "",
+              "runtime": ""
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "fdo_input",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [
+              {
+                "name": "run_id",
+                "type": "str"
+              }
+            ],
+            "secrets": []
+          },
+          "fdoConfig": {
+            "vizKind": "table",
+            "outputName": "summary.csv",
+            "dataFormat": "text/csv"
+          }
+        },
+        "size": {
+          "width": 202,
+          "height": 61
+        }
+      },
+      "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4": {
+        "id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
+        "position": {
+          "x": 883.3278795811518,
+          "y": 721.7670157068062
+        },
+        "orientation": 0,
+        "type": "fdo-writer",
+        "ports": {
+          "fdo_input": {
+            "id": "fdo_input",
+            "type": "left",
+            "properties": {
+              "color": "#7d2dd2",
+              "parentNodeType": "fdo-writer"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "fdo-writer",
+            "title": "FDO Writer",
+            "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
+            "type": "fdo-writer",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "version": 1,
+            "versions": [],
+            "container_image": "",
+            "base_container_image": {
+              "build": "",
+              "runtime": ""
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "fdo_input",
+                "type": "str"
+              }
+            ],
+            "outputs": [],
+            "confs": [],
+            "params": [
+              {
+                "name": "run_id",
+                "type": "str"
+              }
+            ],
+            "secrets": []
+          },
+          "fdoConfig": {
+            "vizKind": "html",
+            "outputName": "weather_widget.html",
+            "dataFormat": "text/html"
+          }
+        },
+        "size": {
+          "width": 202,
+          "height": 61
+        }
+      },
+      "5411f1e1-8aef-4755-8422-b697b291814c": {
+        "id": "5411f1e1-8aef-4755-8422-b697b291814c",
+        "position": {
+          "x": 508.5528468586387,
+          "y": 658.9397905759159
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "widget_html_path": {
+            "id": "widget_html_path",
+            "type": "right",
+            "properties": {
+              "color": "#c72dd2",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/8dd29827-1475-4c77-9cf8-ae2820781081/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "versions": [
+              {
+                "version": 1,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/18726866-6583-4643-a9e8-758027fe579a/"
+              },
+              {
+                "version": 2,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/8dd29827-1475-4c77-9cf8-ae2820781081/"
+              }
+            ],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.13",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.13"
+            },
+            "dependencies": [
+              {
+                "name": "os",
+                "module": "",
+                "asname": null
+              },
+              {
+                "name": "request",
+                "module": "urllib",
+                "asname": null
+              },
+              {
+                "name": "json",
+                "module": "",
+                "asname": null
+              }
+            ],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "widget_html_path",
+                "type": "str"
+              }
+            ],
+            "confs": [
+              {
+                "name": "conf_local_tmp",
+                "assignation": "conf_local_tmp = '/tmp/data'"
+              },
+              {
+                "name": "conf_cities",
+                "assignation": "conf_cities = {'Amsterdam': (52.37, 4.89), 'Paris': (48.85, 2.35), 'Berlin': (52.52, 13.41), 'Rome': (41.9, 12.5), 'Lisbon': (38.72, -9.14)}"
+              }
+            ],
+            "params": [],
+            "secrets": [],
+            "title": "s2-weather-widget-user",
+            "description": "s2-weather-widget-user",
+            "created": "2026-07-27T08:43:29.051197Z",
+            "modified": "2026-07-27T08:43:29.296329Z",
+            "version": 2,
+            "template_format": "v1",
+            "container_image": "ghcr.io/thomas-brn/cells-vl-thomas-dev/s2-weather-widget-user:257dc48",
+            "kernel": "ipython",
+            "source_url": "https://github.com/thomas-brn/cells-vl-thomas-dev/tree/5756aee41dfd25aa7ec967f0ed7a9ecf6ab95662/s2-weather-widget-user",
+            "is_draft": false
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
       }
     },
     "links": {
-      "be7442ab-294e-4a21-8b11-55c7b9b26f71": {
-        "id": "be7442ab-294e-4a21-8b11-55c7b9b26f71",
+      "84aa66e7-9432-4e1d-9222-eb57df7192ec": {
+        "id": "84aa66e7-9432-4e1d-9222-eb57df7192ec",
         "from": {
-          "nodeId": "e525915f-2c1e-44e9-9081-faf012dbde1e",
-          "portId": "fdo_output"
+          "nodeId": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+          "portId": "cities_geojson_path"
         },
         "to": {
-          "nodeId": "61c43e08-18bc-4ca7-9224-04610f07193c",
+          "nodeId": "bbe35638-367d-4d89-b349-aed4d5ab290b",
+          "portId": "fdo_input"
+        }
+      },
+      "84588dc4-5a3e-457a-b5a7-854fe1cee37b": {
+        "id": "84588dc4-5a3e-457a-b5a7-854fe1cee37b",
+        "from": {
+          "nodeId": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+          "portId": "forecast_path"
+        },
+        "to": {
+          "nodeId": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
+          "portId": "fdo_input"
+        }
+      },
+      "51ff29bd-cdcf-47ee-b175-7a854c6c2628": {
+        "id": "51ff29bd-cdcf-47ee-b175-7a854c6c2628",
+        "from": {
+          "nodeId": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+          "portId": "summary_path"
+        },
+        "to": {
+          "nodeId": "02998201-23b8-48e1-bae9-5d1c887a0411",
+          "portId": "fdo_input"
+        }
+      },
+      "86c3f39c-e258-4d4d-be3c-7336b2746580": {
+        "id": "86c3f39c-e258-4d4d-be3c-7336b2746580",
+        "from": {
+          "nodeId": "5411f1e1-8aef-4755-8422-b697b291814c",
+          "portId": "widget_html_path"
+        },
+        "to": {
+          "nodeId": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
           "portId": "fdo_input"
         }
       }
     },
+    "properties": {
+      "params": []
+    },
     "selected": {},
-    "hovered": {
+    "hovered": {},
+    "metadata": {
+      "version": "1.1"
     }
   }
 }

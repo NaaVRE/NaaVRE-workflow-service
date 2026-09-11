@@ -2,54 +2,113 @@
   "virtual_lab": "openlab",
   "naavrewf2": {
     "offset": {
-      "x": 0,
-      "y": 0
-    },
-    "scale": 1,
+        "x": -38.28,
+        "y": 79.77
+      },
+    "scale": 0.771,
     "nodes": "{wf.naavrewf.chart.nodes}",
     "links": "{wf.naavrewf.chart.links}",
+    "properties": {
+        "params": []
+      },
     "selected": {},
     "hovered": {},
     "metadata": {
-      "version": "1.1"
-    },
-    "properties": {
-      "params": []
-    }
+        "version": "1.1"
+      }
   },
   "params": [
     {
-      "node_id": "e525915f-2c1e-44e9-9081-faf012dbde1e",
-      "name": "param_test_1",
-      "value": "test value"
+      "node_id": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+      "name": "param_city",
+      "value": "Amsterdam"
     },
     {
-      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c",
+      "node_id": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+      "name": "param_forecast_hours",
+      "value": "48"
+    },
+    {
+      "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
       "name": "run_id",
-      "value": "0"
+      "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
     },
     {
+      "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
+      "name": "run_id",
+      "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
+    },
+    {
+      "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
+      "name": "run_id",
+      "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
+    },
+    {
+      "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
+      "name": "run_id",
+      "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
+    },
+    {
+      "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
       "name": "viz_kind",
-      "value": "xy-plot",
-      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c"
+      "value": "map"
     },
     {
+      "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
       "name": "output_name",
-      "value": "output",
-      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c"
+      "value": "cities.geojson"
     },
     {
+      "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
       "name": "data_format",
-      "value": "text/csv",
-      "node_id": "61c43e08-18bc-4ca7-9224-04610f07193c"
-    }
-  ],
-  "secrets": [
+      "value": "application/geo+json"
+    },
     {
-      "node_id": "e525915f-2c1e-44e9-9081-faf012dbde1e",
-      "name": "secret_test_1",
-      "value": "test value"
+      "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
+      "name": "viz_kind",
+      "value": "xy-plot"
+    },
+    {
+      "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
+      "name": "output_name",
+      "value": "forecast.csv"
+    },
+    {
+      "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
+      "name": "data_format",
+      "value": "text/csv"
+    },
+    {
+      "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
+      "name": "viz_kind",
+      "value": "table"
+    },
+    {
+      "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
+      "name": "output_name",
+      "value": "summary.csv"
+    },
+    {
+      "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
+      "name": "data_format",
+      "value": "text/csv"
+    },
+    {
+      "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
+      "name": "viz_kind",
+      "value": "html"
+    },
+    {
+      "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
+      "name": "output_name",
+      "value": "weather_widget.html"
+    },
+    {
+      "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
+      "name": "data_format",
+      "value": "text/html"
     }
   ],
+  "secrets": [],
   "cron_schedule": null
 }
