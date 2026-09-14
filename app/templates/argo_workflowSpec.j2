@@ -121,6 +121,9 @@ templates:
       {% if vol.subPath is defined %}
       subPath: {{ vol.subPath }}
       {% endif %}
+      {% if vol.readOnly is defined %}
+      readOnly: {{ vol.readOnly }}
+      {% endif %}
     {% endfor %}
     source: |
       {{ include('fdo_writer_logic.j2', special_dep=special_dep, node=node) | indent(6) }}
