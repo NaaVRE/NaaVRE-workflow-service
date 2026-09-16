@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 class PayloadParam(BaseModel):
     node_id: str
     name: str
-    value: StrictBool | StrictInt | StrictFloat | StrictStr
+    value: StrictBool | StrictInt | StrictFloat | StrictStr | None
 
 
 class Naavrewf2Payload(BaseModel):
