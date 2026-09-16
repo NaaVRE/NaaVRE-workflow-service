@@ -25,7 +25,12 @@ def test_params_accepts_list_of_node_id_name_value_entries():
         {
             "node_id": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
             "name": "param_forecast_hours",
-            "value": "48"
+            "value": 48
+        },
+        {
+            "node_id": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+            "name": "param_include_wind",
+            "value": True
         }
     ]
 
@@ -35,6 +40,8 @@ def test_params_accepts_list_of_node_id_name_value_entries():
     assert model.params[0].node_id == "f7418da0-788c-4fc7-a18c-45c6766a09f0"
     assert model.params[0].name == "param_city"
     assert model.params[0].value == "Amsterdam"
+    assert model.params[1].value == 48
+    assert model.params[2].value is True
 
 
 @pytest.mark.parametrize("missing_field", ["node_id", "name", "value"])
