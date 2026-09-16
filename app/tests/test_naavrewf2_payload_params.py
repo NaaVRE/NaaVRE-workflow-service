@@ -72,3 +72,18 @@ def test_params_remains_optional():
     model = Naavrewf2Payload(**payload)
 
     assert model.params is None
+
+
+@pytest.mark.parametrize("invalid_value", [{"k": "v"}, ["x", "y"], [1, 2]])
+def test_params_rejects_non_scalar_values(invalid_value):
+    payload = _base_payload()
+    payload["params"] = [{
+        "node_id": "f7418da0-788c-4fc7-a18c-45c6766a09f0",
+        "name": "param_city",
+        "value": invalid_value
+    }]
+
+    with pytest.raises(ValidationError) as exc_info:
+        Naavrewf2Payload(**payload)
+
+    assert "params.0.value" in str(exc_info.value)
