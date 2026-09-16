@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from pydantic import BaseModel, StrictBool, StrictFloat, StrictInt, StrictStr
+from pydantic import BaseModel, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 
 from app.models.naavre_wf2 import Naavrewf2
 
@@ -12,7 +12,9 @@ logger.setLevel(logging.DEBUG)
 class PayloadParam(BaseModel):
     node_id: str
     name: str
-    value: StrictBool | StrictInt | StrictFloat | StrictStr | None
+    value: StrictBool | StrictInt | StrictFloat | StrictStr | None = Field(
+        description="Scalar/null payload value; not validated per parameter name."
+    )
 
 
 class Naavrewf2Payload(BaseModel):
