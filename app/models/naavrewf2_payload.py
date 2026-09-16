@@ -9,9 +9,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
+class PayloadParam(BaseModel):
+    node_id: str
+    name: str
+    value: str
+
+
 class Naavrewf2Payload(BaseModel):
     virtual_lab: str
-    params: Optional[list] | None = None
+    params: Optional[list[PayloadParam]] | None = None
     secrets: Optional[list] = None
     naavrewf2: Naavrewf2
     user_name: Optional[str] | None = None

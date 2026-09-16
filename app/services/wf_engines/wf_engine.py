@@ -47,14 +47,7 @@ class WFEngine:
     def set_payload(self, naavrewf2_payload: Naavrewf2Payload):
         self.naavrewf2_payload = naavrewf2_payload
         self.parser = WorkflowParser(naavrewf2_payload.naavrewf2)
-        exceptions = []
-        self.naavrewf2_payload_params = naavrewf2_payload.params
-        for param in self.naavrewf2_payload_params:
-            if 'value' not in param:
-                exceptions.append(f"Parameter {param['value']} is "
-                                  f"missing a value")
-        if exceptions:
-            raise ValueError("Invalid parameters: " + "; ".join(exceptions))
+        self.naavrewf2_payload_params = naavrewf2_payload.params or []
         self.secrets = naavrewf2_payload.secrets
         self.user_name = naavrewf2_payload.user_name
         self.user_groups = naavrewf2_payload.user_groups
