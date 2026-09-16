@@ -64,7 +64,10 @@ def test_params_rejects_entries_missing_required_fields(missing_field):
     with pytest.raises(ValidationError) as exc_info:
         Naavrewf2Payload(**payload)
 
-    assert f"params.0.{missing_field}" in str(exc_info.value)
+    assert any(
+        error["loc"] == ("params", 0, missing_field)
+        for error in exc_info.value.errors()
+    )
 
 
 def test_params_remains_optional():
@@ -86,4 +89,7 @@ def test_params_rejects_non_scalar_values(invalid_value):
     with pytest.raises(ValidationError) as exc_info:
         Naavrewf2Payload(**payload)
 
-    assert "params.0.value" in str(exc_info.value)
+    assert any(
+        error["loc"][:3] == ("params", 0, "value")
+        for error in exc_info.value.errors()
+    )
