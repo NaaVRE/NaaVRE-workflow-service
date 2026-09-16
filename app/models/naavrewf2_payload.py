@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, StrictBool, StrictFloat, StrictInt, StrictStr
 
 from app.models.naavre_wf2 import Naavrewf2
 
@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 class PayloadParam(BaseModel):
     node_id: str
     name: str
-    value: bool | int | float | str
+    value: StrictBool | StrictInt | StrictFloat | StrictStr
 
 
 class Naavrewf2Payload(BaseModel):
