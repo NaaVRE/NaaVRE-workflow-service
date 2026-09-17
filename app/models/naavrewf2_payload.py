@@ -53,13 +53,6 @@ class Naavrewf2Payload(BaseModel):
                     if not uuid_regex.match(param['value']):
                         raise ValueError(f"Invalid UUID for fdo_writer_run_id"
                                          f": {param['value']}")
-                if param['name'] == 'fdo_writer_output_name':
-                    # Value must be a valid filename
-                    filename_regex = re.compile(r'^[\w,\s-]+\.[A-Za-z]{3}$')
-                    if not filename_regex.match(param['value']):
-                        raise ValueError(f"Invalid filename for "
-                                         f"fdo_writer_output_name: "
-                                         f"{param['value']}")
                 if param['name'] == 'fdo_writer_viz_kind':
                     # Value must be a valid viz kind
                     fdo_valid_viz_kinds = get_valid_viz_kinds()
