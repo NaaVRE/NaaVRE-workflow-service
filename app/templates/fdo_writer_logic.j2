@@ -4,11 +4,12 @@ import os
 import shutil
 import sys
 
-fdo_input   = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
-fdo_writer_run_id      = "{{ '{{inputs.parameters.fdo_writer_run_id_' }}{{ node.id[:7] }}{{ '}}' }}"
-fdo_writer_viz_kind    = "{{ '{{inputs.parameters.fdo_writer_viz_kind_' }}{{ node.id[:7] }}{{ '}}' }}"
-fdo_writer_output_name = "{{ '{{inputs.parameters.fdo_writer_output_name_' }}{{ node.id[:7] }}{{ '}}' }}"
-fdo_writer_data_format = "{{ '{{inputs.parameters.fdo_writer_data_format_' }}{{ node.id[:7] }}{{ '}}' }}"
+fdo_input   = os.environ.get('FDO_INPUT').strip().replace('"', '')
+fdo_writer_run_id      = os.environ.get('FDO_WRITER_RUN_ID')
+fdo_writer_viz_kind    = os.environ.get('FDO_WRITER_VIZ_KIND')
+fdo_writer_output_name = os.environ.get('FDO_WRITER_OUTPUT_NAME')
+fdo_writer_data_format = os.environ.get('FDO_WRITER_DATA_FORMAT')
+
 
 # The composer lets the author type this freely, and it is joined onto a path
 # under the user's mounted storage: keep it a bare file name so a value like
