@@ -114,7 +114,7 @@ templates:
     command: [python]
     env:
     - name: FDO_INPUT
-      value: "{{ '{{inputs.parameters.fdo_writer_run_id_' }}{{ node.id[:7] }}{{ '}}' }}"
+      value: "{{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}"
     - name: FDO_WRITER_RUN_ID
       value: "{{ '{{inputs.parameters.fdo_writer_run_id_' }}{{ node.id[:7] }}{{ '}}' }}"
     - name: FDO_WRITER_VIZ_KIND

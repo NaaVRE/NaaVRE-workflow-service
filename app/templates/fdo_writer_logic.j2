@@ -10,6 +10,11 @@ fdo_writer_viz_kind    = os.environ.get('FDO_WRITER_VIZ_KIND')
 fdo_writer_output_name = os.environ.get('FDO_WRITER_OUTPUT_NAME')
 fdo_writer_data_format = os.environ.get('FDO_WRITER_DATA_FORMAT')
 
+print(f'FDO_INPUT={fdo_input}')
+print(f'FDO_WRITER_RUN_ID={fdo_writer_run_id}')
+print(f'FDO_WRITER_VIZ_KIND={fdo_writer_viz_kind}')
+print(f'FDO_WRITER_OUTPUT_NAME={fdo_writer_output_name}')
+print(f'FDO_WRITER_DATA_FORMAT={fdo_writer_data_format}')
 
 # The composer lets the author type this freely, and it is joined onto a path
 # under the user's mounted storage: keep it a bare file name so a value like
