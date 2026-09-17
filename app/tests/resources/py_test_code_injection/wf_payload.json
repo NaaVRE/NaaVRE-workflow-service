@@ -41,12 +41,12 @@
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
       "name": "fdo_writer_run_id",
-      "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
+      "value": "\"; print('INJECTED in 02998201-23b8-48e1-bae9-5d1c887a0411'); #"
     },
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
       "name": "fdo_writer_run_id",
-      "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
+      "value": "\"; print('INJECTED in 9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4'); #"
     },
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
@@ -56,7 +56,7 @@
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
       "name": "fdo_writer_output_name",
-      "value": "cities.geojson"
+      "value": "\"; print('INJECTED in bbe35638-367d-4d89-b349-aed4d5ab290b'); #"
     },
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
@@ -71,7 +71,7 @@
     {
       "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
       "name": "fdo_writer_output_name",
-      "value": "forecast.csv"
+      "value": "\"; print('INJECTED in dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41'); #"
     },
     {
       "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
@@ -86,7 +86,7 @@
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
       "name": "fdo_writer_output_name",
-      "value": "summary.csv"
+      "value": "\"; print('INJECTED in 02998201-23b8-48e1-bae9-5d1c887a0411'); #"
     },
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
@@ -101,7 +101,7 @@
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
       "name": "fdo_writer_output_name",
-      "value": "weather_widget.html"
+      "value": "\"; print('INJECTED in 9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4'); #"
     },
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",

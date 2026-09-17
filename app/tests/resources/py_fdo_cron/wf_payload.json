@@ -30,82 +30,82 @@
     },
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
-      "name": "run_id",
+      "name": "fdo_writer_run_id",
       "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
     },
     {
       "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
-      "name": "run_id",
+      "name": "fdo_writer_run_id",
       "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
     },
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
-      "name": "run_id",
+      "name": "fdo_writer_run_id",
       "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
     },
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
-      "name": "run_id",
+      "name": "fdo_writer_run_id",
       "value": "32f1119c-6979-4a41-b890-b0e550988c8b"
     },
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
-      "name": "viz_kind",
+      "name": "fdo_writer_viz_kind",
       "value": "map"
     },
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
-      "name": "output_name",
+      "name": "fdo_writer_output_name",
       "value": "cities.geojson"
     },
     {
       "node_id": "bbe35638-367d-4d89-b349-aed4d5ab290b",
-      "name": "data_format",
+      "name": "fdo_writer_data_format",
       "value": "application/geo+json"
     },
     {
       "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
-      "name": "viz_kind",
+      "name": "fdo_writer_viz_kind",
       "value": "xy-plot"
     },
     {
       "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
-      "name": "output_name",
+      "name": "fdo_writer_output_name",
       "value": "forecast.csv"
     },
     {
       "node_id": "dcb18f2d-f8b1-4c30-ab63-7b0d0121ae41",
-      "name": "data_format",
+      "name": "fdo_writer_data_format",
       "value": "text/csv"
     },
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
-      "name": "viz_kind",
+      "name": "fdo_writer_viz_kind",
       "value": "table"
     },
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
-      "name": "output_name",
+      "name": "fdo_writer_output_name",
       "value": "summary.csv"
     },
     {
       "node_id": "02998201-23b8-48e1-bae9-5d1c887a0411",
-      "name": "data_format",
+      "name": "fdo_writer_data_format",
       "value": "text/csv"
     },
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
-      "name": "viz_kind",
+      "name": "fdo_writer_viz_kind",
       "value": "html"
     },
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
-      "name": "output_name",
+      "name": "fdo_writer_output_name",
       "value": "weather_widget.html"
     },
     {
       "node_id": "9ff8bc69-23af-43a1-8f7a-eb0f0b6489a4",
-      "name": "data_format",
+      "name": "fdo_writer_data_format",
       "value": "text/html"
     }
   ],

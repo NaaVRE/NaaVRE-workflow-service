@@ -65,6 +65,9 @@ if os.getenv('DEBUG', 'false').lower() == 'true':
 else:
     logging.basicConfig(level=logging.INFO)
 
+os.environ["FDO_VALID_VIZ_KINDS_URL"] = (
+    settings.service_settings.fdo_valid_viz_kinds_url)
+
 
 def valid_access_token(credentials: Annotated[
         HTTPAuthorizationCredentials, Depends(security)]):

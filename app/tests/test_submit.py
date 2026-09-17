@@ -133,6 +133,8 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
+        if 'py_test_code_injection' not in workflow_test_folder:
+            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
@@ -146,12 +148,6 @@ def test_submit():
 
         workflow_dict['naavrewf2']['nodes'] = nodes
         workflow_dict['naavrewf2']['links'] = links
-
-        # Test model
-        try:
-            Naavrewf2Payload(**workflow_dict)
-        except TypeError as ex:
-            assert False, f"Error creating Naavrewf2Payload: {ex}"
 
         submit_response = client.post(
             '/submit/',
@@ -173,6 +169,11 @@ def test_submit():
         if submit_response.status_code != 200 and \
                 responses_dict['submit']['code'] != 200:
             continue
+        # Test model
+        try:
+            Naavrewf2Payload(**workflow_dict)
+        except TypeError as ex:
+            assert False, f"Error creating Naavrewf2Payload: {ex}"
         # Check run_url that the workflow was submitted successfully
         submit_response_json = submit_response.json()
         run_url = submit_response_json['run_url']

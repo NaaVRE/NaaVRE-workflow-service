@@ -5,15 +5,15 @@ import shutil
 import sys
 
 fdo_input   = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
-run_id      = "{{ '{{inputs.parameters.run_id_' }}{{ node.id[:7] }}{{ '}}' }}"
-viz_kind    = "{{ '{{inputs.parameters.viz_kind_' }}{{ node.id[:7] }}{{ '}}' }}"
-output_name = "{{ '{{inputs.parameters.output_name_' }}{{ node.id[:7] }}{{ '}}' }}"
-data_format = "{{ '{{inputs.parameters.data_format_' }}{{ node.id[:7] }}{{ '}}' }}"
+fdo_writer_run_id      = "{{ '{{inputs.parameters.fdo_writer_run_id_' }}{{ node.id[:7] }}{{ '}}' }}"
+fdo_writer_viz_kind    = "{{ '{{inputs.parameters.fdo_writer_viz_kind_' }}{{ node.id[:7] }}{{ '}}' }}"
+fdo_writer_output_name = "{{ '{{inputs.parameters.fdo_writer_output_name_' }}{{ node.id[:7] }}{{ '}}' }}"
+fdo_writer_data_format = "{{ '{{inputs.parameters.fdo_writer_data_format_' }}{{ node.id[:7] }}{{ '}}' }}"
 
 # The composer lets the author type this freely, and it is joined onto a path
 # under the user's mounted storage: keep it a bare file name so a value like
 # '../../.bashrc' cannot escape the run directory.
-output_name = os.path.basename(output_name.strip()) or 'output'
+fdo_writer_output_name = os.path.basename(fdo_writer_output_name.strip()) or 'output'
 
 # Upstream cells emit either an absolute path or one relative to the shared
 # workdir volume, which is mounted at /tmp/data for this template.
@@ -26,11 +26,11 @@ if not os.path.exists(src):
 # crate back through the Jupyter contents API: keep it in sync with
 # src/components/vizPanel/storage.ts in NaaVRE-workflow-jupyterlab.
 storage_base = '/home/jovyan/Cloud Storage/naa-vre-user-data'
-run_dir      = os.path.join(storage_base, 'naavre-runs', run_id)
+run_dir      = os.path.join(storage_base, 'naavre-runs', fdo_writer_run_id)
 outputs_dir  = os.path.join(run_dir, 'outputs')
 os.makedirs(outputs_dir, exist_ok=True)
 
-dest = os.path.join(outputs_dir, output_name)
+dest = os.path.join(outputs_dir, fdo_writer_output_name)
 shutil.copy2(src, dest)
 print(f'Copied {src} -> {dest}')
 
@@ -53,7 +53,7 @@ else:
             {
                 '@id': './',
                 '@type': 'Dataset',
-                'naavre:runId': run_id,
+                'naavre:runId': fdo_writer_run_id,
                 'dateCreated': datetime.datetime.now(
                     datetime.timezone.utc).isoformat(),
                 'hasPart': [],
@@ -61,13 +61,13 @@ else:
         ],
     }
 
-entity_id = f'outputs/{output_name}'
+entity_id = f'outputs/{fdo_writer_output_name}'
 entity = {
     '@id': entity_id,
     '@type': 'File',
-    'name': output_name,
-    'encodingFormat': data_format,
-    'naavre:vizKind': viz_kind,
+    'name': fdo_writer_output_name,
+    'encodingFormat': fdo_writer_data_format,
+    'naavre:vizKind': fdo_writer_viz_kind,
 }
 # Re-running the same writer (e.g. a retried step) must not duplicate entries.
 if any(e['@id'] == entity_id for e in crate['@graph']):
