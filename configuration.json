@@ -1,4 +1,5 @@
 {
+  "fdo_valid_viz_kinds_url": "https://raw.githubusercontent.com/NaaVRE/NaaVRE-conf/refs/heads/main/fdo_valid_viz_kinds.json",
   "vl_configurations": [
     {
       "name": "openlab",
