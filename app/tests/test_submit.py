@@ -100,11 +100,8 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
     for task_name in parallel_tasks:
         for wf_nodes_name in wf_nodes:
             if task_name in wf_nodes_name:
-                expected_count = parallel_tasks[task_name]
+                expected_count = int(parallel_tasks[task_name])
                 count = wf_nodes[wf_nodes_name]
-                if count != expected_count:
-                    print(f"Expected {expected_count} branches for task "
-                          f"{task_name}, but got {count}")
                 assert count == expected_count, (f"Expected {expected_count} "
                                                  f"branches for task "
                                                  f"{task_name}, but got "
