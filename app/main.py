@@ -121,7 +121,8 @@ def convert(access_token: Annotated[dict, Depends(valid_access_token)],
         wf_engine.set_payload(naavrewf2_payload)
         return wf_engine.naavrewf2_2_argo_workflow()
     except Exception as ex:
-        logging.debug(msg="Error submitting workflow", exc_info=ex)
+        logging.debug(msg="Error submitting workflow: " +
+                          str(naavrewf2_payload.naavrewf2.nodes), exc_info=ex)
         raise HTTPException(status_code=400, detail="Error submitting "
                                                     "workflow: " + str(ex))
 
