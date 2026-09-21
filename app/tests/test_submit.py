@@ -122,6 +122,8 @@ def wait_for_wf(wf_status_response_json=None,
         )
         assert wf_status_response.status_code == 200
         wf_status_response_json = wf_status_response.json()
+    if wf_status_response_json['status']['phase'] == 'Failed':
+        print("Workflow failed: "+str(workflow_dict))
     assert wf_status_response_json['status']['phase'] != 'Failed'
     assert wf_status_response_json['status']['phase'] != 'Error'
     parallel_tasks = get_num_of_max_parallel_tasks(workflow_dict=workflow_dict)

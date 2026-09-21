@@ -135,8 +135,6 @@ class ArgoEngine(WFEngine, ABC):
                     self.vl_config.wf_engine_config.default_max_branches
                     or 100)
         dependencies_dag = self.parser.get_dependencies_dag()
-        print(self.nodes)
-        print(dependencies_dag)
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
             dependencies_dag=dependencies_dag,
