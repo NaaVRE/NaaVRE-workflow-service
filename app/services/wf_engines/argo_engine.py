@@ -150,7 +150,7 @@ class ArgoEngine(WFEngine, ABC):
             )
         except Exception as ex:
             raise Exception(f"Error rendering workflow template: {ex}" +
-                            ' workflow_name: ' + workflow_name)
+                            ' =self.nodes: ' + str(self.nodes))
 
         workflow_dict = yaml.safe_load(
             workflow_yaml.replace('{unescaped_username}', self.user_name))
