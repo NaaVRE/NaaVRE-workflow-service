@@ -134,19 +134,23 @@ class ArgoEngine(WFEngine, ABC):
         default_max_branches = (
                     self.vl_config.wf_engine_config.default_max_branches
                     or 100)
-        workflow_yaml = self.workflow_template.render(
-            vlab_slug=self.virtual_lab_name,
-            dependencies_dag=self.parser.get_dependencies_dag(),
-            nodes=self.nodes,
-            naavrewf2_payload_params=self.naavrewf2_payload_params or [],
-            k8s_secret_name=k8s_secret_name,
-            workflow_name=workflow_name,
-            workflow_service_account=service_account,
-            workdir_storage_size=workdir_storage_size,
-            cron_schedule=self.cron_schedule,
-            extraVolumeMounts=self.user_extraVolumeMounts or [],
-            default_max_branches=int(default_max_branches)
-        )
+        try:
+            workflow_yaml = self.workflow_template.render(
+                vlab_slug=self.virtual_lab_name,
+                dependencies_dag=self.parser.get_dependencies_dag(),
+                nodes=self.nodes,
+                naavrewf2_payload_params=self.naavrewf2_payload_params or [],
+                k8s_secret_name=k8s_secret_name,
+                workflow_name=workflow_name,
+                workflow_service_account=service_account,
+                workdir_storage_size=workdir_storage_size,
+                cron_schedule=self.cron_schedule,
+                extraVolumeMounts=self.user_extraVolumeMounts or [],
+                default_max_branches=int(default_max_branches)
+            )
+        except Exception as ex:
+            raise Exception(f"Error rendering workflow template: {ex}" +
+                            ' workflow_name: ' + workflow_name)
 
         workflow_dict = yaml.safe_load(
             workflow_yaml.replace('{unescaped_username}', self.user_name))
