@@ -102,13 +102,17 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
             if task_name in wf_nodes_name:
                 expected_count = parallel_tasks[task_name]
                 count = wf_nodes[wf_nodes_name]
+                if count != expected_count:
+                    print(f"Expected {expected_count} branches for task "
+                          f"{task_name}, but got {count}")
                 assert count == expected_count, (f"Expected {expected_count} "
                                                  f"branches for task "
                                                  f"{task_name}, but got "
                                                  f"{count}")
 
 
-def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
+def wait_for_wf(wf_status_response_json=None,
+                workflow_dict=None,
                 run_url=None):
     print(wf_status_response_json['status']['phase'])
     while 'Running' in wf_status_response_json['status']['phase'] or \
@@ -133,8 +137,6 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
-        if 'py_test_code_injection' not in workflow_test_folder:
-            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
