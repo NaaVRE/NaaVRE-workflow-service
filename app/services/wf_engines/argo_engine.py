@@ -134,9 +134,10 @@ class ArgoEngine(WFEngine, ABC):
         default_max_branches = (
                     self.vl_config.wf_engine_config.default_max_branches
                     or 100)
+        dependencies_dag = self.parser.get_dependencies_dag()
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
-            dependencies_dag=self.parser.get_dependencies_dag(),
+            dependencies_dag=dependencies_dag,
             nodes=self.nodes,
             naavrewf2_payload_params=self.naavrewf2_payload_params or [],
             k8s_secret_name=k8s_secret_name,
@@ -145,7 +146,7 @@ class ArgoEngine(WFEngine, ABC):
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
             extraVolumeMounts=self.user_extraVolumeMounts or [],
-            default_max_branches=default_max_branches
+            default_max_branches=int(default_max_branches)
         )
 
         workflow_dict = yaml.safe_load(

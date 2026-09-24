@@ -100,7 +100,7 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
     for task_name in parallel_tasks:
         for wf_nodes_name in wf_nodes:
             if task_name in wf_nodes_name:
-                expected_count = parallel_tasks[task_name]
+                expected_count = int(parallel_tasks[task_name])
                 count = wf_nodes[wf_nodes_name]
                 assert count == expected_count, (f"Expected {expected_count} "
                                                  f"branches for task "
@@ -108,7 +108,8 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
                                                  f"{count}")
 
 
-def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
+def wait_for_wf(wf_status_response_json=None,
+                workflow_dict=None,
                 run_url=None):
     print(wf_status_response_json['status']['phase'])
     while 'Running' in wf_status_response_json['status']['phase'] or \
@@ -121,6 +122,8 @@ def wait_for_wf(wf_status_response_json=None, workflow_dict=None,
         )
         assert wf_status_response.status_code == 200
         wf_status_response_json = wf_status_response.json()
+    if wf_status_response_json['status']['phase'] == 'Failed':
+        print("Workflow failed: "+str(workflow_dict))
     assert wf_status_response_json['status']['phase'] != 'Failed'
     assert wf_status_response_json['status']['phase'] != 'Error'
     parallel_tasks = get_num_of_max_parallel_tasks(workflow_dict=workflow_dict)
@@ -147,12 +150,6 @@ def test_submit():
         workflow_dict['naavrewf2']['nodes'] = nodes
         workflow_dict['naavrewf2']['links'] = links
 
-        # Test model
-        try:
-            Naavrewf2Payload(**workflow_dict)
-        except TypeError as ex:
-            assert False, f"Error creating Naavrewf2Payload: {ex}"
-
         submit_response = client.post(
             '/submit/',
             headers={'Authorization': 'Bearer ' + user_auth_token},
@@ -173,6 +170,11 @@ def test_submit():
         if submit_response.status_code != 200 and \
                 responses_dict['submit']['code'] != 200:
             continue
+        # Test model
+        try:
+            Naavrewf2Payload(**workflow_dict)
+        except TypeError as ex:
+            assert False, f"Error creating Naavrewf2Payload: {ex}"
         # Check run_url that the workflow was submitted successfully
         submit_response_json = submit_response.json()
         run_url = submit_response_json['run_url']
