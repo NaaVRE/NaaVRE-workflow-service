@@ -7,6 +7,7 @@ from app.models.vl_config import VLConfig
 
 class ServiceSettings(BaseSettings):
     vl_configurations: List[VLConfig]
+    fdo_valid_viz_kinds_url: str
 
 
 class Settings:
