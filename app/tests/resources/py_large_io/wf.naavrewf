@@ -42,8 +42,8 @@
               }
             ],
             "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.16",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.16"
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.23",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.23"
             },
             "dependencies": [],
             "inputs": [
@@ -56,15 +56,15 @@
             "confs": [],
             "params": [],
             "secrets": [],
-            "title": "process-list-spiros-koulouzis-lifewatch-eu",
-            "description": "process-list-spiros-koulouzis-lifewatch-eu",
+            "title": "process-list-user",
+            "description": "process-list-user",
             "created": "2026-08-28T09:33:57.931996Z",
             "modified": "2026-08-28T09:33:58.095993Z",
             "version": 1,
             "template_format": "v1",
-            "container_image": "ghcr.io/naavre/cells-vl-openlab/process-list-spiros-koulouzis-lifewatch-eu:458c289",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/process-list-user:458c289",
             "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-openlab/tree/668b6c8a8e5daa72983045363ada0e9b9bade870/process-list-spiros-koulouzis-lifewatch-eu",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/e65aace7fc774a41dbeb1674952d84e899d96b29/process-list-user",
             "is_draft": false
           }
         },
@@ -76,8 +76,8 @@
       "34a7cee4-38ba-4a92-a94f-d79058f05787": {
         "id": "34a7cee4-38ba-4a92-a94f-d79058f05787",
         "position": {
-          "x": 742,
-          "y": 167
+          "x": 695,
+          "y": 160
         },
         "orientation": 0,
         "type": "splitter",
@@ -154,8 +154,8 @@
       "0099893f-315c-448f-8f07-b9ece10dca14": {
         "id": "0099893f-315c-448f-8f07-b9ece10dca14",
         "position": {
-          "x": 453,
-          "y": 215
+          "x": 334,
+          "y": 150
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -203,8 +203,8 @@
               }
             ],
             "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.16",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.16"
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.23",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.23"
             },
             "dependencies": [
               {
@@ -229,15 +229,15 @@
               }
             ],
             "secrets": [],
-            "title": "generate-list-spiros-koulouzis-lifewatch-eu",
-            "description": "generate-list-spiros-koulouzis-lifewatch-eu",
+            "title": "process-list-user",
+            "description": "process-list-user",
             "created": "2026-08-28T10:55:34.030841Z",
             "modified": "2026-08-28T10:55:34.332925Z",
             "version": 5,
             "template_format": "v1",
-            "container_image": "ghcr.io/naavre/cells-vl-openlab/generate-list-spiros-koulouzis-lifewatch-eu:5bb7451",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/process-list-user:458c289",
             "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-openlab/tree/e6f9cddc591c73a02bd2bfbb84a0458a033ad205/generate-list-spiros-koulouzis-lifewatch-eu",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/e65aace7fc774a41dbeb1674952d84e899d96b29/process-list-user",
             "is_draft": false
           }
         },
@@ -258,21 +258,29 @@
           "nodeId": "a1a8baa4-38fb-4a84-9a99-706041cb974c",
           "portId": "a_list"
         }
+      },
+      "5a75ae00-2dc4-479b-b9d6-e56468346f6f": {
+        "id": "5a75ae00-2dc4-479b-b9d6-e56468346f6f",
+        "from": {
+          "nodeId": "0099893f-315c-448f-8f07-b9ece10dca14",
+          "portId": "a_list"
+        },
+        "to": {
+          "nodeId": "34a7cee4-38ba-4a92-a94f-d79058f05787",
+          "portId": "splitter_source"
+        }
       }
     },
     "properties": {
-      "params": [
-        {
-          "node_id": "34a7cee4-38ba-4a92-a94f-d79058f05787",
-          "name": "param_max_branches",
-          "value": "10"
-        }
-      ]
+      "params": []
     },
     "selected": {},
     "hovered": {
       "type": "node",
       "id": "0099893f-315c-448f-8f07-b9ece10dca14"
+    },
+    "metadata": {
+      "version": "1.1"
     }
   }
 }

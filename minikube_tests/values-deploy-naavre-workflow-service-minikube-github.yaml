@@ -1,7 +1,7 @@
 global:
   namespace: naavre
 jupyterhub:
-  enabled: false
+  enabled: true
   vlabs:
     openlab:
       image:

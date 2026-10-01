@@ -2,7 +2,9 @@ import base64
 import json
 import os
 from abc import ABC
+from functools import lru_cache
 
+# from profiling_decorator import profile
 import jinja2
 import requests
 import yaml
@@ -11,6 +13,16 @@ from slugify import slugify
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
 from app.services.wf_engines.wf_engine import WFEngine
+
+MAX_TASK_TITLE_LEN = 62
+
+
+def build_task_title(node, node_id: str) -> str:
+    suffix = f"-{node_id[:7]}"
+    base_title = node.type if node.type in {'splitter', 'merger'} \
+        else node.properties.cell.title
+    max_base_len = MAX_TASK_TITLE_LEN - len(suffix)
+    return f"{base_title[:max_base_len]}{suffix}"
 
 
 def is_cron(workflow_dict):
@@ -33,10 +45,7 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
     all_artifacts = []
     for node_id in nodes:
         node = nodes[node_id]
-        if node.type == 'splitter' or node.type == 'merger':
-            title = node.type + '-' + node_id[:7]
-        else:
-            title = node.properties.cell.title + '-' + node_id[:7]
+        title = build_task_title(node=node, node_id=node_id)
         for dependency in dependencies_dag[node_id]:
             name = dependency['from_port']
             from_task = dependency['task_name']
@@ -117,10 +126,7 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
                 all_parameters.append(parameter)
     for node_id in nodes:
         node = nodes[node_id]
-        if node.type == 'splitter' or node.type == 'merger':
-            title = node.type + '-' + node_id[:7]
-        else:
-            title = node.properties.cell.title + '-' + node_id[:7]
+        title = build_task_title(node=node, node_id=node_id)
         node_parameters = []
         node_artifacts = []
         for parameter in all_parameters:
@@ -233,6 +239,7 @@ class ArgoEngine(WFEngine, ABC):
         return {'run_url': run_url,
                 'naavrewf2': self.naavrewf2_payload.naavrewf2}
 
+    @lru_cache
     def naavrewf2_2_argo_workflow(self, create_secrets: bool = True):
         if self.secrets and create_secrets:
             k8s_secret_name = self.add_secrets_to_k8s()

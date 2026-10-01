@@ -33,12 +33,15 @@ templates:
     {% for node in nodes.values() %}
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
-    {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
+    {% set id_suffix = '-' + node.id[:7] %}
+    {% set base_title = node.type if is_special_node else node.properties.cell.title %}
+    {% set title = base_title[:(62 - (id_suffix | length))] + id_suffix %}
+    {% set task_template_name = title[:58] + '-tmp' %}
     - name: {{ title }}
       {% if dependencies_dag[node.id]|length > 0 %}
       dependencies: [{% for d in dependencies_dag[node.id] %} {{ d.task_name }}{% if not loop.last %},{% endif %} {% endfor %}]
       {% endif %}
-      template: {{ title }}-tmp
+      template: {{ task_template_name }}
       arguments:
       {% if node.properties.artifacts %}
         artifacts:
@@ -65,10 +68,14 @@ templates:
 {% for node in nodes.values() %}
 {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
-{% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title + "-" + node.id[:7] %}
+{% set id_suffix = '-' + node.id[:7] %}
+{% set base_title = node.type if is_special_node else node.properties.cell.title %}
+{% set title = base_title[:(62 - (id_suffix | length))] + id_suffix %}
+{% set task_template_name = title[:58] + '-tmp' %}
+{% set init_container_name = 'init-' + title[:57] %}
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
-- name: {{ title }}-tmp
+- name: {{ task_template_name }}
   inputs:
     {% if node.properties.parameters %}
     parameters:
@@ -143,7 +150,7 @@ templates:
         image: "{{ node.properties.cell.container_image }}"
         imagePullPolicy: Always
         dependencies:
-            - init-input-args-{{ title }}
+            - {{ init_container_name }}
         env:
         {%  for s in secrets %}
         - name: {{ s.name }}
@@ -166,7 +173,7 @@ templates:
             {%  else %}
             xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
             {%  endif %}
-      - name: init-input-args-{{ title }}
+      - name: {{ init_container_name }}
         image: python:alpine3.9
         command: ["python", "-c"]
         args:

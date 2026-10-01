@@ -6,9 +6,20 @@ from app.models.naavre_wf2 import Naavrewf2, Node, Link, Cell, SpecialCell
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+MAX_TASK_TITLE_LEN = 62
+
 
 def is_special_node(node: Node) -> bool:
     return node.type in ['splitter', 'merger']
+
+
+def build_task_title(node: Node) -> str:
+    node_id = node.id[:7]
+    suffix = f'-{node_id}'
+    base_title = node.type if is_special_node(node) else (
+        node.properties.cell.title)
+    max_base_len = MAX_TASK_TITLE_LEN - len(suffix)
+    return f'{base_title[:max_base_len]}{suffix}'
 
 
 class WorkflowParser:
@@ -42,11 +53,7 @@ class WorkflowParser:
             to_node_id = to_node.id[:7]
             from_node_id = from_node.id[:7]
 
-            if is_special_node(from_node):
-                task_name = f'{from_node.type}-{from_node_id}'
-            else:
-                task_name = (f'{from_node.properties.cell.title}-'
-                             f'{from_node_id}')
+            task_name = build_task_title(from_node)
 
             self.dependencies[to_node.id].append({
                 'task_name': task_name,
