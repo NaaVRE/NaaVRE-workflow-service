@@ -78,6 +78,15 @@ for arg in args:
             end = start + chunk
             list_of_lists.append(var_value[start:end])
 
+        # Persist each chunk as a separate JSON file next to the main splitter output.
+        output_base, _ = os.path.splitext(arg['path'])
+        chunk_file_paths = []
+        for idx, sublist in enumerate(list_of_lists):
+            chunk_path = f"{output_base}_{idx}.json"
+            with open(chunk_path, "w") as chunk_out:
+                chunk_out.write(json.dumps(sublist))
+            chunk_file_paths.append(chunk_path)
+
         f_out = open(arg['path'], "w")
-        f_out.write(json.dumps(list_of_lists))
+        f_out.write(json.dumps(chunk_file_paths))
         f_out.close()
