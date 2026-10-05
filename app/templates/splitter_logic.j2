@@ -94,4 +94,4 @@ for arg in args:
         print(chunk_file_paths)
         f_out = open(arg['path'], "w")
         f_out.write(json.dumps(chunk_file_paths))
-        chunk_paths_out.write(json.dumps(chunk_file_paths))
+        f_out.close()
