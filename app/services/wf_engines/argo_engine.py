@@ -128,14 +128,20 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
         node = nodes[node_id]
         title = build_task_title(node=node, node_id=node_id)
         node_parameters = []
+        node_parameter_keys = set()
         node_artifacts = []
+        node_artifact_keys = set()
         for parameter in all_parameters:
             if (parameter['to_task'] == title or
-                    parameter['from_task'] == title):
+                    parameter['from_task'] == title and
+                    parameter['name'] not in node_parameter_keys):
+                node_parameter_keys.add(parameter['name'])
                 node_parameters.append(parameter)
         for artifact in all_artifacts:
             if (artifact['to_task'] == title or
-                    artifact['from_task'] == title):
+                    artifact['from_task'] == title and
+                    artifact['name'] not in node_artifact_keys):
+                node_artifact_keys.add(artifact['name'])
                 node_artifacts.append(artifact)
         node.properties.parameters = node_parameters
         node.properties.artifacts = node_artifacts

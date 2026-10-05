@@ -1,7 +1,7 @@
 global:
   namespace: naavre
 jupyterhub:
-  enabled: false
+  enabled: true
   vlabs:
     openlab:
       image:
@@ -14,7 +14,7 @@ jupyterhub:
         module_mapping_url: https://raw.githubusercontent.com/NaaVRE/NaaVRE-conf/main/module_mapping.json
 
 naavreContainerizerService:
-  enabled: false
+  enabled: true
 
 naavreWorkflowService:
   enabled: false
