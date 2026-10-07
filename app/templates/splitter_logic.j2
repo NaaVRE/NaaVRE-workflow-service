@@ -15,7 +15,7 @@ input_parameter_value = {{ parameter.value }}
 input_parameter_type = '{{ parameter.type }}'
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
-path = "/workspace/{{ port.id }}_{{ node.id[:7] }}.json"
+path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
 {% endif %}
 {% endfor %}
 arg = {
@@ -40,7 +40,7 @@ with open(path) as f:
 input_parameter_type = '{{ artifact.type }}'
 {% for port in ports.values() %}
 {% if port.type == 'right' %}
-path = "/workspace/{{ port.id }}_{{ node.id[:7] }}.json"
+path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
 {% endif %}
 {% endfor %}
 
@@ -78,56 +78,21 @@ for arg in args:
             end = start + chunk
             list_of_lists.append(var_value[start:end])
 
-        # list contents of /workspace for debugging purposes
-        print(f"Contents of /workspace:")
-        for file_name in os.listdir('/workspace'):
-            print(f" - {file_name}")
-        # list contents of /tmp for debugging purposes
-        print(f"Contents of /tmp:")
-        for file_name in os.listdir('/tmp'):
-            print(f" - {file_name}")
-        # list contents of the /tmp/data directory for debugging purposes
-        tmp_data_dir = '/tmp/data'
-        if os.path.exists(tmp_data_dir):
-            print(f"Contents of {tmp_data_dir}:")
-            for file_name in os.listdir(tmp_data_dir):
-                print(f" - {file_name}")
-
-        output_base_path = '/workspace'
-        output_base, _ = os.path.splitext(arg['path'])
-        list_of_lists_path = f"{output_base_path}/{output_base}_list_of_lists.json"
+        file_name = os.path.splitext(os.path.basename(path))[0]
+        output_base = f"/workspace/{file_name}"
+        list_of_lists_path = f"{output_base}_list_of_lists.json"
         chunk_file_paths = []
         for idx, sublist in enumerate(list_of_lists):
-            chunk_path = f"{output_base_path}/{output_base}_{idx}.json"
+            chunk_path = f"{output_base}_{idx}.json"
             print(f"Writing chunk {idx} to {chunk_path} with {len(sublist)} items.")
             with open(chunk_path, "w") as chunk_out:
                 chunk_out.write(json.dumps(sublist))
             chunk_file_paths.append(chunk_path)
 
+        print(f"Writing list of lists to {list_of_lists_path} with {len(list_of_lists)} sublists.")
         with open(list_of_lists_path, "w") as list_out:
             list_out.write(json.dumps(list_of_lists))
 
-        # list contents of output_base for debugging purposes
-        print(f"Contents of {output_base}:")
-        for file_name in os.listdir(os.path.dirname(output_base)):
-            print(f" - {file_name}")
-
-        print(chunk_file_paths)
         f_out = open(arg['path'], "w")
         f_out.write(json.dumps(chunk_file_paths))
         f_out.close()
-
-        # list contents of /workspace for debugging purposes
-        print(f"Contents of /workspace:")
-        for file_name in os.listdir('/workspace'):
-            print(f" - {file_name}")
-        # list contents of /tmp for debugging purposes
-        print(f"Contents of /tmp:")
-        for file_name in os.listdir('/tmp'):
-            print(f" - {file_name}")
-        # list contents of the /tmp/data directory for debugging purposes
-        tmp_data_dir = '/tmp/data'
-        if os.path.exists(tmp_data_dir):
-            print(f"Contents of {tmp_data_dir}:")
-            for file_name in os.listdir(tmp_data_dir):
-                print(f" - {file_name}")
