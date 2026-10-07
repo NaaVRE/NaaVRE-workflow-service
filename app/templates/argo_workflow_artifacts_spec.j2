@@ -112,6 +112,8 @@ templates:
   volumeMounts:
     - name: workspace
       mountPath: /workspace
+    - name: workdir
+      mountPath: /tmp/data
   script:
     image: python:alpine3.9
     imagePullPolicy: IfNotPresent
