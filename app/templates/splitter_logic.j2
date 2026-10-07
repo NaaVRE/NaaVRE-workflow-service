@@ -1,13 +1,61 @@
 import json
 import os
-
-{{ include('io_args.j2', ports=ports, node=node) }}
-
-
+{% set id_suffix = '-' + node.id[:7] %}
+{% set title = node.type[:(62 - (id_suffix | length))] + id_suffix %}
 default_max_branches = {{ default_max_branches }}
+param_max_branches = default_max_branches
+
+args = []
+
+# node.properties.parameters
+{% for parameter in node.properties.parameters %}
+{% if  parameter.to_task == title %}
+input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
+input_parameter_value = {{ parameter.value }}
+input_parameter_type = '{{ parameter.type }}'
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+path = "/workspace/{{ port.id }}_{{ node.id[:7] }}.json"
+{% endif %}
+{% endfor %}
+arg = {
+   "name": input_parameter_name,
+   "type": input_parameter_type,
+   "value": str(input_parameter_value),
+   "path": path
+}
+args.append(arg)
+{% endif %}
+{% endfor %}
+
+# node.properties.artifacts
+{% for artifact in node.properties.artifacts %}
+{% if artifact.to_task == title %}
+input_parameter_name = '{{ artifact.name }}'
+path = "/tmp/" + input_parameter_name + ".json"
+if not os.path.exists(path):
+    path = "/workspace/" + input_parameter_name + ".json"
+with open(path) as f:
+    input_parameter_value = json.load(f)
+input_parameter_type = '{{ artifact.type }}'
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+path = "/workspace/{{ port.id }}_{{ node.id[:7] }}.json"
+{% endif %}
+{% endfor %}
+
+arg = {
+   "name": input_parameter_name,
+   "type": input_parameter_type,
+   "value": str(input_parameter_value),
+   "path": path
+}
+args.append(arg)
+{% endif %}
+{% endfor %}
 
 for arg in args:
-    if 'param_max_branches' in arg['name']:
+    if arg['name'] == 'param_max_branches':
         param_max_branches = int(arg['value'])
     else:
         var_name = arg['name']
@@ -30,35 +78,56 @@ for arg in args:
             end = start + chunk
             list_of_lists.append(var_value[start:end])
 
-        file_name = os.path.splitext(os.path.basename(path))[0]
-        shared_dir_mount = '{{ shared_dir_mount }}'
-        output_base = f"{shared_dir_mount}/{file_name}"
-        max_inline_payload_bytes = 0 #256 * 1024
-        list_of_lists_json = json.dumps(list_of_lists)
+        # list contents of /workspace for debugging purposes
+        print(f"Contents of /workspace:")
+        for file_name in os.listdir('/workspace'):
+            print(f" - {file_name}")
+        # list contents of /tmp for debugging purposes
+        print(f"Contents of /tmp:")
+        for file_name in os.listdir('/tmp'):
+            print(f" - {file_name}")
+        # list contents of the /tmp/data directory for debugging purposes
+        tmp_data_dir = '/tmp/data'
+        if os.path.exists(tmp_data_dir):
+            print(f"Contents of {tmp_data_dir}:")
+            for file_name in os.listdir(tmp_data_dir):
+                print(f" - {file_name}")
 
-{#        if len(list_of_lists_json.encode("utf-8")) > max_inline_payload_bytes:#}
-        if False:
-            chunk_file_paths = []
-            for idx, sublist in enumerate(list_of_lists):
-                chunk_path = f"{output_base}_{idx}.json"
-                print(f"Writing chunk {idx} to {chunk_path} with {len(sublist)} items.")
-                # Persist each chunk with metadata expected by downstream tasks.
-                chunk_payload = {
-                    "name": var_name,
-                    "value": sublist,
-                    "type": var_type,
-                }
-                print(f"Chunk payload for {chunk_path}: {chunk_payload}")
-                with open(chunk_path, "w") as chunk_out:
-                    chunk_out.write(json.dumps(chunk_payload))
-                chunk_file_paths.append(chunk_path)
+        output_base_path = '/workspace'
+        output_base, _ = os.path.splitext(arg['path'])
+        list_of_lists_path = f"{output_base_path}/{output_base}_list_of_lists.json"
+        chunk_file_paths = []
+        for idx, sublist in enumerate(list_of_lists):
+            chunk_path = f"{output_base_path}/{output_base}_{idx}.json"
+            print(f"Writing chunk {idx} to {chunk_path} with {len(sublist)} items.")
+            with open(chunk_path, "w") as chunk_out:
+                chunk_out.write(json.dumps(sublist))
+            chunk_file_paths.append(chunk_path)
 
-            chunk_file_refs = [
-                {"name": var_name, "value": chunk_path, "type": "ref"}
-                for chunk_path in chunk_file_paths
-            ]
-            with open(arg['path'], "w") as f_out:
-                f_out.write(json.dumps(chunk_file_refs))
-        else:
-            with open(arg['path'], "w") as f_out:
-                f_out.write(list_of_lists_json)
+        with open(list_of_lists_path, "w") as list_out:
+            list_out.write(json.dumps(list_of_lists))
+
+        # list contents of output_base for debugging purposes
+        print(f"Contents of {output_base}:")
+        for file_name in os.listdir(os.path.dirname(output_base)):
+            print(f" - {file_name}")
+
+        print(chunk_file_paths)
+        f_out = open(arg['path'], "w")
+        f_out.write(json.dumps(chunk_file_paths))
+        f_out.close()
+
+        # list contents of /workspace for debugging purposes
+        print(f"Contents of /workspace:")
+        for file_name in os.listdir('/workspace'):
+            print(f" - {file_name}")
+        # list contents of /tmp for debugging purposes
+        print(f"Contents of /tmp:")
+        for file_name in os.listdir('/tmp'):
+            print(f" - {file_name}")
+        # list contents of the /tmp/data directory for debugging purposes
+        tmp_data_dir = '/tmp/data'
+        if os.path.exists(tmp_data_dir):
+            print(f"Contents of {tmp_data_dir}:")
+            for file_name in os.listdir(tmp_data_dir):
+                print(f" - {file_name}")
