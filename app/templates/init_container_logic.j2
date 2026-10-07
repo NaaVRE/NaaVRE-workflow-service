@@ -101,6 +101,21 @@ try:
                     value = '"'+value+'"'
                 line = f'--{name}={value}'
                 f.write(line.encode() + b"\0")
+
+    # list contents of /workspace for debugging purposes
+    print(f"Contents of /workspace:")
+    for file_name in os.listdir('/workspace'):
+        print(f" - {file_name}")
+    # list contents of /tmp for debugging purposes
+    print(f"Contents of /tmp:")
+    for file_name in os.listdir('/tmp'):
+        print(f" - {file_name}")
+    # list contents of the /tmp/data directory for debugging purposes
+    tmp_data_dir = '/tmp/data'
+    if os.path.exists(tmp_data_dir):
+        print(f"Contents of {tmp_data_dir}:")
+        for file_name in os.listdir(tmp_data_dir):
+            print(f" - {file_name}")
 except Exception as e:
     print("Error in init container logic:")
     traceback.print_exc()

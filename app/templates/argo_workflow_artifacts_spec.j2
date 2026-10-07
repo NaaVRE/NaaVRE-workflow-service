@@ -109,6 +109,9 @@ templates:
     {% endif %}
   {% if is_special_node %}
   {% set special_dep = dependencies_dag[node.id][0] %}
+  volumeMounts:
+    - name: workspace
+      mountPath: /workspace
   script:
     image: python:alpine3.9
     imagePullPolicy: IfNotPresent

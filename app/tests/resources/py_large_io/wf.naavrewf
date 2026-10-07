@@ -359,7 +359,10 @@
       "params": []
     },
     "selected": {},
-    "hovered": {},
+    "hovered": {
+      "type": "node",
+      "id": "9e681b7a-0bd4-4301-b893-a1b24416913f"
+    },
     "metadata": {
       "version": "1.1"
     }
