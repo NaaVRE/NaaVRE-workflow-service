@@ -167,7 +167,8 @@ templates:
             cat /workspace/{{ node.id[:7] }}/inputs.json;
             {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
             {%  else %}
-            xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt
+{#            xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt#}
+            python -c 'import os,sys,runpy; sys.argv=["/app/task.py"]+[os.fsdecode(a) for a in open("/workspace/{{ node.id[:7] }}/inputs.txt","rb").read().split(b"\0") if a]; sys.path.insert(0,"/app"); runpy.run_path("/app/task.py", run_name="__main__")'
             {%  endif %}
       - name: init-input-args-{{ title }}
         image: python:alpine3.9
