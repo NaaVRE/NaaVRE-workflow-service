@@ -109,15 +109,13 @@ templates:
     {% endif %}
   {% if is_special_node %}
   {% set special_dep = dependencies_dag[node.id][0] %}
-  volumeMounts:
-    - name: workspace
-      mountPath: /workspace
-    - name: workdir
-      mountPath: /tmp/data
   script:
     image: python:alpine3.9
     imagePullPolicy: IfNotPresent
     command: [python]
+    volumeMounts:
+    - name: workdir
+      mountPath: /tmp/data
     source: |
       {% if is_splitter %}
       {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node, naavrewf2_payload_params=naavrewf2_payload_params, default_max_branches=default_max_branches) | indent(6) }}

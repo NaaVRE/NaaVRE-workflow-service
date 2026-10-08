@@ -1,5 +1,37 @@
 import json
 import os
+
+# List all volume mounts and their contents for debugging purposes.
+{#      volumeMounts:#}
+{#        - name: workspace#}
+{#          mountPath: /workspace#}
+{#        - name: workdir#}
+{#          mountPath: /tmp/data#}
+
+
+def _print_mount_contents(path):
+    if not os.path.exists(path):
+        print(f"- {path}: missing")
+        return
+    if not os.path.isdir(path):
+        print(f"- {path}: exists but is not a directory")
+        return
+
+    try:
+        entries = sorted(os.listdir(path))
+    except OSError as err:
+        print(f"- {path}: unreadable ({err})")
+        return
+
+    print(f"- {path}: {len(entries)} item(s)")
+    for name in entries:
+        print(f"    - {name}")
+
+
+print("Volume mounts and their contents:")
+for _mount_path in ["/workspace", "/tmp/data", "/tmp"]:
+    _print_mount_contents(_mount_path)
+
 {% set id_suffix = '-' + node.id[:7] %}
 {% set title = node.type[:(62 - (id_suffix | length))] + id_suffix %}
 default_max_branches = {{ default_max_branches }}
@@ -79,7 +111,7 @@ for arg in args:
             list_of_lists.append(var_value[start:end])
 
         file_name = os.path.splitext(os.path.basename(path))[0]
-        shared_dir_mount = '/workspace/'
+        shared_dir_mount = '/tmp/data/'
         output_base = f"{shared_dir_mount}/{file_name}"
         list_of_lists_path = f"{output_base}_list_of_lists.json"
         chunk_file_paths = []
