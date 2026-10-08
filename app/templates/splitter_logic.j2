@@ -114,9 +114,9 @@ for arg in args:
                 chunk_out.write(json.dumps(sublist))
             chunk_file_paths.append(chunk_path)
 
-        print(f"Writing list of lists to {list_of_lists_path} with {len(list_of_lists)} sublists.")
-        with open(list_of_lists_path, "w") as list_out:
-            list_out.write(json.dumps(list_of_lists))
+{#        print(f"Writing list of lists to {list_of_lists_path} with {len(list_of_lists)} sublists.")#}
+{#        with open(list_of_lists_path, "w") as list_out:#}
+{#            list_out.write(json.dumps(list_of_lists))#}
 
         f_out = open(arg['path'], "w")
         f_out.write(json.dumps(chunk_file_paths))
