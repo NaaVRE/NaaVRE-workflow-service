@@ -159,6 +159,7 @@ templates:
         {{ include('init_container_logic.j2', ports=ports,node=node) | indent(8) }}
         PY
         python /tmp/init_input_args.py;
+        {% set inputs_dir = '/workspace/' ~ node.id[:7] %}
         {% if node.properties.cell.kernel == 'ipython' %}
         {% set cmd = 'python /app/task.py' %}
         {% elif node.properties.cell.kernel == 'IRkernel' %}
@@ -167,9 +168,10 @@ templates:
         {%  if  node.properties.cell.json_args_supported %}
         cat /workspace/{{ node.id[:7] }}/inputs.json;
         {{  cmd }} --args_json /workspace/{{ node.id[:7] }}/inputs.json;
-        {%  else %}
-{#        xargs -0 {{  cmd }} < /workspace/{{ node.id[:7] }}/inputs.txt#}
-        python -c 'import os,sys,runpy; sys.argv=["/app/task.py"]+[os.fsdecode(a) for a in open("/workspace/{{ node.id[:7] }}/inputs.txt","rb").read().split(b"\0") if a]; sys.path.insert(0,"/app"); runpy.run_path("/app/task.py", run_name="__main__")'
+        {%  elif node.properties.cell.kernel == 'ipython' %}
+        python -c 'import os,sys,runpy; sys.argv=["/app/task.py"]+[os.fsdecode(a) for a in open("{{ inputs_dir }}/inputs.txt","rb").read().split(b"\0") if a]; sys.path.insert(0,"/app"); runpy.run_path("/app/task.py", run_name="__main__")'
+        {%  elif node.properties.cell.kernel == 'IRkernel' %}
+        Rscript -e 'f<-"{{ inputs_dir }}/inputs.txt"; r<-readBin(f,"raw",file.size(f)); z<-c(0,which(r==as.raw(0)),length(r)+1); a<-unlist(lapply(seq_len(length(z)-1),function(i) if(z[i+1]-z[i]>1) rawToChar(r[(z[i]+1):(z[i+1]-1)]))); unlockBinding("commandArgs",baseenv()); assign("commandArgs",function(trailingOnly=FALSE) if(trailingOnly) a else c("R","--no-echo","--no-restore","--file=/app/task.R","--args",a),envir=baseenv()); source("/app/task.R")'
         {%  endif %}
   {% endif %}
 {% endfor %}

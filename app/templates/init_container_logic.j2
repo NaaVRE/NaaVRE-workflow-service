@@ -38,7 +38,9 @@ try:
     {% if  parameter.to_task == title %}
     input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
     input_parameter_value = '{{ parameter.input_parameter_value }}'
-    if os.path.exists(input_parameter_value):
+    if input_parameter_value.startswith('"') and input_parameter_value.endswith('"'):
+        input_parameter_value = input_parameter_value[1:-1]  # Remove quotes
+    elif os.path.exists(input_parameter_value):
         with open(input_parameter_value) as f:
             input_parameter_value = json.load(f)
     else:
