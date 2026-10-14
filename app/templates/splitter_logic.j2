@@ -110,20 +110,26 @@ for arg in args:
         for idx, sublist in enumerate(list_of_lists):
             chunk_path = f"{output_base}_{idx}.json"
             print(f"Writing chunk {idx} to {chunk_path} with {len(sublist)} items.")
+            # Persist each chunk with metadata expected by downstream tasks.
+            chunk_payload = {
+                "name": var_name,
+                "value": sublist,
+                "type": var_type,
+            }
             with open(chunk_path, "w") as chunk_out:
-                chunk_out.write(json.dumps(sublist))
+                chunk_out.write(json.dumps(chunk_payload))
             chunk_file_paths.append(chunk_path)
 
 {#        print(f"Writing list of lists to {list_of_lists_path} with {len(list_of_lists)} sublists.")#}
 {#        with open(list_of_lists_path, "w") as list_out:#}
 {#            list_out.write(json.dumps(list_of_lists))#}
 
+        chunk_file_refs = [
+            {"name": var_name, "value": chunk_path, "type": "ref"}
+            for chunk_path in chunk_file_paths
+        ]
+
         f_out = open(arg['path'], "w")
-        f_out.write(json.dumps(chunk_file_paths))
+        f_out.write(json.dumps(chunk_file_refs))
 {#        f_out.write(json.dumps(list_of_lists))#}
         f_out.close()
-
-
-print("Volume mounts and their contents:")
-for _mount_path in ["/workspace", "/tmp/data", "/tmp"]:
-    _print_mount_contents(_mount_path)

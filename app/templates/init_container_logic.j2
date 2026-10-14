@@ -37,15 +37,20 @@ try:
     {% for parameter in node.properties.parameters %}
     {% if  parameter.to_task == title %}
     input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
-    input_parameter_value = '{{ parameter.input_parameter_value }}'
-    if input_parameter_value.startswith('"') and input_parameter_value.endswith('"'):
-        input_parameter_value = input_parameter_value[1:-1]  # Remove quotes
-    elif os.path.exists(input_parameter_value):
-        with open(input_parameter_value) as f:
-            input_parameter_value = json.load(f)
-    else:
-        input_parameter_value = input_parameter_value[1:-1]  # Remove quotes
+    input_parameter_value = {{ parameter.input_parameter_value }}
     input_parameter_type = '{{ parameter.type }}'
+    if isinstance(input_parameter_value, dict) and 'type' in input_parameter_value and input_parameter_value['type'] == 'ref':
+        ref_path = input_parameter_value['value']
+        print(f"Input parameter {input_parameter_name} is a reference. Looking for file at {ref_path}.")
+        if os.path.exists(ref_path):
+            with open(ref_path) as f:
+                ref_input_parameter = json.load(f)
+            input_parameter_value = ref_input_parameter['value']
+            input_parameter_type = ref_input_parameter['type']
+        else:
+            print(f"Reference file {ref_path} does not exist. Using the original value.")
+    print("type:", type(input_parameter_value))
+
     {% for port in ports.values() %}
     {% if port.type == 'right' %}
     path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
