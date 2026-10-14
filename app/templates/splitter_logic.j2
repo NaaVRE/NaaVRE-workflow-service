@@ -105,31 +105,30 @@ for arg in args:
         file_name = os.path.splitext(os.path.basename(path))[0]
         shared_dir_mount = '/tmp/data'
         output_base = f"{shared_dir_mount}/{file_name}"
-        list_of_lists_path = f"{output_base}_list_of_lists.json"
-        chunk_file_paths = []
-        for idx, sublist in enumerate(list_of_lists):
-            chunk_path = f"{output_base}_{idx}.json"
-            print(f"Writing chunk {idx} to {chunk_path} with {len(sublist)} items.")
-            # Persist each chunk with metadata expected by downstream tasks.
-            chunk_payload = {
-                "name": var_name,
-                "value": sublist,
-                "type": var_type,
-            }
-            with open(chunk_path, "w") as chunk_out:
-                chunk_out.write(json.dumps(chunk_payload))
-            chunk_file_paths.append(chunk_path)
+        max_inline_payload_bytes = 0 #256 * 1024
+        list_of_lists_json = json.dumps(list_of_lists)
 
-{#        print(f"Writing list of lists to {list_of_lists_path} with {len(list_of_lists)} sublists.")#}
-{#        with open(list_of_lists_path, "w") as list_out:#}
-{#            list_out.write(json.dumps(list_of_lists))#}
+        if len(list_of_lists_json.encode("utf-8")) > max_inline_payload_bytes:
+            chunk_file_paths = []
+            for idx, sublist in enumerate(list_of_lists):
+                chunk_path = f"{output_base}_{idx}.json"
+                print(f"Writing chunk {idx} to {chunk_path} with {len(sublist)} items.")
+                # Persist each chunk with metadata expected by downstream tasks.
+                chunk_payload = {
+                    "name": var_name,
+                    "value": sublist,
+                    "type": var_type,
+                }
+                with open(chunk_path, "w") as chunk_out:
+                    chunk_out.write(json.dumps(chunk_payload))
+                chunk_file_paths.append(chunk_path)
 
-        chunk_file_refs = [
-            {"name": var_name, "value": chunk_path, "type": "ref"}
-            for chunk_path in chunk_file_paths
-        ]
-
-        f_out = open(arg['path'], "w")
-        f_out.write(json.dumps(chunk_file_refs))
-{#        f_out.write(json.dumps(list_of_lists))#}
-        f_out.close()
+            chunk_file_refs = [
+                {"name": var_name, "value": chunk_path, "type": "ref"}
+                for chunk_path in chunk_file_paths
+            ]
+            with open(arg['path'], "w") as f_out:
+                f_out.write(json.dumps(chunk_file_refs))
+        else:
+            with open(arg['path'], "w") as f_out:
+                f_out.write(list_of_lists_json)
