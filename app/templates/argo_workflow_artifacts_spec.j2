@@ -33,6 +33,9 @@ templates:
     {% for node in nodes.values() %}
     {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
+    {% set is_merger = node.type == 'merger' %}
+    {% set is_fdo_writer = node.type == 'fdo-writer' %}
+    {% set is_special_node = is_splitter or is_merger or is_fdo_writer %}
     {% set title =  node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title+ "-" + node.id[:7] %}
     - name: {{ title }}
       {% if dependencies_dag[node.id]|length > 0 %}
@@ -87,6 +90,14 @@ templates:
     {% endif %}
     {% endfor %}
     {% endif %}
+    {# fdo-writer is a sink: it has no output ports. Argo rejects a template
+    with an empty `outputs.parameters` list, so only emit the block when at
+    least one output port exists. #}
+    {% set ns = namespace(has_outputs=false) %}
+    {% for port in ports.values() %}
+    {% if port.type == 'right' %}{% set ns.has_outputs = true %}{% endif %}
+    {% endfor %}
+    {% if ns.has_outputs %}
   outputs:
     {% if node.properties.parameters %}
     parameters:
@@ -107,15 +118,34 @@ templates:
     {% endif %}
     {% endfor %}
     {% endif %}
-  {% if is_special_node %}
+    {% endif %}
+  {% if is_fdo_writer %}
   {% set special_dep = dependencies_dag[node.id][0] %}
   script:
-    image: python:alpine3.9
+    image: python:3.11-alpine
     imagePullPolicy: IfNotPresent
     command: [python]
     volumeMounts:
     - name: workdir
       mountPath: /tmp/data
+    {% for vol in extraVolumeMounts %}
+    - name: {{ vol.name }}
+      mountPath: {{ vol.mountPath }}
+      {% if vol.subPath is defined %}
+      subPath: {{ vol.subPath }}
+      {% endif %}
+      {% if vol.readOnly is defined %}
+      readOnly: {{ vol.readOnly }}
+      {% endif %}
+    {% endfor %}
+    source: |
+      {{ include('fdo_writer_logic.j2', special_dep=special_dep, node=node) | indent(6) }}
+  {% elif is_splitter or is_merger %}
+  {% set special_dep = dependencies_dag[node.id][0] %}
+  script:
+    image: python:alpine3.9
+    imagePullPolicy: IfNotPresent
+    command: [python]
     source: |
       {% if is_splitter %}
       {{ include('splitter_logic.j2', ports=ports, special_dep=special_dep, node=node, naavrewf2_payload_params=naavrewf2_payload_params, default_max_branches=default_max_branches) | indent(6) }}
