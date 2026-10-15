@@ -18,7 +18,6 @@ path = None
 
 # node.properties.parameters
 {% for parameter in node.properties.parameters %}
-print("Processing parameter: {{ parameter.input_parameter_name }} for task: {{ parameter.to_task }}")
 {% if  parameter.to_task == title %}
 input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
 input_parameter_value = {{ parameter.value }}

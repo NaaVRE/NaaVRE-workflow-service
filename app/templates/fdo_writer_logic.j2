@@ -12,6 +12,7 @@ fdo_writer_run_id = None
 fdo_writer_viz_kind = None
 fdo_writer_output_name = None
 fdo_writer_data_format = None
+print(f'args: {args}')
 for arg in args:
     var_name = arg['name']
     print(f'Processing argument: name={var_name}, value={arg["value"]}, type={arg["type"]}')
