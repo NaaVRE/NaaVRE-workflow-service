@@ -88,6 +88,7 @@ class InternalWorkflowComponent(Cell):
     """
     json_args_supported: bool = False
     extra_properties: Optional[Mapping[str, str]] = None
+    task_title: Optional[str] = None
 
 
 class PortProperties(BaseModel):

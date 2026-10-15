@@ -166,7 +166,7 @@
         "properties": {
           "cell": {
             "url": "fdo-writer",
-            "title": "FDO Writer",
+            "title": "fdo-writer",
             "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
             "type": "fdo-writer",
             "shared_with_scopes": [],
@@ -231,7 +231,7 @@
         "properties": {
           "cell": {
             "url": "fdo-writer",
-            "title": "FDO Writer",
+            "title": "fdo-writer",
             "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
             "type": "fdo-writer",
             "shared_with_scopes": [],
@@ -296,7 +296,7 @@
         "properties": {
           "cell": {
             "url": "fdo-writer",
-            "title": "FDO Writer",
+            "title": "fdo-writer",
             "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
             "type": "fdo-writer",
             "shared_with_scopes": [],
@@ -361,7 +361,7 @@
         "properties": {
           "cell": {
             "url": "fdo-writer",
-            "title": "FDO Writer",
+            "title": "fdo-writer",
             "description": "Write a workflow output as a FAIR Digital Object (RO-Crate) to your cloud storage. Add one per output you want to visualise.",
             "type": "fdo-writer",
             "shared_with_scopes": [],

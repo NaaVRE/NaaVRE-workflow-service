@@ -31,7 +31,6 @@ templates:
   dag:
     tasks:
     {% for node in nodes.values() %}
-    {% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
     {% set is_splitter = node.type == 'splitter' %}
     {% set is_merger = node.type == 'merger' %}
     {% set is_fdo_writer = node.type == 'fdo-writer' %}
@@ -66,8 +65,10 @@ templates:
       {% endif %}
     {% endfor %}
 {% for node in nodes.values() %}
-{% set is_special_node = node.type == 'splitter' or node.type == 'merger' %}
 {% set is_splitter = node.type == 'splitter' %}
+{% set is_merger = node.type == 'merger' %}
+{% set is_fdo_writer = node.type == 'fdo-writer' %}
+{% set is_special_node = is_splitter or is_merger or is_fdo_writer %}
 {% set title = node.type + "-" + node.id[:7] if is_special_node else node.properties.cell.title + "-" + node.id[:7] %}
 {% set secrets = [] if is_special_node else node.properties.cell.secrets %}
 {% set ports = node.ports %}
@@ -139,7 +140,7 @@ templates:
       {% endif %}
     {% endfor %}
     source: |
-      {{ include('fdo_writer_logic.j2', special_dep=special_dep, node=node) | indent(6) }}
+      {{ include('fdo_writer_logic.j2', ports=ports, special_dep=special_dep, node=node) | indent(6) }}
   {% elif is_splitter or is_merger %}
   {% set special_dep = dependencies_dag[node.id][0] %}
   script:

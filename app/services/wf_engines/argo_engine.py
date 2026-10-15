@@ -18,11 +18,17 @@ MAX_TASK_TITLE_LEN = 62
 
 
 def build_task_title(node, node_id: str) -> str:
-    suffix = f"-{node_id[:7]}"
-    base_title = node.type if node.type in {'splitter', 'merger'} \
-        else node.properties.cell.title
-    max_base_len = MAX_TASK_TITLE_LEN - len(suffix)
-    return f"{base_title[:max_base_len]}{suffix}"
+    is_special_node = (
+            node.type == "splitter"
+            or node.type == "merger"
+            or node.type == "fdo-writer"
+    )
+    title = (
+        f"{node.type}-{node.id[:7]}"
+        if is_special_node
+        else f"{node.properties.cell.title}-{node.id[:7]}"
+    )
+    return title
 
 
 def is_cron(workflow_dict):
@@ -46,6 +52,9 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
     for node_id in nodes:
         node = nodes[node_id]
         title = build_task_title(node=node, node_id=node_id)
+        node.properties.cell.task_title = title
+        if 'fdo' in title:
+            print(f"Processing node: {title} with id: {node_id}")
         for dependency in dependencies_dag[node_id]:
             name = dependency['from_port']
             from_task = dependency['task_name']
@@ -122,7 +131,7 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
                 all_parameters.append(parameter)
     for node_id in nodes:
         node = nodes[node_id]
-        title = build_task_title(node=node, node_id=node_id)
+        title = node.properties.cell.task_title
         node_parameters = []
         node_parameter_keys = set()
         node_artifacts = []

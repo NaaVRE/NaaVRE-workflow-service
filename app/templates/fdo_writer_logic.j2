@@ -4,23 +4,52 @@ import os
 import shutil
 import sys
 
-fdo_input   = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
-fdo_writer_run_id      = str("{{ '{{inputs.parameters.fdo_writer_run_id_' }}{{ node.id[:7] }}{{ '}}' }}")
-fdo_writer_viz_kind    = str("{{ '{{inputs.parameters.fdo_writer_viz_kind_' }}{{ node.id[:7] }}{{ '}}' }}")
-fdo_writer_output_name = str("{{ '{{inputs.parameters.fdo_writer_output_name_' }}{{ node.id[:7] }}{{ '}}' }}")
-fdo_writer_data_format = str("{{ '{{inputs.parameters.fdo_writer_data_format_' }}{{ node.id[:7] }}{{ '}}' }}")
+{{ include('io_args.j2', ports=ports, node=node) }}
 
-# The composer lets the author type this freely, and it is joined onto a path
-# under the user's mounted storage: keep it a bare file name so a value like
-# '../../.bashrc' cannot escape the run directory.
-fdo_writer_output_name = os.path.basename(fdo_writer_output_name.strip()) or 'output'
 
-# Upstream cells emit either an absolute path or one relative to the shared
-# workdir volume, which is mounted at /tmp/data for this template.
-src = fdo_input if fdo_input.startswith('/') else os.path.join('/tmp/data', fdo_input)
-if not os.path.exists(src):
-    print(f'ERROR: input file not found: {src}', file=sys.stderr)
+fdo_input = None
+fdo_writer_run_id = None
+fdo_writer_viz_kind = None
+fdo_writer_output_name = None
+fdo_writer_data_format = None
+for arg in args:
+    var_name = arg['name']
+    print(f'Processing argument: name={var_name}, value={arg["value"]}, type={arg["type"]}')
+    var_value = arg['value']
+    var_type = arg['type']
+    if 'fdo_input' in var_name:
+        fdo_input = var_value
+        # Upstream cells emit either an absolute path or one relative to the shared
+        # workdir volume, which is mounted at /tmp/data for this template.
+        src = fdo_input if fdo_input.startswith('/') else os.path.join('/tmp/data', fdo_input)
+        if not os.path.exists(src):
+            print(f'ERROR: input file not found: {src}')
+            sys.exit(1)
+    if 'fdo_writer_run_id' in var_name:
+        fdo_writer_run_id = var_value.strip()
+    if 'fdo_writer_viz_kind' in var_name:
+        fdo_writer_viz_kind = var_value.strip()
+    if 'fdo_writer_output_name' in var_name:
+        # The composer lets the author type this freely, and it is joined onto a path
+        # under the user's mounted storage: keep it a bare file name so a value like
+        # '../../.bashrc' cannot escape the run directory.
+        fdo_writer_output_name = os.path.basename(var_value.strip()) or 'output'
+    if 'fdo_writer_data_format' in var_name:
+        fdo_writer_data_format = var_value.strip()
+
+if not fdo_input:
+    print('ERROR: fdo_input is required')
     sys.exit(1)
+if not fdo_writer_run_id:
+    print('ERROR: fdo_writer_run_id is required')
+    sys.exit(1)
+if not fdo_writer_viz_kind:
+    print('ERROR: fdo_writer_viz_kind is required')
+    sys.exit(1)
+if not fdo_writer_output_name:
+    print('ERROR: fdo_writer_output_name is required')
+    sys.exit(1)
+
 
 # This layout is a contract with the JupyterLab extension, which reads the
 # crate back through the Jupyter contents API: keep it in sync with
