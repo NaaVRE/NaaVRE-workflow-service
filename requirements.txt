@@ -1,7 +1,7 @@
 fastapi[standard]==0.142.2
 PyJWT[crypto]==2.15.1
 uvicorn==0.54.0
-pydantic==2.13.5
+pydantic==2.14.1
 Jinja2==3.1.6
 pre-commit==4.6.2
 jsonschema==4.26.0
