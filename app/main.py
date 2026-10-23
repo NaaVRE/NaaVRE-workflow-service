@@ -4,6 +4,7 @@ import os
 from typing import Annotated
 from urllib.parse import urlparse
 
+# from profiling_decorator import profile
 import cachetools.func
 import jwt
 import requests
@@ -33,7 +34,6 @@ def load_configuration(source):
             data_dict = json.load(file)
         file.close()
         return data_dict
-
     else:
         raise Exception('Invalid configuration source')
 
@@ -86,12 +86,13 @@ def valid_access_token(credentials: Annotated[
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-def _get_wf_engine(virtual_lab: str = None):
+def _get_wf_engine(virtual_lab: str):
     vl_conf = settings.get_vl_config(virtual_lab)
     if vl_conf and vl_conf.wf_engine_config.name == "argo":
         return ArgoEngine(vl_conf)
     else:
-        raise HTTPException(status_code=422, detail="Invalid configuration")
+        raise HTTPException(status_code=422, detail="Could not load virtual: "
+                                                    + virtual_lab)
 
 
 @app.post("/submit")

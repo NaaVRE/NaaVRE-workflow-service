@@ -169,10 +169,10 @@ setup_minikube(){
 
 deploy_naavre(){
   if [ "$RUNS_FROM_NAAAVRE_HELM" == "false" ]; then
-    if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
-      rm -rf NaaVRE-helm
-    fi
-    git clone $NaaVRE_HELM_REPO
+#    if [ "$DELETE_NAAAVRE_DIR" == "true" ]; then
+#      rm -rf NaaVRE-helm
+#    fi
+#    git clone $NaaVRE_HELM_REPO
     cd NaaVRE-helm
     cp "../$VALUES_FILE" .
     cp "../$VALUES_FILE" secrets-minikube.yaml

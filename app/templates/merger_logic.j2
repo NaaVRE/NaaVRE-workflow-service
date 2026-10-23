@@ -1,28 +1,34 @@
 import json
-{{ special_dep.from_port }} = {{ '{{inputs.parameters.' }}{{ special_dep.from_port }}{{ '}}' }}
-{% for port in ports.values() %}
-{% if port.type == 'right' %}
+import ast
+import os
 
-list_of_lists = {{ special_dep.from_port }}
-flat_list = []
-if isinstance(list_of_lists, str):
-    list_of_lists = json.loads(list_of_lists)
-for sublist in list_of_lists:
-    if isinstance(sublist, list):
-        flat_list.extend(sublist)
-    else:
-        if isinstance(sublist, str):
-            try:
-                parsed = json.loads(sublist)
-                if isinstance(parsed, list):
-                    flat_list.extend(parsed)
-                else:
-                    flat_list.append(parsed)
-            except json.JSONDecodeError:
-                flat_list.append(sublist)
 
-f_out = open("/tmp/{{port.id}}_{{ node.id[:7] }}.json", "w")
-f_out.write(json.dumps(flat_list))
-f_out.close()
-{% endif %}
-{% endfor %}
+{{ include('io_args.j2', ports=ports, node=node) }}
+
+for arg in args:
+    var_name = arg['name']
+    var_value = arg['value']
+    var_type = arg['type']
+    if var_type == 'list':
+        lst = [json.loads(item) for item in ast.literal_eval(var_value)]
+        var_value = lst
+    list_of_lists = var_value
+    flat_list = []
+    if isinstance(list_of_lists, str):
+        list_of_lists = json.loads(list_of_lists)
+    for sublist in list_of_lists:
+        if isinstance(sublist, list):
+            flat_list.extend(sublist)
+        else:
+            if isinstance(sublist, str):
+                try:
+                    parsed = json.loads(sublist)
+                    if isinstance(parsed, list):
+                        flat_list.extend(parsed)
+                    else:
+                        flat_list.append(parsed)
+                except json.JSONDecodeError:
+                    flat_list.append(sublist)
+        f_out = open(arg['path'], "w")
+        f_out.write(json.dumps(flat_list))
+        f_out.close()

@@ -8,7 +8,7 @@ from packaging.version import Version
 from app.models.naavre_wf2 import Node, InternalWorkflowComponent
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.models.vl_config import VLConfig
-from app.services.wf_parser import WorkflowParser
+from app.services.workflow_parser import WorkflowParser
 
 json_args_supported_version = Version('v2')
 
