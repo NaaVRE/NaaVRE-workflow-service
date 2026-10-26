@@ -26,8 +26,11 @@ for _mount_path in ["/workspace", "/tmp/data", "/tmp"]:
 
 {{ include('io_args.j2', ports=ports, node=node) }}
 
+
+default_max_branches = {{ default_max_branches }}
+
 for arg in args:
-    if arg['name'] == 'param_max_branches':
+    if 'param_max_branches' in arg['name']:
         param_max_branches = int(arg['value'])
     else:
         var_name = arg['name']

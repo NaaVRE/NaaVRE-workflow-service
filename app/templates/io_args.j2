@@ -41,10 +41,14 @@ args.append(arg)
 # node.properties.artifacts
 {% for artifact in node.properties.artifacts %}
 {% if artifact.to_task == title %}
-input_parameter_name = '{{ artifact.name }}'
-path = "/tmp/" + input_parameter_name + ".json"
+{##input_parameter_name = '{{ artifact.name }}'#}
+{#input_parameter_name = '{{ artifact.name }}'.replace('_{{ node.id[:7] }}', '')#}
+input_parameter_name_suffix = '{{ artifact.name }}'.split('_')[-1]
+input_parameter_name = '{{ artifact.name }}'.replace('_'+input_parameter_name_suffix,'')
+print(f"Input parameter name: {input_parameter_name}")
+path = "/tmp/{{ artifact.name }}.json"
 if not os.path.exists(path):
-    path = "/workspace/" + input_parameter_name + ".json"
+    path = "/workspace/{{ artifact.name }}.json"
 with open(path) as f:
     input_parameter_value = json.load(f)
 input_parameter_type = '{{ artifact.type }}'
