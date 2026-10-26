@@ -43,8 +43,8 @@ if not fdo_input:
     sys.exit(1)
 
 # Upstream cells emit either an absolute path or one relative to the shared
-# workdir volume, which is mounted at /tmp/data for this template.
-src = fdo_input if fdo_input.startswith('/') else os.path.join('/tmp/data', fdo_input)
+# workdir volume, which is mounted at {{ shared_dir_mount }} for this template.
+src = fdo_input if fdo_input.startswith('/') else os.path.join('{{ shared_dir_mount }}', fdo_input)
 if not os.path.exists(src):
     print(f'ERROR: input file not found: {src}')
     sys.exit(1)

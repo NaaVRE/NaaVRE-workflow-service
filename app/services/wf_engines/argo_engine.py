@@ -279,7 +279,8 @@ class ArgoEngine(WFEngine, ABC):
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
             extraVolumeMounts=self.user_extraVolumeMounts or [],
-            default_max_branches=int(default_max_branches)
+            default_max_branches=int(default_max_branches),
+            shared_dir_mount='/tmp/data'
         )
 
         workflow_dict = yaml.safe_load(

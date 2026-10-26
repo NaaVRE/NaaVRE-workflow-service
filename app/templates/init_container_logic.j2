@@ -24,7 +24,7 @@ def _print_mount_contents(path):
 
 
 print("Volume mounts and their contents:")
-for _mount_path in ["/workspace", "/tmp/data", "/tmp"]:
+for _mount_path in ["{{ shared_dir_mount }}", "/tmp"]:
     _print_mount_contents(_mount_path)
 
 {{ include('io_args.j2', ports=ports, node=node) }}
@@ -36,11 +36,11 @@ try:
         "value": "{{ node.id[:7] }}"
     }
     args.append(arg)
-    # Crate a folder with the node id if it doesn't exist in /workspace
-    workspace_dir = '/workspace/{{ node.id[:7] }}'
-    if not os.path.exists(workspace_dir):
-        os.makedirs(workspace_dir)
-    with open(workspace_dir + '/' + 'inputs.json', 'w') as f:
+    # Crate a folder with the node id if it doesn't exist in /tmp
+    tmp_dir = '/tmp/{{ node.id[:7] }}'
+    if not os.path.exists(tmp_dir):
+        os.makedirs(tmp_dir)
+    with open(tmp_dir + '/' + 'inputs.json', 'w') as f:
         json.dump(args, f)
 
     # Convert to flat arguments
@@ -58,7 +58,7 @@ try:
       print(f"Converted to flat argument: {line}")
       inputs += line + ' '
 
-    with open(workspace_dir+'/inputs.txt', "wb") as f:
+    with open(tmp_dir+'/inputs.txt', "wb") as f:
         for arg in args:
             name = arg.get('name')
             value = arg.get('value')
