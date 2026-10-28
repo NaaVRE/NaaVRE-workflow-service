@@ -47,7 +47,7 @@ args.append(arg)
 # node.properties.artifacts
 {% for artifact in node.properties.artifacts %}
 {% if artifact.to_task == title %}
-input_parameter_name = '{{ artifact.input_parameter_value }}'
+input_parameter_name = '{{ artifact.input_parameter_name }}'
 print(f"Input parameter name: {input_parameter_name}")
 path = "/tmp/{{ artifact.name }}.json"
 with open(path) as f:

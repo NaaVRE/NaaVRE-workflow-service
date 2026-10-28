@@ -50,9 +50,6 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
     all_parameters = []
     all_artifacts = []
     for node_id in nodes:
-        if '12a9a941-e4eb-4cd6-b597-8bd1414edf53' in node_id:
-            print(f"Debug: Processing node_id {node_id} with title "
-                  f"{nodes[node_id].properties.cell.task_title}")
         node = nodes[node_id]
         title = build_task_title(node=node, node_id=node_id)
         node.properties.cell.task_title = title
@@ -131,9 +128,6 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
                              'input_parameter_value': value}
                 all_parameters.append(parameter)
     for node_id in nodes:
-        if '12a9a941-e4eb-4cd6-b597-8bd1414edf53' in node_id:
-            print(f"Debug: Processing node_id {node_id} with title "
-                  f"{nodes[node_id].properties.cell.task_title}")
         node = nodes[node_id]
         title = node.properties.cell.task_title
         node_parameters = []
