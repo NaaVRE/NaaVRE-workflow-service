@@ -127,6 +127,9 @@ templates:
       {{ include('fdo_writer_logic.j2', ports=ports, special_dep=special_dep, node=node) | indent(6) }}
   {% elif is_splitter or is_merger %}
   {% set special_dep = dependencies_dag[node.id][0] %}
+  volumeMounts:
+    - name: workspace
+      mountPath: /workspace
   script:
     image: python:alpine3.9
     imagePullPolicy: IfNotPresent

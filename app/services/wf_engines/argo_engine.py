@@ -53,8 +53,6 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
         node = nodes[node_id]
         title = build_task_title(node=node, node_id=node_id)
         node.properties.cell.task_title = title
-        if 'fdo' in title:
-            print(f"Processing node: {title} with id: {node_id}")
         for dependency in dependencies_dag[node_id]:
             name = dependency['from_port']
             from_task = dependency['task_name']
