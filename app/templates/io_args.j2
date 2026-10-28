@@ -49,8 +49,8 @@ args.append(arg)
 {% if artifact.to_task == title %}
 input_parameter_name = '{{ artifact.input_parameter_name }}'
 print(f"Input parameter name: {input_parameter_name}")
-path = "/tmp/{{ artifact.name }}.json"
-with open(path) as f:
+artifact_path = "/tmp/{{ artifact.name }}.json"
+with open(artifact_path) as f:
     input_parameter_value = json.load(f)
 input_parameter_type = '{{ artifact.type }}'
 {% for port in ports.values() %}
