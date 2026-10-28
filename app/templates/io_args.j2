@@ -1,6 +1,12 @@
 {% set title = node.properties.cell.task_title %}
 
 def resolve_input_parameter(value):
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.decoder.JSONDecodeError as err:
+            print(f"Value is a string but not valid JSON: {value}. Error: {err}")
+            return value
     if isinstance(value, dict) and 'type' in value and value['type'] == 'ref':
         ref_path = value['value']
         print(f"Input parameter {input_parameter_name} is a reference. Looking for file at {ref_path}.")
@@ -20,7 +26,7 @@ path = None
 {% for parameter in node.properties.parameters %}
 {% if  parameter.to_task == title %}
 input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
-input_parameter_value = {{ parameter.value }}
+input_parameter_value = {{ parameter.input_parameter_value }}
 input_parameter_value = resolve_input_parameter(input_parameter_value)
 input_parameter_type = '{{ parameter.type }}'
 {% for port in ports.values() %}

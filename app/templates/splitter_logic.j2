@@ -56,7 +56,7 @@ for arg in args:
         file_name = os.path.splitext(os.path.basename(path))[0]
         shared_dir_mount = '{{ shared_dir_mount }}'
         output_base = f"{shared_dir_mount}/{file_name}"
-        max_inline_payload_bytes = 0 #256 * 1024
+        max_inline_payload_bytes = 256 * 1024
         list_of_lists_json = json.dumps(list_of_lists)
 
         if len(list_of_lists_json.encode("utf-8")) > max_inline_payload_bytes:
