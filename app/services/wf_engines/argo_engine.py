@@ -298,6 +298,37 @@ class ArgoEngine(WFEngine, ABC):
             print(yaml.dump(workflow_dict, sort_keys=False))
         return workflow_dict
 
+    def get_pod_logs(self, workflow_url: str):
+        # Get all pod names for the workflow and return their logs
+        wf_nodes = self.get_wf(workflow_url=workflow_url)['status']['nodes']
+        workflow_name = workflow_url.split('/')[-1]
+        pod_names = []
+        for node_name in wf_nodes:
+            node = wf_nodes[node_name]
+            if node['type'] == 'Pod':
+                template_scope = node['templateScope'].replace('local/', '')
+                pod_name = template_scope + '-' + node['templateName'] + node[
+                    'id'].replace(template_scope, '')
+                pod_names.append(pod_name)
+                print(f"Getting logs for pod: {pod_name}")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}"
+        }
+        pod_log_urls = []
+        for pod_name in pod_names:
+            pod_log_url = f"{self.api_endpoint}/{workflow_name}/{pod_name}/log"
+            pod_log_urls.append(pod_log_url)
+        logs = []
+        for pod_log_url in pod_log_urls:
+            response = requests.get(pod_log_url, headers=headers,
+                                    verify=os.getenv('VERIFY_SSL', 'true').
+                                    lower() == 'true')
+            if response.status_code != 200:
+                raise Exception('Error getting pod logs: ' + response.text)
+            logs.append(response.text)
+        return logs
+
     def get_wf(self, workflow_url: str):
         # Get the workflow from the Argo API
         headers = {
@@ -309,11 +340,6 @@ class ArgoEngine(WFEngine, ABC):
         response = requests.get(workflow_status_url, headers=headers,
                                 verify=os.getenv('VERIFY_SSL', 'true').
                                 lower() == 'true')
-        # response_logs = requests.get(workflow_status_url+'/log',
-        #                              headers=headers,
-        #                         verify=os.getenv('VERIFY_SSL', 'true').
-        #                         lower() == 'true')
-        # print("Workflow logs:\n" + response_logs.text)
         if response.status_code != 200:
             raise Exception('Error getting workflow: ' + response.text)
         return response.json()
