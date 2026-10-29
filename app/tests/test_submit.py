@@ -128,7 +128,8 @@ def wait_for_wf(wf_status_response_json=None,
             if 'phase' in node:
                 if node['phase'] == 'Failed' or node['phase'] == 'Error':
                     print("Node failed: " + json.dumps(node, indent=2))
-                    assert False, "Workflow failed, see logs for details"
+
+        assert False, "Workflow failed, see logs for details"
     parallel_tasks = get_num_of_max_parallel_tasks(workflow_dict=workflow_dict)
     check_max_branch_count(wf_status_response_json=wf_status_response_json,
                            parallel_tasks=parallel_tasks)
