@@ -66,7 +66,6 @@ def get_num_of_max_parallel_tasks(workflow_dict):
         if 'param_max_branches' in param['name']:
             entry = {'node_id': param['node_id'], 'value': param['value']}
             splitters.append(entry)
-
     splitter_targets = []
     for link_id in workflow_dict['naavrewf2']['links']:
         link = workflow_dict['naavrewf2']['links'][link_id]
@@ -140,12 +139,6 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
-        if 'py_fdo_cron' in workflow_test_folder:
-            print('Skipping workflow: ' + workflow_test_folder)
-            continue
-        if 'py_fdo' not in workflow_test_folder:
-            print('Skipping workflow: ' + workflow_test_folder)
-            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
