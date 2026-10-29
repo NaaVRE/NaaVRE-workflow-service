@@ -197,7 +197,7 @@ class ArgoEngine(WFEngine, ABC):
                             "configuration")
 
     @property
-    def user_extraVolumeMounts(self):
+    def user_extra_volume_mounts(self):
         """ Returns extraVolumeMounts for the current user
 
         Filters extraVolumeMounts:
@@ -282,7 +282,7 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts=self.user_extraVolumeMounts or [],
+            extraVolumeMounts=self.user_extra_volume_mounts or [],
             default_max_branches=int(default_max_branches),
             shared_dir_mount='/tmp/data'
         )
@@ -309,6 +309,11 @@ class ArgoEngine(WFEngine, ABC):
         response = requests.get(workflow_status_url, headers=headers,
                                 verify=os.getenv('VERIFY_SSL', 'true').
                                 lower() == 'true')
+        # response_logs = requests.get(workflow_status_url+'/log',
+        #                              headers=headers,
+        #                         verify=os.getenv('VERIFY_SSL', 'true').
+        #                         lower() == 'true')
+        # print("Workflow logs:\n" + response_logs.text)
         if response.status_code != 200:
             raise Exception('Error getting workflow: ' + response.text)
         return response.json()
