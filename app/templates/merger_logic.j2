@@ -10,7 +10,20 @@ for arg in args:
     var_value = arg['value']
     var_type = arg['type']
     if var_type == 'list':
-        lst = [json.loads(item) for item in ast.literal_eval(var_value)]
+        parsed_items = ast.literal_eval(var_value)
+        lst = []
+        for idx, item in enumerate(parsed_items):
+            print(f"  Parsing list item {idx}: {item}")
+            print(f"  Type of item: {type(item)}")
+            if isinstance(item, str):
+                try:
+                    parsed_item = json.loads(item)
+                except json.JSONDecodeError:
+                    print(f"  Failed to parse item as JSON: {item}")
+                    parsed_item = item
+            else:
+                parsed_item = item
+            lst.append(parsed_item)
         var_value = lst
     list_of_lists = var_value
     flat_list = []
