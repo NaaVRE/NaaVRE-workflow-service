@@ -48,7 +48,9 @@ args.append(arg)
 {% endfor %}
 
 # node.properties.artifacts
+print("Artifact len: {{ node.properties.artifacts | length }}")
 {% for artifact in node.properties.artifacts %}
+print("Title: {{ title }}, Artifact to_task: {{ artifact.to_task }}")
 {% if artifact.to_task == title %}
 artifact_path = "/tmp/{{ artifact.name }}.json"
 with open(artifact_path) as f:

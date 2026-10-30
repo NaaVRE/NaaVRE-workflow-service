@@ -93,7 +93,6 @@ def set_node_io(dependencies_dag: dict, nodes: dict,
 
         io_types = _build_io_type_index(node)
         param_types = _build_param_type_index(node)
-
         for dependency in dependencies_dag.get(node_id, []):
             name = dependency['from_port']
             from_task = dependency['task_name']
@@ -101,7 +100,6 @@ def set_node_io(dependencies_dag: dict, nodes: dict,
             input_name = dependency['to_port']
             input_name_base = _base_input_name(input_name)
             parameter_type = io_types.get(input_name_base)
-
             if dependency['type'] == 'splitter':
                 with_param = (
                     f'"{{{{tasks.{from_task}.outputs.parameters.'
@@ -147,9 +145,11 @@ def set_node_io(dependencies_dag: dict, nodes: dict,
             short_id = payload_param['node_id'][:7]
             wf_param_name = f'{name}_{short_id}'
             value = f'"{{{{workflow.parameters.{wf_param_name}}}}}"'
+            input_name = payload_param['input_name']
             parameter = {'name': wf_param_name,
                          'value': value,
                          'to_task': title,
+                         'to_port': input_name,
                          'from_task': wf_param_name,
                          'input_parameter_name': wf_param_name,
                          'type': param_types.get(name),
