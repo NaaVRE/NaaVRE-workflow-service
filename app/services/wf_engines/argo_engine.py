@@ -59,21 +59,21 @@ def _build_param_type_index(node) -> dict:
     return {port.name: port.type for port in node.properties.cell.params}
 
 
-def _collect_node_items(items: list, title: str) -> list:
+def _collect_node_items(inputs: list, title: str) -> list:
     node_items = []
     items_by_name = {}
-    for item in items:
-        if item['to_task'] != title and item['from_task'] != title:
+    for input in inputs:
+        if input['to_task'] != title and input['from_task'] != title:
             continue
-        node_item = items_by_name.get(item['name'])
-        if node_item is None:
-            node_item = item.copy()
-            node_item['input_parameter_names'] = []
-            items_by_name[item['name']] = node_item
-            node_items.append(node_item)
-        input_parameter_name = item['input_parameter_name']
-        if input_parameter_name not in node_item['input_parameter_names']:
-            node_item['input_parameter_names'].append(input_parameter_name)
+        node_input = items_by_name.get(input['name'])
+        if node_input is None:
+            node_input = input.copy()
+            node_input['input_parameter_names'] = []
+            items_by_name[input['name']] = node_input
+            node_items.append(node_input)
+        input_parameter_name = input['input_parameter_name']
+        if input_parameter_name not in node_input['input_parameter_names']:
+            node_input['input_parameter_names'].append(input_parameter_name)
     return node_items
 
 
