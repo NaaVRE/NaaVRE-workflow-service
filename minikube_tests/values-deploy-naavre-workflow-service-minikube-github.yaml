@@ -1,18 +1,7 @@
 global:
   namespace: naavre
-
-  common:
-    userPods:
-      extraVolumeMounts:
-        - name: naa-vre-public
-          mountPath: /home/jovyan/Cloud Storage/naa-vre-public
-          readOnly: true
-        - name: naa-vre-user-data
-          mountPath: /home/jovyan/Cloud Storage/naa-vre-user-data/
-          subPath: '{unescaped_username}'
-
-
 jupyterhub:
+  enabled: true
   vlabs:
     openlab:
       image:
@@ -32,3 +21,4 @@ naavreWorkflowService:
 
 k8sSecretCreator:
   enabled: true
+
