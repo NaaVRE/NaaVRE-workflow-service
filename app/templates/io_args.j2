@@ -34,6 +34,8 @@ input_parameter_type = '{{ parameter.type }}'
 path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
 {% endif %}
 {% endfor %}
+{% for binding_name in parameter.input_parameter_names %}
+input_parameter_name = '{{ binding_name }}'.replace('_{{ node.id[:7] }}', '')
 arg = {
    "name": input_parameter_name,
    "type": input_parameter_type,
@@ -41,14 +43,13 @@ arg = {
    "path": path
 }
 args.append(arg)
+{% endfor %}
 {% endif %}
 {% endfor %}
 
 # node.properties.artifacts
 {% for artifact in node.properties.artifacts %}
 {% if artifact.to_task == title %}
-input_parameter_name = '{{ artifact.input_parameter_name }}'
-print(f"Input parameter name: {input_parameter_name}")
 artifact_path = "/tmp/{{ artifact.name }}.json"
 with open(artifact_path) as f:
     input_parameter_value = json.load(f)
@@ -59,6 +60,9 @@ path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
 {% endif %}
 {% endfor %}
 
+{% for binding_name in artifact.input_parameter_names %}
+input_parameter_name = '{{ binding_name }}'
+print(f"Input parameter name: {input_parameter_name}")
 arg = {
    "name": input_parameter_name,
    "type": input_parameter_type,
@@ -66,5 +70,6 @@ arg = {
    "path": path
 }
 args.append(arg)
+{% endfor %}
 {% endif %}
 {% endfor %}

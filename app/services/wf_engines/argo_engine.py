@@ -61,12 +61,19 @@ def _build_param_type_index(node) -> dict:
 
 def _collect_node_items(items: list, title: str) -> list:
     node_items = []
-    seen_names = set()
+    items_by_name = {}
     for item in items:
-        if ((item['to_task'] == title or item['from_task'] == title)
-                and item['name'] not in seen_names):
-            seen_names.add(item['name'])
-            node_items.append(item)
+        if item['to_task'] != title and item['from_task'] != title:
+            continue
+        node_item = items_by_name.get(item['name'])
+        if node_item is None:
+            node_item = item.copy()
+            node_item['input_parameter_names'] = []
+            items_by_name[item['name']] = node_item
+            node_items.append(node_item)
+        input_parameter_name = item['input_parameter_name']
+        if input_parameter_name not in node_item['input_parameter_names']:
+            node_item['input_parameter_names'].append(input_parameter_name)
     return node_items
 
 
