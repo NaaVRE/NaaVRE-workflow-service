@@ -45,7 +45,9 @@ args.append(arg)
 {% endfor %}
 
 # node.properties.artifacts
+print("Artifact len: {{ node.properties.artifacts | length }}")
 {% for artifact in node.properties.artifacts %}
+print("Title: {{ title }}, Artifact to_task: {{ artifact.to_task }}")
 {% if artifact.to_task == title %}
 input_parameter_name = '{{ artifact.input_parameter_name }}'
 print(f"Input parameter name: {input_parameter_name}")
