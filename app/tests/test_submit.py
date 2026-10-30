@@ -118,7 +118,7 @@ def wait_for_wf(wf_status_response_json=None,
         )
         assert wf_status_response.status_code == 200
         wf_status_response_json = wf_status_response.json()
-    if wf_status_response_json['status']['phase'] == 'Failed':
+    if wf_status_response_json['status']['phase'] in ('Failed', 'Error'):
         # print("Workflow failed: "+str(workflow_dict))
         # print("Workflow failed:\n" + json.dumps(wf_status_response_json,
         #                                         indent=2))
