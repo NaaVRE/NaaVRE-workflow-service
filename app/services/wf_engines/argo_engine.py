@@ -145,11 +145,9 @@ def set_node_io(dependencies_dag: dict, nodes: dict,
             short_id = payload_param['node_id'][:7]
             wf_param_name = f'{name}_{short_id}'
             value = f'"{{{{workflow.parameters.{wf_param_name}}}}}"'
-            input_name = payload_param['input_name']
             parameter = {'name': wf_param_name,
                          'value': value,
                          'to_task': title,
-                         'to_port': input_name,
                          'from_task': wf_param_name,
                          'input_parameter_name': wf_param_name,
                          'type': param_types.get(name),
