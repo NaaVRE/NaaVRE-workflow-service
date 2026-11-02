@@ -1,0 +1,77 @@
+{% set title = node.properties.cell.task_title %}
+
+def resolve_input_parameter(value):
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except json.decoder.JSONDecodeError as err:
+            print(f"Value is a string but not valid JSON: {value}. Error: {err}")
+            return value
+    if isinstance(value, dict) and 'type' in value and value['type'] == 'ref':
+        ref_path = value['value']
+        print(f"Input parameter {input_parameter_name} is a reference. Looking for file at {ref_path}.")
+        if os.path.exists(ref_path):
+            with open(ref_path) as f:
+                ref_input_parameter = json.load(f)
+            return ref_input_parameter['value']
+        else:
+            print(f"Reference file {ref_path} does not exist. Using the original value.")
+            return value
+    return value
+
+args = []
+path = None
+
+# node.properties.parameters
+{% for parameter in node.properties.parameters %}
+{% if  parameter.to_task == title %}
+input_parameter_name = '{{ parameter.input_parameter_name }}'.replace('_{{ node.id[:7] }}', '')
+input_parameter_value = {{ parameter.input_parameter_value }}
+input_parameter_value = resolve_input_parameter(input_parameter_value)
+input_parameter_type = '{{ parameter.type }}'
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
+{% endif %}
+{% endfor %}
+{% for binding_name in parameter.input_parameter_names %}
+input_parameter_name = '{{ binding_name }}'.replace('_{{ node.id[:7] }}', '')
+arg = {
+   "name": input_parameter_name,
+   "type": input_parameter_type,
+   "value": str(input_parameter_value),
+   "path": path
+}
+args.append(arg)
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+# node.properties.artifacts
+print("Artifact len: {{ node.properties.artifacts | length }}")
+{% for artifact in node.properties.artifacts %}
+print("Title: {{ title }}, Artifact to_task: {{ artifact.to_task }}")
+{% if artifact.to_task == title %}
+artifact_path = "/tmp/{{ artifact.name }}.json"
+with open(artifact_path) as f:
+    input_parameter_value = json.load(f)
+input_parameter_type = '{{ artifact.type }}'
+{% for port in ports.values() %}
+{% if port.type == 'right' %}
+path = "/tmp/{{ port.id }}_{{ node.id[:7] }}.json"
+{% endif %}
+{% endfor %}
+
+{% for binding_name in artifact.input_parameter_names %}
+input_parameter_name = '{{ binding_name }}'
+print(f"Input parameter name: {input_parameter_name}")
+arg = {
+   "name": input_parameter_name,
+   "type": input_parameter_type,
+   "value": str(input_parameter_value),
+   "path": path
+}
+args.append(arg)
+{% endfor %}
+{% endif %}
+{% endfor %}
