@@ -124,7 +124,7 @@ templates:
     imagePullPolicy: IfNotPresent
     command: [python]
     source: |
-      {{ include('fdo_writer_logic.j2', ports=ports, special_dep=special_dep, node=node) | indent(6) }}
+      {{ include('fdo_writer_logic.j2', ports=ports, special_dep=special_dep, node=node,shared_dir_mount=shared_dir_mount) | indent(6) }}
   {% elif is_splitter or is_merger %}
   {% set special_dep = dependencies_dag[node.id][0] %}
   volumeMounts:

@@ -66,7 +66,6 @@ def get_num_of_max_parallel_tasks(workflow_dict):
         if 'param_max_branches' in param['name']:
             entry = {'node_id': param['node_id'], 'value': param['value']}
             splitters.append(entry)
-
     splitter_targets = []
     for link_id in workflow_dict['naavrewf2']['links']:
         link = workflow_dict['naavrewf2']['links'][link_id]
@@ -109,7 +108,6 @@ def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
 def wait_for_wf(wf_status_response_json=None,
                 workflow_dict=None,
                 run_url=None):
-    print(wf_status_response_json['status']['phase'])
     while 'Running' in wf_status_response_json['status']['phase'] or \
             'Pending' in wf_status_response_json['status']['phase']:
         sleep(5)
@@ -120,10 +118,17 @@ def wait_for_wf(wf_status_response_json=None,
         )
         assert wf_status_response.status_code == 200
         wf_status_response_json = wf_status_response.json()
-    if wf_status_response_json['status']['phase'] == 'Failed':
-        print("Workflow failed: "+str(workflow_dict))
-    assert wf_status_response_json['status']['phase'] != 'Failed'
-    assert wf_status_response_json['status']['phase'] != 'Error'
+    if wf_status_response_json['status']['phase'] in ('Failed', 'Error'):
+        # print("Workflow failed: "+str(workflow_dict))
+        # print("Workflow failed:\n" + json.dumps(wf_status_response_json,
+        #                                         indent=2))
+        for node_name in wf_status_response_json['status']['nodes']:
+            node = wf_status_response_json['status']['nodes'][node_name]
+            if 'phase' in node:
+                if node['phase'] == 'Failed' or node['phase'] == 'Error':
+                    print("Node failed: " + json.dumps(node, indent=2))
+
+        assert False, "Workflow failed, see logs for details"
     parallel_tasks = get_num_of_max_parallel_tasks(workflow_dict=workflow_dict)
     check_max_branch_count(wf_status_response_json=wf_status_response_json,
                            parallel_tasks=parallel_tasks)
@@ -134,8 +139,6 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
-        if 'py_large_io' not in workflow_test_folder:
-            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
@@ -204,5 +207,4 @@ def test_submit():
         )
         assert wf_delete_response.status_code == 200
         delete_wf_response_json = wf_delete_response.json()
-        print(delete_wf_response_json)
         assert delete_wf_response_json['status'] == 'deleted'

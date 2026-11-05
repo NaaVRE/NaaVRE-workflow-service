@@ -130,7 +130,7 @@
             "modified": "2026-07-24T13:52:08.915045Z",
             "version": 1,
             "template_format": "v1",
-            "container_image": "ghcr.io/thomas-brn/cells-vl-thomas-dev/s1-fetch-weather-user:348b7f8",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/s1-fetch-weather-user:23c5248",
             "kernel": "ipython",
             "source_url": "https://github.com/thomas-brn/cells-vl-thomas-dev/tree/800f66e8ed3f2efae46b20746167dd8e61cc79b8/s1-fetch-weather-user",
             "is_draft": false

@@ -2,6 +2,7 @@ import base64
 import json
 import os
 from abc import ABC
+from collections import defaultdict
 from functools import lru_cache
 
 # from profiling_decorator import profile
@@ -41,38 +42,69 @@ def include_file(env):
     def _include(name, **kwargs):
         template = env.get_template(name)
         return template.render(**kwargs)
-
     return _include
 
 
-def set_io_artifacts(dependencies_dag: dict, nodes: dict,
-                     payload_params: list) -> dict:
+def _base_input_name(port_name: str) -> str:
+    return '_'.join(port_name.split('_')[:-1])
+
+
+def _build_io_type_index(node) -> dict:
+    ports = (list(node.properties.cell.inputs) +
+             list(node.properties.cell.outputs))
+    return {port.name: port.type for port in ports}
+
+
+def _build_param_type_index(node) -> dict:
+    return {port.name: port.type for port in node.properties.cell.params}
+
+
+def _collect_node_items(inputs: list, title: str) -> list:
+    node_items = []
+    items_by_name = {}
+    for input in inputs:
+        if input['to_task'] != title and input['from_task'] != title:
+            continue
+        node_input = items_by_name.get(input['name'])
+        if node_input is None:
+            node_input = input.copy()
+            node_input['input_parameter_names'] = []
+            items_by_name[input['name']] = node_input
+            node_items.append(node_input)
+        input_parameter_name = input['input_parameter_name']
+        if input_parameter_name not in node_input['input_parameter_names']:
+            node_input['input_parameter_names'].append(input_parameter_name)
+    return node_items
+
+
+def set_node_io(dependencies_dag: dict, nodes: dict,
+                payload_params: list) -> dict:
+    payload_params = payload_params or []
+    payload_params_by_node = defaultdict(list)
+    for payload_param in payload_params:
+        payload_params_by_node[payload_param['node_id']].append(payload_param)
+
     all_parameters = []
     all_artifacts = []
     for node_id in nodes:
         node = nodes[node_id]
         title = build_task_title(node=node, node_id=node_id)
         node.properties.cell.task_title = title
-        for dependency in dependencies_dag[node_id]:
+
+        io_types = _build_io_type_index(node)
+        param_types = _build_param_type_index(node)
+        for dependency in dependencies_dag.get(node_id, []):
             name = dependency['from_port']
             from_task = dependency['task_name']
             from_port = dependency['from_port']
-            task_name = dependency['task_name']
             input_name = dependency['to_port']
-            input_name_base = '_'.join(input_name.split('_')[:-1])
-            cell_port = None
-            for c_input in node.properties.cell.inputs:
-                if c_input.name == input_name_base:
-                    cell_port = c_input
-                    break
-            for c_output in node.properties.cell.outputs:
-                if c_output.name == input_name_base:
-                    cell_port = c_output
-                    break
-            parameter_type = cell_port.type if cell_port else None
+            input_name_base = _base_input_name(input_name)
+            parameter_type = io_types.get(input_name_base)
             if dependency['type'] == 'splitter':
-                with_param = ('"{{tasks.' + task_name +
-                              '.outputs.parameters.' + from_port + '}}"')
+                with_param = (
+                    f'"{{{{tasks.{from_task}.outputs.parameters.'
+                    f'{from_port}}}}}"'
+                )
                 parameter = {'name': name,
                              'value': '"{{item}}"',
                              'withParam': with_param,
@@ -80,25 +112,26 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
                              'from_task': from_task,
                              'input_parameter_name': input_name_base,
                              'input_parameter_value':
-                                 '{{inputs.parameters.' + name + '}}',
+                                 f'{{{{inputs.parameters.{name}}}}}',
                              'type': parameter_type}
                 all_parameters.append(parameter)
             elif node.type == 'merger':
+                value = (f'"{{{{tasks.{from_task}.outputs.parameters.'
+                         f'{name}}}}}"')
                 parameter = {'name': name,
-                             'value': '"{{tasks.' +
-                                      from_task + '.outputs.parameters.' +
-                                      name + '}}"',
+                             'value': value,
                              'to_task': title,
                              'from_task': from_task,
                              'input_parameter_name': input_name_base,
                              'type': parameter_type,
                              'input_parameter_value':
-                                 '{{inputs.parameters.' + name + '}}'}
+                                 f'{{{{inputs.parameters.{name}}}}}'}
                 all_parameters.append(parameter)
             else:
-                take_from = ('"{{tasks.' + from_task +
-                             '.outputs.artifacts.' +
-                             from_port + '}}"')
+                take_from = (
+                    f'"{{{{tasks.{from_task}.outputs.artifacts.'
+                    f'{from_port}}}}}"'
+                )
                 artifact = {'name': name,
                             'from': take_from,
                             'to_task': title,
@@ -106,48 +139,26 @@ def set_io_artifacts(dependencies_dag: dict, nodes: dict,
                             'input_parameter_name': input_name_base,
                             'type': parameter_type}
                 all_artifacts.append(artifact)
-        for payload_param in payload_params:
-            if payload_param['node_id'] == node_id:
-                name = payload_param['name']
-                short_id = payload_param['node_id'][:7]
-                value = ('"{{workflow.parameters.' + name + '_' +
-                         short_id + '}}"')
-                wf_param_name = name + '_' + short_id
-                cell_port = None
-                for c_param in node.properties.cell.params:
-                    if c_param.name == name:
-                        cell_port = c_param
-                        break
-                parameter_type = cell_port.type if cell_port else None
-                parameter = {'name': name + '_' + short_id,
-                             'value': value,
-                             'to_task': title,
-                             'from_task': name + '_' + short_id,
-                             'input_parameter_name': wf_param_name,
-                             'type': parameter_type,
-                             'input_parameter_value': value}
-                all_parameters.append(parameter)
+
+        for payload_param in payload_params_by_node.get(node_id, []):
+            name = payload_param['name']
+            short_id = payload_param['node_id'][:7]
+            wf_param_name = f'{name}_{short_id}'
+            value = f'"{{{{workflow.parameters.{wf_param_name}}}}}"'
+            parameter = {'name': wf_param_name,
+                         'value': value,
+                         'to_task': title,
+                         'from_task': wf_param_name,
+                         'input_parameter_name': wf_param_name,
+                         'type': param_types.get(name),
+                         'input_parameter_value': value}
+            all_parameters.append(parameter)
+
     for node_id in nodes:
         node = nodes[node_id]
         title = node.properties.cell.task_title
-        node_parameters = []
-        node_parameter_keys = set()
-        node_artifacts = []
-        node_artifact_keys = set()
-        for parameter in all_parameters:
-            if (parameter['to_task'] == title or
-                    parameter['from_task'] == title and
-                    parameter['name'] not in node_parameter_keys):
-                node_parameter_keys.add(parameter['name'])
-                node_parameters.append(parameter)
-        for artifact in all_artifacts:
-            if (artifact['to_task'] == title or
-                    artifact['from_task'] == title and
-                    artifact['name'] not in node_artifact_keys):
-                node_artifact_keys.add(artifact['name'])
-                node_artifacts.append(artifact)
-        node.properties.parameters = node_parameters
-        node.properties.artifacts = node_artifacts
+        node.properties.parameters = _collect_node_items(all_parameters, title)
+        node.properties.artifacts = _collect_node_items(all_artifacts, title)
         nodes[node_id] = node
     return nodes
 
@@ -191,7 +202,7 @@ class ArgoEngine(WFEngine, ABC):
                             "configuration")
 
     @property
-    def user_extraVolumeMounts(self):
+    def user_extra_volume_mounts(self):
         """ Returns extraVolumeMounts for the current user
 
         Filters extraVolumeMounts:
@@ -262,9 +273,9 @@ class ArgoEngine(WFEngine, ABC):
         default_max_branches = (
                     self.vl_config.wf_engine_config.default_max_branches
                     or 100)
-        nodes = set_io_artifacts(self.parser.get_dependencies_dag(),
-                                 self.nodes,
-                                 self.naavrewf2_payload_params)
+        nodes = set_node_io(self.parser.get_dependencies_dag(),
+                            self.nodes,
+                            self.naavrewf2_payload_params)
         dependencies_dag = self.parser.get_dependencies_dag()
         workflow_yaml = self.workflow_template.render(
             vlab_slug=self.virtual_lab_name,
@@ -276,7 +287,7 @@ class ArgoEngine(WFEngine, ABC):
             workflow_service_account=service_account,
             workdir_storage_size=workdir_storage_size,
             cron_schedule=self.cron_schedule,
-            extraVolumeMounts=self.user_extraVolumeMounts or [],
+            extraVolumeMounts=self.user_extra_volume_mounts or [],
             default_max_branches=int(default_max_branches),
             shared_dir_mount='/tmp/data'
         )
@@ -291,6 +302,37 @@ class ArgoEngine(WFEngine, ABC):
                 f.write(workflow_yaml)
             print(yaml.dump(workflow_dict, sort_keys=False))
         return workflow_dict
+
+    def get_pod_logs(self, workflow_url: str):
+        # Get all pod names for the workflow and return their logs
+        wf_nodes = self.get_wf(workflow_url=workflow_url)['status']['nodes']
+        workflow_name = workflow_url.split('/')[-1]
+        pod_names = []
+        for node_name in wf_nodes:
+            node = wf_nodes[node_name]
+            if node['type'] == 'Pod':
+                template_scope = node['templateScope'].replace('local/', '')
+                pod_name = template_scope + '-' + node['templateName'] + node[
+                    'id'].replace(template_scope, '')
+                pod_names.append(pod_name)
+                print(f"Getting logs for pod: {pod_name}")
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.token}"
+        }
+        pod_log_urls = []
+        for pod_name in pod_names:
+            pod_log_url = f"{self.api_endpoint}/{workflow_name}/{pod_name}/log"
+            pod_log_urls.append(pod_log_url)
+        logs = []
+        for pod_log_url in pod_log_urls:
+            response = requests.get(pod_log_url, headers=headers,
+                                    verify=os.getenv('VERIFY_SSL', 'true').
+                                    lower() == 'true')
+            if response.status_code != 200:
+                raise Exception('Error getting pod logs: ' + response.text)
+            logs.append(response.text)
+        return logs
 
     def get_wf(self, workflow_url: str):
         # Get the workflow from the Argo API
