@@ -1,0 +1,159 @@
+{
+  "virtual_lab": "openlab",
+  "naavrewf2": {
+    "offset": {
+      "x": 124.72,
+      "y": 111.47
+    },
+
+    "nodes": "{wf.naavrewf.chart.nodes}",
+    "links": "{wf.naavrewf.chart.links}",
+    "selected": {},
+    "hovered": {},
+    "metadata": {
+      "version": "1.1"
+    },
+    "properties": {
+      "params": []
+    }
+  },
+  "params": [
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_assoc",
+      "value": "150"
+    },
+    {
+      "node_id": "8c3c9846-9ef6-493a-9434-92e29d77f83d",
+      "name": "param_batch_size",
+      "value": "128"
+    },
+    {
+      "node_id": "19b78b19-42c2-435a-81c5-df8b7e2b76fb",
+      "name": "param_channel",
+      "value": "HH?"
+    },
+    {
+      "node_id": "19b78b19-42c2-435a-81c5-df8b7e2b76fb",
+      "name": "param_duration_minutes",
+      "value": "30"
+    },
+    {
+      "node_id": "a6284a85-5a75-4ead-a8e7-fab0e75f7279",
+      "name": "param_lat_bounds_1st",
+      "value": "37.5"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_lat_bounds_1st",
+      "value": "37.5"
+    },
+    {
+      "node_id": "a6284a85-5a75-4ead-a8e7-fab0e75f7279",
+      "name": "param_lat_bounds_2and",
+      "value": "39.0"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_lat_bounds_2and",
+      "value": "39.0"
+    },
+    {
+      "node_id": "19b78b19-42c2-435a-81c5-df8b7e2b76fb",
+      "name": "param_location",
+      "value": "*"
+    },
+    {
+      "node_id": "a6284a85-5a75-4ead-a8e7-fab0e75f7279",
+      "name": "param_lon_bounds_1st",
+      "value": "20.0"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_lon_bounds_1st",
+      "value": "20.0"
+    },
+    {
+      "node_id": "a6284a85-5a75-4ead-a8e7-fab0e75f7279",
+      "name": "param_lon_bounds_2and",
+      "value": "22.0"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_lon_bounds_2and",
+      "value": "22.0"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_n_p_s_picks",
+      "value": "4"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_n_picks",
+      "value": "12"
+    },
+    {
+      "node_id": "19b78b19-42c2-435a-81c5-df8b7e2b76fb",
+      "name": "param_networks",
+      "value": "HT,HL,HP,HA"
+    },
+    {
+      "node_id": "a6284a85-5a75-4ead-a8e7-fab0e75f7279",
+      "name": "param_output_dir",
+      "value": "outputs"
+    },
+    {
+      "node_id": "8c3c9846-9ef6-493a-9434-92e29d77f83d",
+      "name": "param_p_thld",
+      "value": "0.1"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_p_velocity",
+      "value": "6.2"
+    },
+    {
+      "node_id": "19b78b19-42c2-435a-81c5-df8b7e2b76fb",
+      "name": "param_provider",
+      "value": "NOA"
+    },
+    {
+      "node_id": "8c3c9846-9ef6-493a-9434-92e29d77f83d",
+      "name": "param_s_thld",
+      "value": "0.1"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_s_velocity",
+      "value": "3.3"
+    },
+    {
+      "node_id": "19b78b19-42c2-435a-81c5-df8b7e2b76fb",
+      "name": "param_stations",
+      "value": "ATHR,HAVD,LKD2,FSK,VLS,LTHK,PSDA,RTZL,EVGI,ITHC,DMLN,NYDR,TSLK,RLS,DRAG,KEF3,KEF4,ORTH,VLMS,PLEV,AXS,PDO,KSTR"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_time_before_s",
+      "value": "300"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_tolerance_s",
+      "value": "2.0"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_zlim_km_1st",
+      "value": "0.0"
+    },
+    {
+      "node_id": "177c924f-e0bd-4d1e-8563-a819cd3ede56",
+      "name": "param_zlim_km_2and",
+      "value": "100.0"
+    }
+  ],
+  "secrets": [],
+  "cron_schedule": null
+}
