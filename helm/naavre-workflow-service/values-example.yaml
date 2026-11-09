@@ -25,6 +25,7 @@ conf:
                 "cell_github_token": "SECRET",
                 "registry_url": "ghcr.io/naavre/naavre-cells-vl-tests",
                 "wf_engine_config": {
+                  "default_max_branches": 5,
                   "name": "argo",
                   "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
                   "access_token": "SECRET",
