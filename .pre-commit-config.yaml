@@ -4,14 +4,18 @@ repos:
     hooks:
       - id: ggshield
         language_version: python3
-        stages: [ commit ]
+        stages: [ pre-commit ]
 
   - repo: https://github.com/crate-ci/typos
     rev: v1.26.0
     hooks:
       - id: typos
+    exclude: 'app/tests/resources/.*'
+    stages: [ pre-commit ]
+
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.0.0
     hooks:
       - id: flake8
+    stages: [ pre-commit ]
