@@ -28,7 +28,7 @@ for _mount_path in ["{{ shared_dir_mount }}", "/tmp"]:
 
 
 default_max_branches = {{ default_max_branches }}
-
+param_max_branches = default_max_branches
 for arg in args:
     if 'param_max_branches' in arg['name']:
         param_max_branches = int(arg['value'])
