@@ -70,6 +70,7 @@ jobs:
 
       - name: pytest
         shell: bash -l {0}
+        env:
+          TEST_NODE_ID: ${{ inputs.test }}
         run: |
-          pip install pytest
-          pytest ${{ inputs.test }} -s --ignore=docker --ignore=cypress --no-header --log-cli-level=DEBUG -vv --tb=long
+          pytest "$TEST_NODE_ID" -s --ignore=docker --ignore=cypress --no-header --log-cli-level=DEBUG -vv --tb=long

@@ -7,6 +7,7 @@ from time import sleep
 
 from croniter import croniter
 from fastapi.testclient import TestClient
+import pytest
 
 from app.main import app
 from app.models.naavrewf2_payload import Naavrewf2Payload
@@ -135,81 +136,78 @@ def wait_for_wf(wf_status_response_json=None,
                            parallel_tasks=parallel_tasks)
 
 
-def test_submit():
-    workflow_dirs = os.path.join(base_path)
-    workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
-                           f.is_dir()]
-    for workflow_test_folder in workflow_test_files:
-        if 'r_split_merge_v2' not in workflow_test_folder:
-            print(f"Skipping workflow test for {workflow_test_folder} because "
-                  f"it is not a valid test case for this test.")
-            continue
-        print('Testing workflow: ' + workflow_test_folder)
-        workflow_payload_path = os.path.join(workflow_test_folder,
-                                             'wf_payload.json')
-        with open(workflow_payload_path) as f:
-            workflow_dict = json.load(f)
-        workflow_file_path = os.path.join(workflow_test_folder, 'wf.naavrewf')
-        with open(workflow_file_path) as f:
-            workflow_file = json.load(f)
-        nodes = workflow_file['chart']['nodes']
-        links = workflow_file['chart']['links']
+@pytest.mark.parametrize(
+    'workflow_test_folder',
+    sorted(str(path) for path in Path(base_path).iterdir() if path.is_dir()),
+    ids=lambda path: Path(path).name,
+)
+def test_submit(workflow_test_folder):
+    print('Testing workflow: ' + workflow_test_folder)
+    workflow_payload_path = os.path.join(workflow_test_folder,
+                                         'wf_payload.json')
+    with open(workflow_payload_path) as f:
+        workflow_dict = json.load(f)
+    workflow_file_path = os.path.join(workflow_test_folder, 'wf.naavrewf')
+    with open(workflow_file_path) as f:
+        workflow_file = json.load(f)
+    nodes = workflow_file['chart']['nodes']
+    links = workflow_file['chart']['links']
 
-        workflow_dict['naavrewf2']['nodes'] = nodes
-        workflow_dict['naavrewf2']['links'] = links
+    workflow_dict['naavrewf2']['nodes'] = nodes
+    workflow_dict['naavrewf2']['links'] = links
 
-        submit_response = client.post(
-            '/submit/',
-            headers={'Authorization': 'Bearer ' + user_auth_token},
-            json=workflow_dict,
-        )
-        responses_dict = {'submit': {'code': 200, 'message': 'OK'}}
-        responses_path = os.path.join(workflow_test_folder, 'responses.json')
-        if os.path.exists(responses_path):
-            with open(responses_path) as f:
-                responses_dict = json.load(f)
+    submit_response = client.post(
+        '/submit/',
+        headers={'Authorization': 'Bearer ' + user_auth_token},
+        json=workflow_dict,
+    )
+    responses_dict = {'submit': {'code': 200, 'message': 'OK'}}
+    responses_path = os.path.join(workflow_test_folder, 'responses.json')
+    if os.path.exists(responses_path):
+        with open(responses_path) as f:
+            responses_dict = json.load(f)
 
-        if submit_response.status_code != \
-                responses_dict['submit']['code']:
-            print(submit_response.text)
+    if submit_response.status_code != \
+            responses_dict['submit']['code']:
+        print(submit_response.text)
 
-        assert submit_response.status_code == \
-               responses_dict['submit']['code']
-        if submit_response.status_code != 200 and \
-                responses_dict['submit']['code'] != 200:
-            continue
-        # Test model
-        try:
-            Naavrewf2Payload(**workflow_dict)
-        except TypeError as ex:
-            assert False, f"Error creating Naavrewf2Payload: {ex}"
-        # Check run_url that the workflow was submitted successfully
-        submit_response_json = submit_response.json()
-        run_url = submit_response_json['run_url']
-        assert run_url is not None
-        wf_status_response = client.get(
-            '/status/' + workflow_dict['virtual_lab'],
-            params={'workflow_url': run_url},
-            headers={'Authorization': 'Bearer ' + user_auth_token}
-        )
+    assert submit_response.status_code == \
+           responses_dict['submit']['code']
+    if submit_response.status_code != 200 and \
+            responses_dict['submit']['code'] != 200:
+        return
+    # Test model
+    try:
+        Naavrewf2Payload(**workflow_dict)
+    except TypeError as ex:
+        assert False, f"Error creating Naavrewf2Payload: {ex}"
+    # Check run_url that the workflow was submitted successfully
+    submit_response_json = submit_response.json()
+    run_url = submit_response_json['run_url']
+    assert run_url is not None
+    wf_status_response = client.get(
+        '/status/' + workflow_dict['virtual_lab'],
+        params={'workflow_url': run_url},
+        headers={'Authorization': 'Bearer ' + user_auth_token}
+    )
 
-        assert wf_status_response.status_code == 200
-        wf_status_response_json = wf_status_response.json()
-        if 'phase' in wf_status_response_json['status']:
-            assert wf_status_response_json['status']['phase'] != 'Failed'
-            assert wf_status_response_json['status']['phase'] != 'Error'
-            wait_for_wf(wf_status_response_json=wf_status_response_json,
-                        workflow_dict=workflow_dict,
-                        run_url=run_url)
-        if ('cron_schedule' in workflow_dict and
-                workflow_dict['cron_schedule'] is not None):
-            check_recurring_workflow(workflow_dict=workflow_dict,
-                                     run_url=run_url)
-        wf_delete_response = client.delete(
-            '/delete/' + workflow_dict['virtual_lab'],
-            params={'workflow_url': run_url},
-            headers={'Authorization': 'Bearer ' + user_auth_token}
-        )
-        assert wf_delete_response.status_code == 200
-        delete_wf_response_json = wf_delete_response.json()
-        assert delete_wf_response_json['status'] == 'deleted'
+    assert wf_status_response.status_code == 200
+    wf_status_response_json = wf_status_response.json()
+    if 'phase' in wf_status_response_json['status']:
+        assert wf_status_response_json['status']['phase'] != 'Failed'
+        assert wf_status_response_json['status']['phase'] != 'Error'
+        wait_for_wf(wf_status_response_json=wf_status_response_json,
+                    workflow_dict=workflow_dict,
+                    run_url=run_url)
+    if ('cron_schedule' in workflow_dict and
+            workflow_dict['cron_schedule'] is not None):
+        check_recurring_workflow(workflow_dict=workflow_dict,
+                                 run_url=run_url)
+    wf_delete_response = client.delete(
+        '/delete/' + workflow_dict['virtual_lab'],
+        params={'workflow_url': run_url},
+        headers={'Authorization': 'Bearer ' + user_auth_token}
+    )
+    assert wf_delete_response.status_code == 200
+    delete_wf_response_json = wf_delete_response.json()
+    assert delete_wf_response_json['status'] == 'deleted'

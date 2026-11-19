@@ -55,8 +55,8 @@ jobs:
         id: split-output
         run: |
           cat test_list.json
-          # Merge test parameters, to run them sequentially within a runner
-          MATRIX=$(jq -c '. | map(.module + "::" + .test) | unique' test_list.json)
+          # Run submit cases separately; group other parameters within a runner.
+          MATRIX=$(jq -c 'map(if .module == "app/tests/test_submit.py" and .test == "test_submit" then .fullname else .module + "::" + .test end) | unique' test_list.json)
           echo $MATRIX
           echo "test_list=$MATRIX" >> $GITHUB_OUTPUT
 
