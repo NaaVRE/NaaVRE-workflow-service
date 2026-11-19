@@ -15,7 +15,10 @@ from jwt import InvalidKeyError
 
 from app.models.naavrewf2_payload import Naavrewf2Payload
 from app.services.wf_engines.argo_engine import ArgoEngine
-from app.settings.service_settings import Settings
+from app.settings.service_settings import (
+    DEFAULT_FDO_VALID_VIZ_KINDS_URL,
+    Settings,
+)
 from app.utils.openid import OpenIDValidator
 
 security = HTTPBearer()
@@ -65,8 +68,16 @@ if os.getenv('DEBUG', 'false').lower() == 'true':
 else:
     logging.basicConfig(level=logging.INFO)
 
-os.environ["FDO_VALID_VIZ_KINDS_URL"] = (
-    settings.service_settings.fdo_valid_viz_kinds_url)
+
+def set_fdo_valid_viz_kinds_url(url: str) -> None:
+    os.environ["FDO_VALID_VIZ_KINDS_URL"] = (
+        url or DEFAULT_FDO_VALID_VIZ_KINDS_URL
+    )
+
+
+set_fdo_valid_viz_kinds_url(
+    settings.service_settings.fdo_valid_viz_kinds_url
+)
 
 
 def valid_access_token(credentials: Annotated[

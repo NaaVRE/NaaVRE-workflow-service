@@ -14,33 +14,72 @@ conf:
   rootPath: /my-root-path
   virtual_labs_configuration:
     rawJson: |
-      {
-        "vl_configurations": [
           {
-            "name": "openlab",
-            "wf_engine_config": {
-              "name": "argo",
-              "api_endpoint": "type_1",
-              "access_token": "config_1",
-              "service_account": "executor",
-              "namespace": "argo",
-              "workdir_storage_size": "1Gi"
-            }
-          },
-          {
-            "name": "virtual_lab_2",
-            "wf_engine_config": {
-              "name": "argo",
-              "api_endpoint": "type_1",
-              "access_token": "config_1",
-              "service_account": "executor",
-              "namespace": "argo",
-              "workdir_storage_size": "1Gi"
-            }
+            "fdo_valid_viz_kinds_url": "https://raw.githubusercontent.com/NaaVRE/NaaVRE-conf/refs/heads/main/fdo_valid_viz_kinds.json",
+            "vl_configurations": [
+              {
+                "name": "openlab",
+                "base_image_tags_url": "https://github.com/NaaVRE/flavors/releases/latest/download/base_image_tags.json",
+                "module_mapping_url": "https://raw.githubusercontent.com/NaaVRE/NaaVRE-conf/main/module_mapping.json",
+                "cell_github_url": "https://github.com/NaaVRE/cells-vl-tests",
+                "cell_github_token": "SECRET",
+                "registry_url": "ghcr.io/naavre/naavre-cells-vl-tests",
+                "wf_engine_config": {
+                  "default_max_branches": 5,
+                  "name": "argo",
+                  "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
+                  "access_token": "SECRET",
+                  "service_account": "argo-executor",
+                  "namespace": "naavre",
+                  "workdir_storage_size": "1Gi",
+                  "extraVolumeMounts": [
+                    {
+                      "name": "naa-vre-public",
+                      "readOnly": true,
+                      "mountPath": "/home/jovyan/Cloud Storage/naa-vre-public"
+                    },
+                    {
+                      "name": "naa-vre-user-data",
+                      "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
+                      "subPath": "{unescaped_username}"
+                    }
+                  ],
+                  "secrets_creator_api_endpoint": "https://naavre-dev.minikube.test/k8s-secret-creator/1.0.0",
+                  "secrets_creator_api_token": "fake-k8sSecretCreator-apiToken"
+                }
+              },
+              {
+                "name": "virtual_lab_2",
+                "base_image_tags_url": "https://github.com/QCDIS/NaaVRE-flavors/releases/latest/download/base_image_tags.json",
+                "module_mapping_url": "https://raw.githubusercontent.com/NaaVRE/NaaVRE-conf/main/module_mapping.json",
+                "cell_github_url": "https://github.com/NaaVRE/cells-vl-tests.git",
+                "cell_github_token": "TOKEN",
+                "registry_url": "ghcr.io/naavre/naavre-cells-vl-tests",
+                "wf_engine_config": {
+                  "name": "argo",
+                  "api_endpoint": "https://naavre-dev.minikube.test/argowf/",
+                  "access_token": "eyJhbGciOg...",
+                  "service_account": "executor",
+                  "namespace": "default",
+                  "workdir_storage_size": "1Gi",
+                  "extraVolumeMounts": [
+                    {
+                      "name": "naa-vre-public",
+                      "readOnly": true,
+                      "mountPath": "/home/jovyan/Cloud Storage/naa-vre-public"
+                    },
+                    {
+                      "name": "naa-vre-user-data",
+                      "mountPath": "/home/jovyan/Cloud Storage/naa-vre-user-data/",
+                      "subPath": "{unescaped_username}"
+                    }
+                  ],
+                  "secrets_creator_api_endpoint": "https://example.naavre.net/k8s-secret-creator/1.0.0/",
+                  "secrets_creator_api_token": "..."
+                }
+              }
+            ]
           }
-        ]
-      }
-
 env:
   OIDC_CONFIGURATION_URL: "https://<keycloak-host>/<keycloak-base-path>/realms/<realm>/.well-known/openid-configuration"
   CONFIG_FILE_URL: "/configuration.json"

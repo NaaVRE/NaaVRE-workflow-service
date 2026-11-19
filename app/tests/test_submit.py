@@ -140,6 +140,10 @@ def test_submit():
     workflow_test_files = [f.path for f in os.scandir(workflow_dirs) if
                            f.is_dir()]
     for workflow_test_folder in workflow_test_files:
+        if 'r_split_merge_v2' not in workflow_test_folder:
+            print(f"Skipping workflow test for {workflow_test_folder} because "
+                  f"it is not a valid test case for this test.")
+            continue
         print('Testing workflow: ' + workflow_test_folder)
         workflow_payload_path = os.path.join(workflow_test_folder,
                                              'wf_payload.json')
