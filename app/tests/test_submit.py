@@ -84,7 +84,8 @@ def get_num_of_max_parallel_tasks(workflow_dict):
     return parallel_tasks
 
 
-def check_max_branch_count(wf_status_response_json=None, parallel_tasks=None):
+def check_max_branch_count(wf_status_response_json=None,
+                           parallel_tasks=None):
     wf_nodes = {}
     if 'nodes' not in wf_status_response_json['status']:
         return

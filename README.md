@@ -77,3 +77,35 @@ To add a new test workflow follow these steps:
 7. Add a `wf_payload.json`. You can copy it from an existing folder. 
 8. If your workflow contains `params`, `secrets` or cron schedule, make sure to update the `wf_payload.json` accordingly.
 9. If your tests have specific HTTP return codes should add a file named `responses.json` with the expected response. If this file is not present, the test will expect a 200 status code. Look at app/tests/resources/py_lint/ for an example of this file.
+
+### Analyzing and containerizing workflow cells
+
+To send the notebook cells referenced by the test workflows to the
+containerizer's `extract_cell` and `containerize` endpoints, provide a bearer token in `AUTH_TOKEN`
+in the environment or in the repository's `dev-setup.env`. An environment
+value takes precedence.
+
+```shell
+python app/tests/analyze_workflow_cells.py
+```
+
+By default, the script scans all fixture folders in `app/tests/resources`. Pass
+a folder path to process just one fixture. Use `--url` and `--containerize-url`
+to override the endpoints; by default, `containerize` is a sibling of the
+`extract_cell` URL. Each successful extraction is sent to `containerize` with
+`force_containerize` set to false. This can commit generated files and trigger
+container image builds. The workflow node provides the kernel. The virtual lab defaults to `openlab` and can be
+set with `VIRTUAL_LAB` or overridden with `--virtual-lab`.
+TLS certificate verification is disabled by default; pass `--verify` to enable it
+outside a trusted development environment.
+Special workflow nodes are skipped. Missing or ambiguous notebook titles,
+invalid extraction responses and failed requests are reported, and cause a
+nonzero exit status. A successful containerization request does not guarantee
+that an asynchronously dispatched image build has completed.
+
+For each fixture with at least one successful containerization response
+containing both `container_image` and `source_url`, the script copies the
+folder to a sibling named `<folder>_v2` and updates those fields on the
+corresponding workflow nodes. Failed nodes remain unchanged in the copy.
+Existing `_v2` folders are never overwritten, and are excluded from scans.
+Responses without either URL are reported as failures.
