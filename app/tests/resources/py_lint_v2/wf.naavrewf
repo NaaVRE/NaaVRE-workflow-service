@@ -55,6 +55,7 @@
             "created": "2026-03-05T14:40:27.516577Z",
             "modified": "2026-03-05T14:40:27.530228Z",
             "version": 1,
+            "template_format": "v2",
             "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/use-input-user:e409f29",
             "kernel": "ipython",
             "source_url": null,
@@ -116,6 +117,7 @@
             "created": "2026-03-05T14:39:51.366766Z",
             "modified": "2026-03-05T14:39:51.406296Z",
             "version": 1,
+            "template_format": "v2",
             "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/input-user:ba4e99d",
             "kernel": "ipython",
             "source_url": null,
@@ -172,6 +174,7 @@
             "shared_with_users": [],
             "version": 1,
             "next_version": null,
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",

@@ -173,6 +173,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -238,6 +239,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -303,6 +305,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -368,6 +371,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
