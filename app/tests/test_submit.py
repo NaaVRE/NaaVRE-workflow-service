@@ -142,10 +142,10 @@ def wait_for_wf(wf_status_response_json=None,
     ids=lambda path: Path(path).name,
 )
 def test_submit(workflow_test_folder):
-    # if not workflow_test_folder.endswith('_v2'):
-    #     pytest.skip("Skipping non-cron workflow test")
+    if not workflow_test_folder.endswith('_v2'):
+        pytest.skip("Skipping non-v2 workflow test")
 
-    if 'py_large_io_v2' not in workflow_test_folder:
+    if 'py_one_output_connected_to_two_ports_v2' not in workflow_test_folder:
         pytest.skip("Skipping workflow test that is not")
     print('Testing workflow: ' + workflow_test_folder)
     workflow_payload_path = os.path.join(workflow_test_folder,
