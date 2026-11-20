@@ -19,6 +19,11 @@ try:
     with open(tmp_dir + '/' + 'inputs.json', 'w') as f:
         json.dump(args, f)
 
+    # Print the contents of the inputs.json file for debugging
+    with open(tmp_dir + '/' + 'inputs.json', 'r') as f:
+        file_contents = f.read()
+        print(f"Contents of {tmp_dir}/inputs.json: {file_contents}")
+
     # Convert to flat arguments
     inputs = ''
     for arg in args:

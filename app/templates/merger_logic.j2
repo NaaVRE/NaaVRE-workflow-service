@@ -45,3 +45,8 @@ for arg in args:
         f_out = open(arg['path'], "w")
         f_out.write(json.dumps(flat_list))
         f_out.close()
+
+        # Print the contents of the file for debugging
+        with open(arg['path'], 'r') as f:
+            file_contents = f.read()
+            print(f"Contents of {arg['path']}: {file_contents}")
