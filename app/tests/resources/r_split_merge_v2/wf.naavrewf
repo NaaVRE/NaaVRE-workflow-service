@@ -1,84 +1,11 @@
 {
   "chart": {
     "offset": {
-      "x": -458.67,
-      "y": 6.64
+      "x": 57.33,
+      "y": 183.64
     },
     "scale": 0.765,
     "nodes": {
-      "f16a2fad-d041-4a5c-9460-60e470dfbb97": {
-        "id": "f16a2fad-d041-4a5c-9460-60e470dfbb97",
-        "position": {
-          "x": 368.566650390625,
-          "y": 184
-        },
-        "orientation": 0,
-        "type": "workflow-cell",
-        "ports": {
-          "str_list": {
-            "id": "str_list",
-            "type": "right",
-            "properties": {
-              "color": "#931f67",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": 252,
-              "y": 30
-            }
-          }
-        },
-        "properties": {
-          "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/198510ad-3de9-427f-95e4-cd4a3d5ecc7e/",
-            "owner": "user",
-            "virtual_lab": "openlab",
-            "shared_with_scopes": [],
-            "shared_with_users": [],
-            "versions": [
-              {
-                "version": 1,
-                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/198510ad-3de9-427f-95e4-cd4a3d5ecc7e/"
-              }
-            ],
-            "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.29",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.29"
-            },
-            "containerization_job": {
-              "html_url": "https://github.com/NaaVRE/cells-vl-tests/actions/runs/44761684734/job/136375630945",
-              "status": "completed",
-              "conclusion": "success"
-            },
-            "dependencies": [],
-            "inputs": [],
-            "outputs": [
-              {
-                "name": "str_list",
-                "type": "list"
-              }
-            ],
-            "confs": [],
-            "params": [],
-            "secrets": [],
-            "title": "input-list-r-user",
-            "description": "input-list-r-user",
-            "created": "2026-11-20T15:16:54.607361Z",
-            "modified": "2026-11-20T15:22:50.029687Z",
-            "version": 1,
-            "template_format": "v2",
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/input-list-r-user:b05a9c2",
-            "containerization_workflow_id": "8a02202a-4a9f-4330-b7dd-d719bce41dfa",
-            "kernel": "IRkernel",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/df7e2be00925dd54f3a805e0a6ff9ad82929c03d/input-list-r-user",
-            "is_draft": false
-          }
-        },
-        "size": {
-          "width": 0,
-          "height": 0
-        }
-      },
       "32872f7c-95ec-49b5-b0c1-b9a48813ebd8": {
         "id": "32872f7c-95ec-49b5-b0c1-b9a48813ebd8",
         "position": {
@@ -157,96 +84,6 @@
           "height": 61
         }
       },
-      "c99dd300-af48-4829-a8d9-fd752dde89a4": {
-        "id": "c99dd300-af48-4829-a8d9-fd752dde89a4",
-        "position": {
-          "x": 997.6949678308818,
-          "y": 186.09150326797382
-        },
-        "orientation": 0,
-        "type": "workflow-cell",
-        "ports": {
-          "str_list": {
-            "id": "str_list",
-            "type": "left",
-            "properties": {
-              "color": "#931f67",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": -2,
-              "y": 30
-            }
-          },
-          "new_lines": {
-            "id": "new_lines",
-            "type": "right",
-            "properties": {
-              "color": "#481f93",
-              "parentNodeType": "workflow-cell"
-            },
-            "position": {
-              "x": 252,
-              "y": 30
-            }
-          }
-        },
-        "properties": {
-          "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/c48e9343-3a21-4c26-855d-3d147af119d2/",
-            "owner": "user",
-            "virtual_lab": "openlab",
-            "shared_with_scopes": [],
-            "shared_with_users": [],
-            "versions": [
-              {
-                "version": 1,
-                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/c48e9343-3a21-4c26-855d-3d147af119d2/"
-              }
-            ],
-            "base_container_image": {
-              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.29",
-              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.29"
-            },
-            "containerization_job": {
-              "html_url": "https://github.com/NaaVRE/cells-vl-tests/actions/runs/44761721429/job/136375755001",
-              "status": "completed",
-              "conclusion": "success"
-            },
-            "dependencies": [],
-            "inputs": [
-              {
-                "name": "str_list",
-                "type": "list"
-              }
-            ],
-            "outputs": [
-              {
-                "name": "new_lines",
-                "type": "list"
-              }
-            ],
-            "confs": [],
-            "params": [],
-            "secrets": [],
-            "title": "str-parallel-processing-r-user",
-            "description": "str-parallel-processing-r-user",
-            "created": "2026-11-20T15:17:07.504112Z",
-            "modified": "2026-11-20T15:20:51.054325Z",
-            "version": 1,
-            "template_format": "v2",
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/str-parallel-processing-r-user:f48bccf",
-            "containerization_workflow_id": "f96b985f-46ca-421a-b2c4-e2a0b49156c7",
-            "kernel": "IRkernel",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/be1f2af78ea0ef15c2f3f7ffc1a2cad29af2ac27/str-parallel-processing-r-user",
-            "is_draft": false
-          }
-        },
-        "size": {
-          "width": 252,
-          "height": 61
-        }
-      },
       "d90043f2-fa21-4a5e-83ac-2da385d85945": {
         "id": "d90043f2-fa21-4a5e-83ac-2da385d85945",
         "position": {
@@ -319,11 +156,174 @@
           "height": 61
         }
       },
-      "8250b1eb-8022-4db8-b23f-28e02414a7ac": {
-        "id": "8250b1eb-8022-4db8-b23f-28e02414a7ac",
+      "b52f94e7-f63d-4c74-bc56-551b13f608ff": {
+        "id": "b52f94e7-f63d-4c74-bc56-551b13f608ff",
         "position": {
-          "x": 1779.3943142361113,
-          "y": 205.69934640522877
+          "x": 269.6121738408905,
+          "y": 173.01960784313735
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "str_list": {
+            "id": "str_list",
+            "type": "right",
+            "properties": {
+              "color": "#931f67",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/2223f730-f905-486b-b7b0-b0f724f546ee/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "versions": [
+              {
+                "version": 1,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/2223f730-f905-486b-b7b0-b0f724f546ee/"
+              }
+            ],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.29",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.29"
+            },
+            "containerization_job": {
+              "html_url": "https://github.com/NaaVRE/cells-vl-tests/actions/runs/45149796226/job/137608084602",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            "dependencies": [],
+            "inputs": [],
+            "outputs": [
+              {
+                "name": "str_list",
+                "type": "list"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "input-list-r-user",
+            "description": "input-list-r-user",
+            "created": "2026-11-23T09:44:46.838065Z",
+            "modified": "2026-11-23T09:49:17.049649Z",
+            "version": 1,
+            "template_format": "v2",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/input-list-r-user:8a56658",
+            "containerization_workflow_id": "dede3a02-0bb8-48dc-85ab-1f61ffdb061a",
+            "kernel": "IRkernel",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/9e3f51ee080c14330bc7eddf1947029f4d232055/input-list-r-user",
+            "is_draft": false
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "cf091e81-de49-4404-8131-7ff4be6a1e87": {
+        "id": "cf091e81-de49-4404-8131-7ff4be6a1e87",
+        "position": {
+          "x": 962.4226313572295,
+          "y": 179.55555555555563
+        },
+        "orientation": 0,
+        "type": "workflow-cell",
+        "ports": {
+          "str_list": {
+            "id": "str_list",
+            "type": "left",
+            "properties": {
+              "color": "#931f67",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": -2,
+              "y": 30
+            }
+          },
+          "new_lines": {
+            "id": "new_lines",
+            "type": "right",
+            "properties": {
+              "color": "#481f93",
+              "parentNodeType": "workflow-cell"
+            },
+            "position": {
+              "x": 252,
+              "y": 30
+            }
+          }
+        },
+        "properties": {
+          "cell": {
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/843320b7-158f-43d2-8dd3-fcc287bfdbbf/",
+            "owner": "user",
+            "virtual_lab": "openlab",
+            "shared_with_scopes": [],
+            "shared_with_users": [],
+            "versions": [
+              {
+                "version": 1,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/843320b7-158f-43d2-8dd3-fcc287bfdbbf/"
+              }
+            ],
+            "base_container_image": {
+              "build": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-build:v0.3.29",
+              "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.29"
+            },
+            "containerization_job": {
+              "html_url": "https://github.com/NaaVRE/cells-vl-tests/actions/runs/45149823553/job/137608172608",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            "dependencies": [],
+            "inputs": [
+              {
+                "name": "str_list",
+                "type": "list"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "new_lines",
+                "type": "list"
+              }
+            ],
+            "confs": [],
+            "params": [],
+            "secrets": [],
+            "title": "str-parallel-processing-r-user",
+            "description": "str-parallel-processing-r-user",
+            "created": "2026-11-23T09:44:58.208522Z",
+            "modified": "2026-11-23T09:46:33.302393Z",
+            "version": 1,
+            "template_format": "v2",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/str-parallel-processing-r-user:98a3bef",
+            "containerization_workflow_id": "1f801c46-755c-4e7e-91cd-696194d1dd1a",
+            "kernel": "IRkernel",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/e48eee64cf735e499fddf7c06c49c968035d2771/str-parallel-processing-r-user",
+            "is_draft": false
+          }
+        },
+        "size": {
+          "width": 252,
+          "height": 61
+        }
+      },
+      "a1fc41fb-6986-4950-9abc-6ffd35ff085c": {
+        "id": "a1fc41fb-6986-4950-9abc-6ffd35ff085c",
+        "position": {
+          "x": 1668.3049842984062,
+          "y": 178.24836601307192
         },
         "orientation": 0,
         "type": "workflow-cell",
@@ -343,7 +343,7 @@
         },
         "properties": {
           "cell": {
-            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/8a7bf223-707d-4891-a39c-fb4429bc8933/",
+            "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/c6c8e3d5-db19-4b1f-a6c1-631f0b8406f0/",
             "owner": "user",
             "virtual_lab": "openlab",
             "shared_with_scopes": [],
@@ -351,7 +351,11 @@
             "versions": [
               {
                 "version": 1,
-                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/8a7bf223-707d-4891-a39c-fb4429bc8933/"
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/c6c8e3d5-db19-4b1f-a6c1-631f0b8406f0/"
+              },
+              {
+                "version": 2,
+                "url": "https://naavre-dev.minikube.test/naavre-catalogue-service/workflow-cells/9d06a6ec-c994-48e6-b657-4d2c53cbf369/"
               }
             ],
             "base_container_image": {
@@ -359,7 +363,7 @@
               "runtime": "ghcr.io/naavre/flavors/naavre-fl-vanilla-cell-runtime:v0.3.29"
             },
             "containerization_job": {
-              "html_url": "https://github.com/NaaVRE/cells-vl-tests/actions/runs/44761756657/job/136375887931",
+              "html_url": "https://github.com/NaaVRE/cells-vl-tests/actions/runs/45149467810/job/137606952300",
               "status": "completed",
               "conclusion": "success"
             },
@@ -376,14 +380,14 @@
             "secrets": [],
             "title": "assert-new-lines-user",
             "description": "assert-new-lines-user",
-            "created": "2026-11-20T15:17:19.599254Z",
-            "modified": "2026-11-20T15:21:47.167772Z",
+            "created": "2026-11-23T09:42:26.785113Z",
+            "modified": "2026-11-23T09:46:12.613690Z",
             "version": 1,
             "template_format": "v2",
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-new-lines-user:latest@sha256:8870ce8414712bba40645d8c757c6c67a59e15c831a318d48880cd2ef1c227ef",
-            "containerization_workflow_id": "578f6a78-8345-476d-bff2-cf4d8d6d8c4d",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-new-lines-user:ecec08f",
+            "containerization_workflow_id": "87d11191-167b-411d-bc5c-12282d2fe7b5",
             "kernel": "IRkernel",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/ef5fc87bfe1c3df015551c99b35783b022c5aee5/assert-new-lines-user",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/823f24f5eafa228d389c9792acd30dcb636a7e55/assert-new-lines-user",
             "is_draft": false
           }
         },
@@ -394,10 +398,10 @@
       }
     },
     "links": {
-      "fd0ea86c-b8ca-4c97-bc61-c322db889970": {
-        "id": "fd0ea86c-b8ca-4c97-bc61-c322db889970",
+      "2b873689-59cb-444e-8e89-b432f1b214f4": {
+        "id": "2b873689-59cb-444e-8e89-b432f1b214f4",
         "from": {
-          "nodeId": "f16a2fad-d041-4a5c-9460-60e470dfbb97",
+          "nodeId": "b52f94e7-f63d-4c74-bc56-551b13f608ff",
           "portId": "str_list"
         },
         "to": {
@@ -405,21 +409,21 @@
           "portId": "splitter_source"
         }
       },
-      "bce5bab8-5760-495a-9b42-181c7af21e04": {
-        "id": "bce5bab8-5760-495a-9b42-181c7af21e04",
+      "8664a36b-86b0-48ea-84e8-d800484cc57a": {
+        "id": "8664a36b-86b0-48ea-84e8-d800484cc57a",
         "from": {
           "nodeId": "32872f7c-95ec-49b5-b0c1-b9a48813ebd8",
           "portId": "splitter_target"
         },
         "to": {
-          "nodeId": "c99dd300-af48-4829-a8d9-fd752dde89a4",
+          "nodeId": "cf091e81-de49-4404-8131-7ff4be6a1e87",
           "portId": "str_list"
         }
       },
-      "f7447d68-c45f-4aee-898e-29db06b5cc39": {
-        "id": "f7447d68-c45f-4aee-898e-29db06b5cc39",
+      "716ae0ca-918a-423b-bbe7-c90f1ead413e": {
+        "id": "716ae0ca-918a-423b-bbe7-c90f1ead413e",
         "from": {
-          "nodeId": "c99dd300-af48-4829-a8d9-fd752dde89a4",
+          "nodeId": "cf091e81-de49-4404-8131-7ff4be6a1e87",
           "portId": "new_lines"
         },
         "to": {
@@ -427,14 +431,14 @@
           "portId": "merger_source"
         }
       },
-      "2379fdbd-bc52-4972-ab79-6e70719158dc": {
-        "id": "2379fdbd-bc52-4972-ab79-6e70719158dc",
+      "a282d241-3003-4b1b-ba72-c1d7028b229a": {
+        "id": "a282d241-3003-4b1b-ba72-c1d7028b229a",
         "from": {
           "nodeId": "d90043f2-fa21-4a5e-83ac-2da385d85945",
           "portId": "merger_target"
         },
         "to": {
-          "nodeId": "8250b1eb-8022-4db8-b23f-28e02414a7ac",
+          "nodeId": "a1fc41fb-6986-4950-9abc-6ffd35ff085c",
           "portId": "new_lines"
         }
       }
@@ -443,9 +447,9 @@
       "params": []
     },
     "selected": {},
-    "hovered": {
-      "type": "node",
-      "id": "d90043f2-fa21-4a5e-83ac-2da385d85945"
+    "hovered": {},
+    "metadata": {
+      "version": "1.1"
     }
   }
 }
