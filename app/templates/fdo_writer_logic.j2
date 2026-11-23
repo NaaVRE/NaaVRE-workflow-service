@@ -21,7 +21,7 @@ reserved_arg_names = {
 }
 for idx, arg in enumerate(args):
     var_name = arg['name']
-    print(f'Processing argument: name={var_name}, value={arg["value"]}, type={arg["type"]}')
+    print(f'FDO Writer: Processing argument: name={var_name}, value={arg["value"]}, type={arg["type"]}')
     var_value = arg['value']
     var_type = arg['type']
     if var_name not in reserved_arg_names:

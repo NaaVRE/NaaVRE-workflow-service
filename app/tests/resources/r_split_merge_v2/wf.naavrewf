@@ -73,7 +73,7 @@
               {
                 "name": "param_max_branches",
                 "type": "int",
-                "default_value": ""
+                "default_value": "3"
               }
             ],
             "secrets": []
@@ -378,16 +378,16 @@
             "confs": [],
             "params": [],
             "secrets": [],
-            "title": "assert-new-lines-user",
-            "description": "assert-new-lines-user",
+            "title": "assert-new-lines-r-user",
+            "description": "assert-new-lines-r-user",
             "created": "2026-11-23T09:42:26.785113Z",
             "modified": "2026-11-23T09:46:12.613690Z",
             "version": 1,
             "template_format": "v2",
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-new-lines-user:ecec08f",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-new-lines-r-user:f1791ee",
             "containerization_workflow_id": "87d11191-167b-411d-bc5c-12282d2fe7b5",
             "kernel": "IRkernel",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/823f24f5eafa228d389c9792acd30dcb636a7e55/assert-new-lines-user",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/0968c7c5a087de320bc1df41e5d36838d841eb97/assert-new-lines-r-user",
             "is_draft": false
           }
         },
