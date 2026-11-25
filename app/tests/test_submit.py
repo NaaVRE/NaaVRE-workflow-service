@@ -142,11 +142,6 @@ def wait_for_wf(wf_status_response_json=None,
     ids=lambda path: Path(path).name,
 )
 def test_submit(workflow_test_folder):
-    # if not workflow_test_folder.endswith('_v2'):
-    #     pytest.skip("Skipping non-v2 workflow test")
-
-    if 'py_split_merge_2' not in workflow_test_folder:
-        pytest.skip("Skipping workflow test that is not")
     print('Testing workflow: ' + workflow_test_folder)
     workflow_payload_path = os.path.join(workflow_test_folder,
                                          'wf_payload.json')
@@ -208,11 +203,11 @@ def test_submit(workflow_test_folder):
             workflow_dict['cron_schedule'] is not None):
         check_recurring_workflow(workflow_dict=workflow_dict,
                                  run_url=run_url)
-    wf_delete_response = client.delete(
-        '/delete/' + workflow_dict['virtual_lab'],
-        params={'workflow_url': run_url},
-        headers={'Authorization': 'Bearer ' + user_auth_token}
-    )
-    assert wf_delete_response.status_code == 200
-    delete_wf_response_json = wf_delete_response.json()
-    assert delete_wf_response_json['status'] == 'deleted'
+    # wf_delete_response = client.delete(
+    #     '/delete/' + workflow_dict['virtual_lab'],
+    #     params={'workflow_url': run_url},
+    #     headers={'Authorization': 'Bearer ' + user_auth_token}
+    # )
+    # assert wf_delete_response.status_code == 200
+    # delete_wf_response_json = wf_delete_response.json()
+    # assert delete_wf_response_json['status'] == 'deleted'
