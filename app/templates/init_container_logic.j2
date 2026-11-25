@@ -19,13 +19,18 @@ try:
     with open(tmp_dir + '/' + 'inputs.json', 'w') as f:
         json.dump(args, f)
 
+    # Print the contents of the inputs.json file for debugging
+    with open(tmp_dir + '/' + 'inputs.json', 'r') as f:
+        file_contents = f.read()
+        print(f"Contents of {tmp_dir}/inputs.json: {file_contents}")
+
     # Convert to flat arguments
     inputs = ''
     for arg in args:
       name = arg.get('name')
       value = arg.get('value')
       type = arg.get('type')
-      print(f"Processing argument: name={name}, value={value}")
+      print(f"Init: Processing argument: name={name}, value={value}")
       if type == 'list':
         value = value.strip()
       if type == 'str':
@@ -39,7 +44,7 @@ try:
             name = arg.get('name')
             value = arg.get('value')
             var_type = arg.get('type')
-            print(f"Writing argument to file: name={name}, value={value}, type={var_type}")
+            print(f"Init: Writing argument to file: name={name}, value={value}, type={var_type}")
             if name and value:
                 if var_type == 'list':
                     value = value.replace(' ','')
@@ -47,7 +52,6 @@ try:
                         json.loads(value)
                     except json.decoder.JSONDecodeError as err:
                         # It is a list[str]. We must save it as ["elm1","elem2",..]
-
                         value = json.dumps(json.loads(value.replace("'",'"')))
                 if var_type == 'str' and ' ' in value:
                     # Escape exiting "

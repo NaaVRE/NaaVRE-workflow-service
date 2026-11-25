@@ -93,6 +93,7 @@ def set_node_io(dependencies_dag: dict, nodes: dict,
 
         io_types = _build_io_type_index(node)
         param_types = _build_param_type_index(node)
+
         for dependency in dependencies_dag.get(node_id, []):
             name = dependency['from_port']
             from_task = dependency['task_name']

@@ -13,6 +13,9 @@ on:
       test:
         required: true
         type: string
+      chart:
+        required: true
+        type: string
       verify_ssl:
         required: true
         type: string
@@ -30,13 +33,6 @@ env:
 jobs:
   test-minikube-script:
     runs-on: ${{ inputs.runs-on }}
-    strategy:
-      fail-fast: true
-      matrix:
-        chart:
-          - minikube_tests/charts/argo-workflows-0.45.6-Chart.yaml
-          - minikube_tests/charts/argo-workflows-0.33.1-Chart.yaml
-          - minikube_tests/charts/argo-workflows-0.47.5-Chart.yaml
     steps:
       - uses: actions/checkout@v7
 
@@ -51,12 +47,14 @@ jobs:
 
       - name: Run setup-tests.sh
         shell: bash -l {0}
+        env:
+          CHART: ${{ inputs.chart }}
         run: |
           wget https://raw.githubusercontent.com/NaaVRE/NaaVRE-helm/refs/heads/main/minikube_tests/setup-tests.sh
           chmod +x setup-tests.sh
           chmod +x minikube_tests/setup-tests-local.sh
           mv setup-tests.sh minikube_tests/
-          ./minikube_tests/setup-tests-local.sh -f minikube_tests/values-deploy-naavre-workflow-service-minikube-github.yaml -d -n -u -p -v -c "${{ matrix.chart }}"
+          ./minikube_tests/setup-tests-local.sh -f minikube_tests/values-deploy-naavre-workflow-service-minikube-github.yaml -d -n -u -p -v -c "$CHART"
 
       - name: Test auth token with python jwt library
         run: |

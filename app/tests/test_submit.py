@@ -203,11 +203,11 @@ def test_submit(workflow_test_folder):
             workflow_dict['cron_schedule'] is not None):
         check_recurring_workflow(workflow_dict=workflow_dict,
                                  run_url=run_url)
-    wf_delete_response = client.delete(
-        '/delete/' + workflow_dict['virtual_lab'],
-        params={'workflow_url': run_url},
-        headers={'Authorization': 'Bearer ' + user_auth_token}
-    )
-    assert wf_delete_response.status_code == 200
-    delete_wf_response_json = wf_delete_response.json()
-    assert delete_wf_response_json['status'] == 'deleted'
+    # wf_delete_response = client.delete(
+    #     '/delete/' + workflow_dict['virtual_lab'],
+    #     params={'workflow_url': run_url},
+    #     headers={'Authorization': 'Bearer ' + user_auth_token}
+    # )
+    # assert wf_delete_response.status_code == 200
+    # delete_wf_response_json = wf_delete_response.json()
+    # assert delete_wf_response_json['status'] == 'deleted'

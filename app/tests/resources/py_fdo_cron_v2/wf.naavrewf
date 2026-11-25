@@ -129,7 +129,7 @@
             "created": "2026-07-24T13:52:07.974353Z",
             "modified": "2026-07-24T13:52:08.915045Z",
             "version": 1,
-            "template_format": "v1",
+            "template_format": "v2",
             "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/s1-fetch-weather-user:3c5982c",
             "kernel": "ipython",
             "source_url": null,
@@ -173,6 +173,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -238,6 +239,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -303,6 +305,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -368,6 +371,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -485,7 +489,7 @@
             "created": "2026-07-27T08:43:29.051197Z",
             "modified": "2026-07-27T08:43:29.296329Z",
             "version": 2,
-            "template_format": "v1",
+            "template_format": "v2",
             "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/s2-weather-widget-user:c733524",
             "kernel": "ipython",
             "source_url": null,

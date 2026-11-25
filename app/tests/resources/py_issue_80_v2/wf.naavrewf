@@ -129,6 +129,7 @@
             "created": "2026-04-09T09:29:19.425777Z",
             "modified": "2026-04-09T09:29:19.572192Z",
             "version": 1,
+            "template_format": "v2",
             "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/create-a-json-user:6f54eb1",
             "kernel": "ipython",
             "source_url": null,

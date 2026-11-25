@@ -123,6 +123,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -291,6 +292,7 @@
             "shared_with_users": [],
             "version": 1,
             "versions": [],
+            "template_format": "v2",
             "container_image": "",
             "base_container_image": {
               "build": "",
@@ -384,10 +386,10 @@
             "modified": "2026-11-17T09:02:34.525212Z",
             "version": 1,
             "template_format": "v2",
-            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-new-lines-user:52f0100",
+            "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-new-lines-user:f7bfdb8",
             "containerization_workflow_id": "6de3d505-c3ae-4f6c-a7c6-e30f5510bf5e",
             "kernel": "ipython",
-            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/45448454fa3f9ceeec85203822009e4dd2f41629/assert-new-lines-user",
+            "source_url": "https://github.com/NaaVRE/cells-vl-tests/tree/b837a73c4eb5db5cec4caecbc735a1f264ba1ae1/assert-new-lines-user",
             "is_draft": false
           }
         },

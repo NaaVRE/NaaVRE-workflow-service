@@ -1,7 +1,3 @@
 dependencies:
   - name: "argo-workflows"
     version: "0.33.1"
-  - name: "naavre-workflow-service"
-    version: "v0.5.1"
-  - name: "naavre-containerizer-service"
-    version: "v0.5.2-beta"

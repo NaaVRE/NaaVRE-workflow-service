@@ -98,6 +98,7 @@
             "created": "2026-03-05T14:10:03.688693Z",
             "modified": "2026-03-05T14:10:03.712542Z",
             "version": 1,
+            "template_format": "v2",
             "container_image": "ghcr.io/naavre/naavre-cells-vl-tests/assert-conf-param-secret-user:582994a",
             "kernel": "ipython",
             "source_url": null,

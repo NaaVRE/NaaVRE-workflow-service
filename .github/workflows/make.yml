@@ -66,14 +66,20 @@ jobs:
     if: ${{ needs.configure-workflow.outputs.should_skip != 'true' }}
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         test: ${{ fromJson(needs.split-tests.outputs.test_list) }}
+        chart:
+          - minikube_tests/charts/argo-workflows-0.45.6-Chart.yaml
+          - minikube_tests/charts/argo-workflows-0.33.1-Chart.yaml
+          - minikube_tests/charts/argo-workflows-0.47.5-Chart.yaml
     with:
       runs-on: ${{ needs.configure-workflow.outputs.runner }}
       debug: ${{ vars.DEBUG }}
       verify_ssl: false
       disable_auth: ${{ vars.DISABLE_AUTH }}
       test: ${{ matrix.test }}
+      chart: ${{ matrix.chart }}
 
   call-build-container:
     needs: [ call-pytest ]
